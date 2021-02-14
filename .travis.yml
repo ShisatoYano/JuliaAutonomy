@@ -12,6 +12,9 @@ matrix:
   fast_finish: true
 notifications:
   email: false
+codecov: true
 script:
   - julia dependencies.jl
-  - julia test/runtests.jl
+  - julia --code-coverage test/runtests.jl
+after_success:
+  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
