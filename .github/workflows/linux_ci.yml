@@ -1,0 +1,27 @@
+name: Linux_CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [1.5.x]
+
+    name: Julia ${{ matrix.julia-version }} CI
+
+    steps:
+    - uses: actions/checkout@v2
+    - run: git fetch --prune --unshallow
+
+    - name: Setup julia
+      uses: actions/setup-julia@v2
+      with:
+        julia-version: ${{ matrix.julia-version }}
+    - name: Install dependencies
+      run: |
+        julia packages.jl
+    - name: Run test suite
+      run: julia runtests.jl
