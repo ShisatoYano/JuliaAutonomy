@@ -6,7 +6,8 @@ using Pkg
 dependencies = [
     "Plots",
     "DataFrames",
-    "CSV"
+    "CSV",
+    "Test"
 ]
 
 Pkg.add(dependencies)
