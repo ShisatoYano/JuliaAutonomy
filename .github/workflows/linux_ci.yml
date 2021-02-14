@@ -13,13 +13,6 @@ jobs:
     name: Julia ${{ matrix.julia-version }} CI
 
     steps:
-    - uses: actions/checkout@v2
-    - run: git fetch --prune --unshallow
-
-    - name: Setup julia
-      uses: actions/setup-julia@v2
-      with:
-        julia-version: ${{ matrix.julia-version }}
     - name: Install dependencies
       run: |
         julia packages.jl
