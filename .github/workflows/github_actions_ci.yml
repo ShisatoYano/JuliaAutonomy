@@ -16,5 +16,8 @@ jobs:
         uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.julia-version }}
-      - run: julia -e 'println("Hello, World!")'
+      - name: "Install dependencies"
+        run: julia packages.jl
         shell: bash
+      - name: "Run test suite"
+        run: julia test/runtests.jl
