@@ -26,7 +26,7 @@ install:
   - ps: iex ((new-object net.webclient).DownloadString("https://raw.githubusercontent.com/JuliaCI/Appveyor.jl/version-1/bin/install.ps1"))
 
 build_script:
-  - C:\julia\bin\julia packages.jl
+  - C:\julia\bin\julia dependencies.jl
 
 test_script:
   - C:\julia\bin\julia test/runtests.jl

@@ -13,5 +13,5 @@ matrix:
 notifications:
   email: false
 script:
-  - julia packages.jl
+  - julia dependencies.jl
   - julia test/runtests.jl
