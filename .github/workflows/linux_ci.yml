@@ -3,17 +3,18 @@ name: Linux_CI
 on: [push, pull_request]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [1.5.x]
-
-    name: Julia ${{ matrix.julia-version }} CI
-
+        julia-version: ['1.5']
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+    
     steps:
-    - name: Install dependencies
-      run: julia packages.jl
-    - name: Run test suite
-      run: julia runtests.jl
+      - uses: actions/checkout@v1.0.0
+      - name: "Set up Julia"
+        uses: julia-actions/setup-julia@v1
+        with:
+          version: ${{ matrix.julia-version }}
+      - run: julia -e 'println("Hello, World!")'
+        shell: bash
