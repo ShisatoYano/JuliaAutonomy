@@ -4,7 +4,7 @@ module TestSensorData
     using Test
 
     # target modules
-    include(joinpath(split(@__FILE__, "/test/")[1], "src/sensor_data/print_sensor_data.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/print_sensor_data.jl"))
 
     function main()
         @testset "SensorData" begin

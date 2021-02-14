@@ -4,7 +4,7 @@ module PrintSensorData
     using DataFrames, CSV
 
     function print_data_200()
-        data_path = joinpath(split(@__FILE__, "/src/")[1], "data/sensor_data_200.txt")
+        data_path = joinpath(split(@__FILE__, "src")[1], "data/sensor_data_200.txt")
         df_200_mm = CSV.read(data_path, DataFrame, header=["date", "time", "ir", "lidar"])
 
         println("sensor_data_200.txt")
@@ -18,7 +18,7 @@ module PrintSensorData
     end
 
     function print_data_600()
-        data_path = joinpath(split(@__FILE__, "/src/")[1], "data/sensor_data_600.txt")
+        data_path = joinpath(split(@__FILE__, "src")[1], "data/sensor_data_600.txt")
         df_600_mm = CSV.read(data_path, DataFrame, header=["date", "time", "ir", "lidar"])
 
         println("sensor_data_600.txt")
