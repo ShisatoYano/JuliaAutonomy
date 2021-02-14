@@ -1,5 +1,5 @@
 # JuliaAutonomy
-[![Build Status](https://travis-ci.org/ShisatoYano/JuliaAutonomy.svg?branch=main)](https://travis-ci.org/ShisatoYano/JuliaAutonomy) [![Build status](https://ci.appveyor.com/api/projects/status/vnd6ngh0hyh5f8kv?svg=true)](https://ci.appveyor.com/project/ShisatoYano/juliaautonomy)
+[![Build Status](https://travis-ci.org/ShisatoYano/JuliaAutonomy.svg?branch=main)](https://travis-ci.org/ShisatoYano/JuliaAutonomy) [![Build status](https://ci.appveyor.com/api/projects/status/vnd6ngh0hyh5f8kv?svg=true)](https://ci.appveyor.com/project/ShisatoYano/juliaautonomy) ![Linux_CI](https://github.com/ShisatoYano/JuliaAutonomy/workflows/Linux_CI/badge.svg)  
 Julia codes for Autonomy, Robotics and Self-Driving Algorithms.  
 
 # Table of Contents
@@ -18,7 +18,9 @@ I've been inspired by and referring to the following projects.
 # Requirements
 * Julia 1.5.x  
 * Plots  
-* DataFrames
+* DataFrames  
+* CSV  
+* Test  
 
 # License
 MIT  
