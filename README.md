@@ -15,12 +15,14 @@ I've been inspired by and referring to the following projects.
 * [LNPR](https://github.com/ryuichiueda/LNPR)  
 * [PythonRobotics](https://github.com/AtsushiSakai/PythonRobotics)  
 
-# Requirements
+# Dependencies
 * Julia 1.5.x  
 * Plots  
 * DataFrames  
 * CSV  
 * Test  
+* StatsPlots
+* Statistics
 
 # License
 MIT  
