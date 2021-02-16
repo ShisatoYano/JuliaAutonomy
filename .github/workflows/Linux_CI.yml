@@ -33,6 +33,9 @@ jobs:
         with:
 
           version: ${{ matrix.julia-version }}
+      - name: "Install dependencies for GR"
+
+        run: sudo apt-get -y install libxt6 libxrender1 libxext6 libgl1-mesa-glx libqt5widgets5
 
       - name: "Install dependencies"
 

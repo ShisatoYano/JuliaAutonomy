@@ -14,7 +14,7 @@ module TestSensorData
                 @test_nowarn PrintSensorData.print_data_600()
             end
             @testset "DrawHistogram" begin
-                @test_nowarn DrawHistogram.main()
+                @test DrawHistogram.main() == true
             end
         end
     end
