@@ -1,0 +1,45 @@
+name: Linux_CI
+
+
+
+on: [push, pull_request]
+
+
+
+jobs:
+
+  test:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+
+      matrix:
+
+        julia-version: ['1.5']
+
+        os: [ubuntu-latest]
+
+    
+
+    steps:
+
+      - uses: actions/checkout@v1.0.0
+
+      - name: "Set up Julia"
+
+        uses: julia-actions/setup-julia@v1
+
+        with:
+
+          version: ${{ matrix.julia-version }}
+
+      - name: "Install dependencies"
+
+        run: julia dependencies.jl
+
+        shell: bash
+
+      - name: "Run test suite"
+
+        run: julia test/runtests.jl
