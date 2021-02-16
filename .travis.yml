@@ -13,6 +13,8 @@ matrix:
 notifications:
   email: false
 codecov: true
+before_install:
+  - sudo apt-get -y install libxt6 libxrender1 libxext6 libgl1-mesa-glx libqt5widgets5
 script:
   - julia dependencies.jl
   - julia --code-coverage test/runtests.jl
