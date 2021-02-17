@@ -6,6 +6,7 @@ module TestSensorData
     # target modules
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/print_sensor_data.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/draw_histogram.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/histogram_mean.jl"))
 
     function main()
         @testset "SensorData" begin
@@ -15,6 +16,9 @@ module TestSensorData
             end
             @testset "DrawHistogram" begin
                 @test DrawHistogram.main() == true
+            end
+            @testset "HistogramMean" begin
+                @test HistogramMean.main() == true
             end
         end
     end

@@ -1,6 +1,6 @@
 # draw histgram of sensor data
 
-module DrawHistogram
+module HistogramMean
     using Plots, DataFrames, CSV, Statistics
 
     function main()
@@ -33,6 +33,6 @@ module DrawHistogram
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
-    using .DrawHistogram
-    DrawHistogram.main()
+    using .HistogramMean
+    HistogramMean.main()
 end
