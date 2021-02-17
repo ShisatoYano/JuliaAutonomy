@@ -21,9 +21,10 @@ module HistogramMean
         println("Mean(mean()) = $mean_2")
         
         bin_min_max = maximum(df_200_mm.lidar) - minimum(df_200_mm.lidar)
-        histogram(df_200_mm.lidar, bins=bin_min_max, color=:orange)
+        histogram(df_200_mm.lidar, bins=bin_min_max, color=:orange, 
+                  label="histogram")
         plot!([mean_1], st=:vline, color=:red, 
-              ylim=(0, 5000), linewidth=5)
+              ylim=(0, 5000), linewidth=5, label="mean")
 
         save_path = joinpath(split(@__FILE__, "src")[1], "img/histogram_mean.png")
         savefig(save_path)

@@ -10,7 +10,7 @@ module DrawHistogram
                              delim=' ')
         
         bin_min_max = maximum(df_200_mm.lidar) - minimum(df_200_mm.lidar)
-        histogram(df_200_mm.lidar, bins=bin_min_max)
+        histogram(df_200_mm.lidar, bins=bin_min_max, label="histogram")
 
         save_path = joinpath(split(@__FILE__, "src")[1], "img/histogram_200_mm.png")
         savefig(save_path)
