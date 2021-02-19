@@ -13,7 +13,9 @@ dependencies = [
     :CSV,
     :Test,
     :StatsPlots,
-    :Statistics
+    :Statistics,
+    :FreqTables,
+    :NamedArrays
 ]
 
 for pkg in dependencies
