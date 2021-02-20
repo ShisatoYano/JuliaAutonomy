@@ -15,7 +15,8 @@ dependencies = [
     :StatsPlots,
     :Statistics,
     :FreqTables,
-    :NamedArrays
+    :NamedArrays,
+    :Distributions
 ]
 
 for pkg in dependencies
