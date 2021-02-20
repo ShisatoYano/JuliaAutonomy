@@ -1,7 +1,7 @@
 # plot gaussian distribution model
 
 module GaussDistModel
-    using Plots, Distributions
+    using Plots
 
     function p(z, mu=209.7, dev=23.4)
         return exp(-(z - mu)^2 / (2 * dev)) / sqrt(2 * pi * dev)
