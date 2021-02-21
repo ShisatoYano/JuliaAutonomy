@@ -11,6 +11,9 @@ module TestSensorData
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/calc_std_dev.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/prob_dist.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/draw_hist_600.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/draw_time_series_600.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/group_by_hour.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/hist_grp_by_hour.jl"))
 
     function main()
         @testset "SensorData" begin
@@ -35,6 +38,15 @@ module TestSensorData
             end
             @testset "DrawHist600" begin
                 @test DrawHist600.main() == true
+            end
+            @testset "DrawTimeSeries600" begin
+                @test DrawTimeSeries600.main() == true
+            end
+            @testset "GroupByHour" begin
+                @test GroupByHour.main() == true
+            end
+            @testset "HistGrpByHour" begin
+                @test HistGrpByHour.main() == true
             end
         end
     end
