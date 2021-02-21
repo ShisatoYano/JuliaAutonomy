@@ -10,6 +10,7 @@ module TestSensorData
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/calc_variance.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/calc_std_dev.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/prob_dist.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/draw_hist_600.jl"))
 
     function main()
         @testset "SensorData" begin
@@ -31,6 +32,9 @@ module TestSensorData
             end
             @testset "ProbDist" begin
                 @test ProbDist.main() == true
+            end
+            @testset "DrawHist600" begin
+                @test DrawHist600.main() == true
             end
         end
     end
