@@ -6,6 +6,9 @@ module TestProbabilisticModel
     # target modules
     include(joinpath(split(@__FILE__, "test")[1], "src/probabilistic_model/gaussian_distribution.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/probabilistic_model/gauss_prob_dist.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/probabilistic_model/gauss_prob_dist_pdf.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/probabilistic_model/gauss_prob_dist_cdf.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/probabilistic_model/bar_prob_dist_cdf.jl"))
 
     function main()
         @testset "ProbabilisticModel" begin
@@ -20,6 +23,15 @@ module TestProbabilisticModel
                 @test GaussProbDist.prob(210) == 0.08187587024811953
                 @test GaussProbDist.prob(229) == 3.113715670488921e-5
                 @test GaussProbDist.main() == true
+            end
+            @testset "GaussProbDistPdf" begin
+                @test GaussProbDistPdf.main() == true
+            end
+            @testset "GaussProbDistCdf" begin
+                @test GaussProbDistCdf.main() == true
+            end
+            @testset "BarProbDistCdf" begin
+                @test BarProbDistCdf.main() == true
             end
         end
     end
