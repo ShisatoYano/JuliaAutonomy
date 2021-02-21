@@ -9,6 +9,7 @@ module TestProbabilisticModel
     include(joinpath(split(@__FILE__, "test")[1], "src/probabilistic_model/gauss_prob_dist_pdf.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/probabilistic_model/gauss_prob_dist_cdf.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/probabilistic_model/bar_prob_dist_cdf.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/probabilistic_model/calc_expected_value.jl"))
 
     function main()
         @testset "ProbabilisticModel" begin
@@ -32,6 +33,9 @@ module TestProbabilisticModel
             end
             @testset "BarProbDistCdf" begin
                 @test BarProbDistCdf.main() == true
+            end
+            @testset "CalcExpValue" begin
+                @test_nowarn CalcExpValue.main()
             end
         end
     end
