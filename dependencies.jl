@@ -27,4 +27,4 @@ for pkg in dependencies
     Pkg.update(String(pkg))
 end
 
-# create_sysimage([:Plots,:DataFrames,:StatsPlots];replace_default=true)
+create_sysimage(dependencies;replace_default=true)
