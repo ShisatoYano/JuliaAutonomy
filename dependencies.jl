@@ -8,6 +8,8 @@ Pkg.add("PackageCompiler")
 using PackageCompiler
 
 dependencies = [
+    :PyCall,
+    :PyPlot,
     :Plots,
     :DataFrames,
     :CSV,
@@ -26,5 +28,3 @@ end
 for pkg in dependencies
     Pkg.update(String(pkg))
 end
-
-create_sysimage(dependencies;replace_default=true)

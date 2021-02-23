@@ -1,6 +1,7 @@
 # plot probability distribution of sensor data
 module ProbDist
     using DataFrames, CSV, Plots, FreqTables, NamedArrays
+    pyplot()
 
     function main()
         data_path = joinpath(split(@__FILE__, "src")[1], "data/sensor_data_200.txt")
@@ -16,16 +17,11 @@ module ProbDist
         println("Observations: $(observs)")
         println("Probability: $(probs)")
 
-        bar(probs, xticks=observs)
+        bar(probs, xticks=observs, label="prob dist")
 
         save_path = joinpath(split(@__FILE__, "src")[1], "img/prob_dist.png")
         savefig(save_path)
 
         return true
     end
-end
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    using .ProbDist
-    ProbDist.main()
 end

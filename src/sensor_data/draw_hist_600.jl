@@ -2,6 +2,7 @@
 
 module DrawHist600
     using Plots, DataFrames, CSV
+    pyplot()
 
     function main()
         data_path = joinpath(split(@__FILE__, "src")[1], "data/sensor_data_600.txt")
@@ -17,9 +18,4 @@ module DrawHist600
 
         return true
     end
-end
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    using .DrawHist600
-    DrawHist600.main()
 end

@@ -2,6 +2,7 @@
 
 module GaussProbDist
     using DataFrames, CSV, Plots, FreqTables, NamedArrays
+    pyplot()
 
     function p(z, mu=209.7, dev=23.4)
         return exp(-(z - mu)^2 / (2 * dev)) / sqrt(2 * pi * dev)
@@ -37,9 +38,4 @@ module GaussProbDist
 
         return true
     end
-end
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    using .GaussProbDist
-    GaussProbDist.main()
 end

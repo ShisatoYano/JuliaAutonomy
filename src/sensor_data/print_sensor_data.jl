@@ -35,9 +35,3 @@ module PrintSensorData
         return df_600_mm
     end
 end
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    using .PrintSensorData
-    PrintSensorData.print_data_200()
-    PrintSensorData.print_data_600()
-end

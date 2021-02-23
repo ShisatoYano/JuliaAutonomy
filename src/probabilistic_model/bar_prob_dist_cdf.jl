@@ -3,6 +3,7 @@
 
 module BarProbDistCdf
     using Plots, Distributions
+    pyplot()
 
     function main()
         norm_dist = Normal(209.7, 4.84) # mu, std_dev
@@ -17,9 +18,4 @@ module BarProbDistCdf
 
         return true
     end
-end
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    using .BarProbDistCdf
-    BarProbDistCdf.main()
 end

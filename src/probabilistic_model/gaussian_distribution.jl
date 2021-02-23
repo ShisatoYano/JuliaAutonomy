@@ -2,6 +2,7 @@
 
 module GaussDistModel
     using Plots
+    pyplot()
 
     function p(z, mu=209.7, dev=23.4)
         return exp(-(z - mu)^2 / (2 * dev)) / sqrt(2 * pi * dev)
@@ -14,16 +15,11 @@ module GaussDistModel
         println("Observations: $(zs)")
         println("Probability: $(ys)")
 
-        plot(zs, ys)
+        plot(zs, ys, label="gaussian distribution")
 
         save_path = joinpath(split(@__FILE__, "src")[1], "img/gauss_dist_model.png")
         savefig(save_path)
 
         return true
     end
-end
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    using .GaussDistModel
-    GaussDistModel.main()
 end

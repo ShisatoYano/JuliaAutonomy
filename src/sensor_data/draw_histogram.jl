@@ -2,6 +2,7 @@
 
 module DrawHistogram
     using Plots, DataFrames, CSV
+    pyplot()
 
     function main()
         data_path = joinpath(split(@__FILE__, "src")[1], "data/sensor_data_200.txt")
@@ -17,9 +18,4 @@ module DrawHistogram
 
         return true
     end
-end
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    using .DrawHistogram
-    DrawHistogram.main()
 end

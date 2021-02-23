@@ -2,6 +2,7 @@
 
 module HistogramMean
     using Plots, DataFrames, CSV, Statistics
+    pyplot()
 
     function main()
         data_path = joinpath(split(@__FILE__, "src")[1], "data/sensor_data_200.txt")
@@ -31,9 +32,4 @@ module HistogramMean
 
         return true
     end
-end
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    using .HistogramMean
-    HistogramMean.main()
 end

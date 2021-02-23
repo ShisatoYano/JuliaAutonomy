@@ -15,6 +15,7 @@ codecov: true
 before_install:
   - sudo apt-get -y install libxt6 libxrender1 libxext6 libgl1-mesa-glx libqt5widgets5
 script:
+  - julia -e 'ENV["CONDA_JL_VERSION"]=3'
   - julia dependencies.jl
   - julia --code-coverage test/runtests.jl
 after_success:
