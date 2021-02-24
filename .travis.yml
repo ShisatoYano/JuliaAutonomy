@@ -13,7 +13,7 @@ notifications:
   email: false
 codecov: true
 before_install:
-  - sudo apt-get -yq bzip2 python3-tk
+  - sudo apt-get -y bzip2 python3-tk
   - sudo apt-get -y install libxt6 libxrender1 libxext6 libgl1-mesa-glx libqt5widgets5
 script:
   - julia -e 'ENV["PYTHON"]=""; using Pkg;Pkg.add("Conda")'
