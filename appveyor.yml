@@ -26,8 +26,8 @@ install:
   - ps: iex ((new-object net.webclient).DownloadString("https://raw.githubusercontent.com/JuliaCI/Appveyor.jl/version-1/bin/install.ps1"))
 
 build_script:
-  - C:\julia\bin\julia -e 'ENV["CONDA_JL_VERSION"]=3'
-  - C:\julia\bin\julia dependencies.jl
+  - C:\julia\bin\julia -e 'ENV["CONDA_JL_VERSION"]=3;include("setup.jl");Setup.install_packages()'
+  - C:\julia\bin\julia -e 'ENV["PYTHON"]=""; using Pkg; Pkg.add("Conda"); Pkg.update(); Pkg.build("PyCall"); using PyPlot'
 
 test_script:
   - C:\julia\bin\julia test/runtests.jl
