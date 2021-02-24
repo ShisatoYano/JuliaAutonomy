@@ -34,7 +34,7 @@ jobs:
 
           version: ${{ matrix.julia-version }}
 
-      - name: "Install dependencies"
+      - name: "Install packages"
 
         run: julia -e 'ENV["CONDA_JL_VERSION"]=3;include("setup.jl");Setup.install_packages()'
 
