@@ -36,9 +36,7 @@ jobs:
 
       - name: "Install dependencies"
 
-        run: julia -e 'ENV["CONDA_JL_VERSION"]=3'
-
-        run: julia dependencies.jl
+        run: julia -e 'ENV["CONDA_JL_VERSION"]=3;include("setup.jl");Setup.install_packages()'
 
         shell: bash
 

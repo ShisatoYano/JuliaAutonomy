@@ -37,11 +37,9 @@ jobs:
 
         run: sudo apt-get -y install libxt6 libxrender1 libxext6 libgl1-mesa-glx libqt5widgets5
 
-      - name: "Install dependencies"
+      - name: "Install packages"
 
-        run: julia -e 'ENV["CONDA_JL_VERSION"]=3'
-
-        run: julia dependencies.jl
+        run: julia -e 'ENV["CONDA_JL_VERSION"]=3;include("setup.jl");Setup.install_packages()'
 
         shell: bash
 
