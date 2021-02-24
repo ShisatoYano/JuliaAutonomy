@@ -16,10 +16,10 @@ before_install:
   - sudo apt-get -y install bzip2 python3-tk
   - sudo apt-get -y install libxt6 libxrender1 libxext6 libgl1-mesa-glx libqt5widgets5
 script:
+  - julia -e 'ENV["CONDA_JL_VERSION"]=3;include("setup.jl");Setup.install_packages()'
   - julia -e 'ENV["PYTHON"]=""; using Pkg;Pkg.add("Conda")'
   - julia -e 'using Pkg, Conda; Conda.add("python=3.8.*")'
-  - julia -e 'using Pkg, Conda; Conda.add("matplotlib")'
-  - julia -e 'ENV["CONDA_JL_VERSION"]=3;include("setup.jl");Setup.install_packages()'
+  - julia -e 'using Pkg, Conda; Conda.add("matplotlib"); Pkg.build("PyCall")'
   - julia --code-coverage test/runtests.jl
 after_success:
   - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
