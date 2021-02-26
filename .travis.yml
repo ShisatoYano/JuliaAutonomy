@@ -11,7 +11,7 @@ matrix:
   fast_finish: true
 notifications:
   email: false
-codecov: true
+coveralls: true
 before_install:
   - sudo apt-get -y install bzip2 python3-tk
   - sudo apt-get -y install libxt6 libxrender1 libxext6 libgl1-mesa-glx libqt5widgets5
@@ -20,4 +20,4 @@ script:
   - julia -e 'ENV["PYTHON"]=""; using Pkg; Pkg.add("Conda"); Pkg.update(); Pkg.build("PyCall"); using PyPlot'
   - julia --code-coverage test/runtests.jl
 after_success:
-  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(process_folder())'
+  - julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
