@@ -1,8 +1,9 @@
 # create dataframe of each group by hour
 # calculate probability of each distance
 
-module DfGroupHour
-    using DataFrames, CSV, Statistics
+module GrpHrHeatmap
+    using DataFrames, CSV, FreqTables, Plots
+    pyplot()
 
     function main()
         data_path = joinpath(split(@__FILE__, "src")[1], "data/sensor_data_600.txt")
@@ -16,17 +17,19 @@ module DfGroupHour
         df_h = DataFrame(hour=hours)
         df_new = hcat(df_org, df_h)
 
-        # sort
-        df_sort = sort(df_new, "hour")
+        # pivot
+        pivot = freqtable(df_new, :lidar, :hour)
+        println(pivot)
 
-        # grouping
-        df_grp = groupby(df_sort, "hour")
+        #heatmap
+        x = names(pivot, 2)
+        y = names(pivot, 1)
+        freqs = [value for(name, value) in enumerate(pivot)]
+        probs = freqs ./ length(df_org.lidar)
+        heatmap(x, y, probs)
+        
 
-        # dictionary
-        each_hour = Dict([(string(i), sort(df, "lidar").lidar) for (i, df) in enumerate(df_grp)])
-
-        # convert to dataframe
-        freqs = DataFrame(each_hour)
-        println(freqs)
+        save_path = joinpath(split(@__FILE__, "src")[1], "img/group_hour_heatmap.png")
+        savefig(save_path)
     end
 end
