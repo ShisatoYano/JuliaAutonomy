@@ -12,3 +12,8 @@ module TestSuite
         TestProbabilisticModel.main()
     end
 end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    using .TestSuite
+    TestSuite.main()
+end
