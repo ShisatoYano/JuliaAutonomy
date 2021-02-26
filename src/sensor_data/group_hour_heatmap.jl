@@ -31,5 +31,7 @@ module GrpHrHeatmap
 
         save_path = joinpath(split(@__FILE__, "src")[1], "img/group_hour_heatmap.png")
         savefig(save_path)
+
+        return true
     end
 end
