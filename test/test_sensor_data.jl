@@ -54,9 +54,9 @@ module TestSensorData
             @testset "GrpHrHeatmap" begin
                 @test GrpHrHeatmap.main() == true
             end
-            @testset "MarginalKde" begin
-                @test MarginalKde.main() == true
-            end
+            # @testset "MarginalKde" begin
+            #     @test MarginalKde.main() == true
+            # end
             @testset "ProbSumHour" begin
                 @test ProbSumHour.main() == 1.0
             end
