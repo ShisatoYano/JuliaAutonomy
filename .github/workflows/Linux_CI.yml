@@ -23,30 +23,27 @@ jobs:
     
 
     steps:
-
       - uses: actions/checkout@v1.0.0
 
       - name: "Set up Julia"
-
         uses: julia-actions/setup-julia@v1
-
         with:
-
           version: ${{ matrix.julia-version }}
-      - name: "Install dependencies for GR"
 
+      - name: "Install dependencies for GR"
         run: sudo apt-get -y install libxt6 libxrender1 libxext6 libgl1-mesa-glx libqt5widgets5
 
       - name: "Install packages"
-
         run: julia -e 'ENV["CONDA_JL_VERSION"]=3;include("setup.jl");Setup.install_packages()'
 
       - name: "Install matplotlib"
-
         run: julia -e 'ENV["PYTHON"]=""; using Pkg; Pkg.add("Conda"); Pkg.update(); Pkg.build("PyCall"); using PyPlot'
-
         shell: bash
 
       - name: "Run test suite"
-
-        run: julia test/runtests.jl
+        run: julia --code-coverage test/runtests.jl
+      
+      - name: Coveralls GitHub Action
+        uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
