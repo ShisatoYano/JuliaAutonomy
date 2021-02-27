@@ -15,6 +15,7 @@ module TestSensorData
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/group_by_hour.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/hist_grp_by_hour.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/group_hour_heatmap.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/marginal_kde.jl"))
 
     function main()
         @testset "SensorData" begin
@@ -51,6 +52,9 @@ module TestSensorData
             end
             @testset "GrpHrHeatmap" begin
                 @test GrpHrHeatmap.main() == true
+            end
+            @testset "MarginalKde" begin
+                @test MarginalKde.main() == true
             end
         end
     end
