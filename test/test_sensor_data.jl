@@ -18,6 +18,7 @@ module TestSensorData
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/marginal_kde.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/prob_sum_hour.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/prob_sum_lidar.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/cond_z_t_bar.jl"))
 
     function main()
         @testset "SensorData" begin
@@ -63,6 +64,9 @@ module TestSensorData
             end
             @testset "ProbSumLidar" begin
                 @test ProbSumLidar.main() == 1.0
+            end
+            @testset "CondZtBar" begin
+                @test CondZtBar.main() == true
             end
         end
     end
