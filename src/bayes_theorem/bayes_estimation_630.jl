@@ -1,6 +1,6 @@
 # estimate observed time by bayes theorem
 
-module BayseEst630
+module BayesEst630
     using DataFrames, CSV, FreqTables, Plots
 
     function bayes_estimation(sensor_value, cond_z_t, current_estimation)
