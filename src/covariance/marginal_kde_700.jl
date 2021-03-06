@@ -1,9 +1,7 @@
-# create dataframe of each group by hour
 # plot kernek density estimation
 
 module MarginalKde700
-    using DataFrames, CSV, FreqTables
-    using Plots, StatsPlots
+    using DataFrames, CSV, StatsPlots
     pyplot()
 
     function main()
