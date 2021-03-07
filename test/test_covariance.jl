@@ -6,6 +6,7 @@ module TestCovariance
     # target modules
     include(joinpath(split(@__FILE__, "test")[1], "src/covariance/calc_covariance.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/covariance/contour_pdf.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/covariance/contour_pdf_plus20.jl"))
 
     function main()
         @testset "Covariance" begin
@@ -14,6 +15,9 @@ module TestCovariance
             end
             @testset "ContourPdf" begin
                 @test ContourPdf.main() == true
+            end
+            @testset "ContourPdfPlus20" begin
+                @test ContourPdfPlus20.main() == true
             end
         end
     end
