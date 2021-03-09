@@ -29,11 +29,33 @@ module CalcPlotEigen
         println("Eigen Vector1: $(eig_vecs[:, 1])")
         println("Eigen Vector2: $(eig_vecs[:, 2])")
 
+        # long or short
+        if eig_vals[1] > eig_vals[2]
+            long_val = eig_vals[1]
+            long_vec = eig_vecs[:, 1]
+            short_val = eig_vals[2]
+            short_vec = eig_vecs[:, 2]
+        else
+            long_val = eig_vals[2]
+            long_vec = eig_vecs[:, 2]
+            short_val = eig_vals[1]
+            short_vec = eig_vecs[:, 1]
+        end
+        println("Long Value: $(long_val)")
+        println("Long Vector: $(long_vec)")
+        println("Short Value: $(short_val)")
+        println("Short Vector: $(short_vec)")
+
         # plot
         z = [pdf([x; y], mu, cov) for x in vx, y in vy]
-        contour(z, label="contour", c=:haline, xlabel="x", ylabel="y")
-        v1 = 2 * sqrt(eig_vals[1]) * eig_vecs[:, 1]
-        v2 = 2 * sqrt(eig_vals[2]) * eig_vecs[:, 2]
+        contour(z', label="contour", c=:haline, xlabel="x", 
+                ylabel="y", aspect_ratio=:equal)
+        long = 2 * sqrt(long_val) * long_vec
+        short = 2 * sqrt(short_val) * short_vec
+        quiver!([mu[1]], [mu[2]], quiver=([long[1]], [long[2]]), 
+                c=:red, aspect_ratio=:equal)
+        quiver!([mu[1]], [mu[2]], quiver=([short[1]], [short[2]]), 
+                c=:blue, aspect_ratio=:equal)
         save_path = joinpath(split(@__FILE__, "src")[1], "img/contour_eigen.png")
         savefig(save_path)
 
