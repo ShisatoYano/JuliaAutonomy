@@ -1,10 +1,10 @@
 # test module for sensor_data
 
-module TestSensorData
+module TestProbStats
     using Test
 
     # target modules
-    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/print_sensor_data.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/sensor_data/print_sensor_data.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/draw_histogram.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/histogram_mean.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/calc_variance.jl"))
