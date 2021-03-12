@@ -5,10 +5,10 @@ module TestProbStats
 
     # target modules
     include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/sensor_data/print_sensor_data.jl"))
-    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/draw_histogram.jl"))
-    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/histogram_mean.jl"))
-    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/calc_variance.jl"))
-    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/calc_std_dev.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/freq_dist/draw_histogram.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/freq_dist/histogram_mean.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/freq_dist/calc_variance.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/freq_dist/calc_std_dev.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/prob_dist.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/draw_hist_600.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/draw_time_series_600.jl"))
@@ -21,21 +21,15 @@ module TestProbStats
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/cond_z_t_bar.jl"))
 
     function main()
-        @testset "SensorData" begin
-            @testset "PrintSensorData" begin
+        @testset "ProbStats" begin
+            @testset "SensorData" begin
                 @test_nowarn PrintSensorData.print_data_200()
                 @test_nowarn PrintSensorData.print_data_600()
             end
-            @testset "DrawHistogram" begin
+            @testset "FreqDist" begin
                 @test DrawHistogram.main() == true
-            end
-            @testset "HistogramMean" begin
                 @test HistogramMean.main() == true
-            end
-            @testset "CalcVariance" begin
                 @test_nowarn CalcVariance.main()
-            end
-            @testset "CalcStdDev" begin
                 @test_nowarn CalcStdDev.main()
             end
             @testset "ProbDist" begin
