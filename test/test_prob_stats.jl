@@ -9,7 +9,7 @@ module TestProbStats
     include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/freq_dist/histogram_mean.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/freq_dist/calc_variance.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/freq_dist/calc_std_dev.jl"))
-    include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/prob_dist.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/prob_dist/prob_dist.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/draw_hist_600.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/draw_time_series_600.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/sensor_data/group_by_hour.jl"))
