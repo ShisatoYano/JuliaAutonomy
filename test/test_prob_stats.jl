@@ -24,6 +24,10 @@ module TestProbStats
     include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/complex_dist/prob_sum_hour.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/complex_dist/prob_sum_lidar.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/complex_dist/cond_z_t_bar.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/complex_dist/probs_bayes.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/complex_dist/bayes_estimation_630.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/complex_dist/bayes_est_at_5.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/complex_dist/bayes_est_at_11.jl"))
 
     function main()
         @testset "ProbStats" begin
@@ -90,6 +94,18 @@ module TestProbStats
                 end
                 @testset "CondZtBar" begin
                     @test CondZtBar.main() == true
+                end
+                @testset "ProbsBayes" begin
+                    @test ProbsBayes.main() == true
+                end
+                @testset "BayesEst630" begin
+                    @test BayesEst630.main() == true
+                end
+                @testset "BayesEstAt5" begin
+                    @test BayesEstAt5.main() == true
+                end
+                @testset "BayesEstAt11" begin
+                    @test BayesEstAt11.main() == true
                 end    
             end
         end
