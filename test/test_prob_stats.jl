@@ -28,6 +28,13 @@ module TestProbStats
     include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/complex_dist/bayes_estimation_630.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/complex_dist/bayes_est_at_5.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/complex_dist/bayes_est_at_11.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/multi_dim_gauss_dist/calc_covariance.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/multi_dim_gauss_dist/contour_pdf.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/multi_dim_gauss_dist/contour_pdf_plus20.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/multi_dim_gauss_dist/contour_pdf_200.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/multi_dim_gauss_dist/multiple_gauss_dist.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/multi_dim_gauss_dist/calc_plot_eigen.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/prob_stats/multi_dim_gauss_dist/calc_cov_mat.jl"))
 
     function main()
         @testset "ProbStats" begin
@@ -107,6 +114,29 @@ module TestProbStats
                 @testset "BayesEstAt11" begin
                     @test BayesEstAt11.main() == true
                 end    
+            end
+            @testset "MultiDimGuassDist" begin
+                @testset "CalcCovariance" begin
+                    @test_nowarn CalcCovariance.main()
+                end
+                @testset "ContourPdf" begin
+                    @test ContourPdf.main() == true
+                end
+                @testset "ContourPdfPlus20" begin
+                    @test ContourPdfPlus20.main() == true
+                end
+                @testset "ContourPdf200" begin
+                    @test ContourPdf200.main() == true
+                end
+                @testset "MultiGaussDist" begin
+                    @test MultiGaussDist.main() == true
+                end
+                @testset "CalcPlotEigen" begin
+                    @test CalcPlotEigen.main() == true
+                end
+                @testset "CalcCovMat" begin
+                    @test CalcCovMat.main() == true
+                end
             end
         end
     end

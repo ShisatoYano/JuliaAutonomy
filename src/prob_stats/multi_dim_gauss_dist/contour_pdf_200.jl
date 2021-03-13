@@ -8,9 +8,6 @@ module ContourPdf200
     pyplot()
 
     function pdf(x, mu, cov_mat)
-        # inverse matrix
-        inv_mat = inv(cov_mat)
-
         # determinant
         det_mat = det(cov_mat)
 
@@ -43,12 +40,10 @@ module ContourPdf200
 
         # plot contour
         vx = 280:340
-        vy = 180:240
-        z = map(product(vx, vy)) do (x, y)
-            pdf([x; y], mu, cov_mat)
-        end
-        contour(vx, vy, z, label="Probability Density", c=:haline)
-
+        vy = 190:230
+        z = [pdf([x; y], mu, cov_mat) for x in vx, y in vy]
+        contour(z', label="contour", c=:haline, xlabel="x", 
+                ylabel="y", aspect_ratio=:equal)
         save_path = joinpath(split(@__FILE__, "src")[1], "img/contour_pdf_200.png")
         savefig(save_path)
 

@@ -1,16 +1,12 @@
 # calculate probability by pdf
-# covariance is plused 20
 # plot as 2d-contour
 
-module ContourPdfPlus20
+module ContourPdf
     using DataFrames, CSV, Statistics, LinearAlgebra
     using Base.Iterators, Plots
     pyplot()
 
     function pdf(x, mu, cov_mat)
-        # inverse matrix
-        inv_mat = inv(cov_mat)
-
         # determinant
         det_mat = det(cov_mat)
 
@@ -40,8 +36,6 @@ module ContourPdfPlus20
         
         # covariance matrix
         cov_mat = [var_ir covar; covar var_lidar]
-        cov_mat[1, 2] += 20
-        cov_mat[2, 1] += 20
 
         # mean(mu)
         mu = [mean(df_ext.ir); mean(df_ext.lidar)]
@@ -49,12 +43,10 @@ module ContourPdfPlus20
         # plot contour
         vx = 0:40
         vy = 710:750
-        z = map(product(vx, vy)) do (x, y)
-            pdf([x; y], mu, cov_mat)
-        end
-        contour(vx, vy, z, label="Probability Density", c=:haline)
-
-        save_path = joinpath(split(@__FILE__, "src")[1], "img/contour_pdf_plus20.png")
+        z = [pdf([x; y], mu, cov_mat) for x in vx, y in vy]
+        contour(z', label="contour", c=:haline, xlabel="x", 
+                ylabel="y", aspect_ratio=:equal)
+        save_path = joinpath(split(@__FILE__, "src")[1], "img/contour_pdf.png")
         savefig(save_path)
 
         return true
