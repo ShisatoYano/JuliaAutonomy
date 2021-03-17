@@ -1,4 +1,4 @@
-# test module for sensor_data
+# test module for prob_stats
 
 module TestProbStats
     using Test
@@ -140,9 +140,4 @@ module TestProbStats
             end
         end
     end
-end
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    using .TestSensorData
-    TestSensorData.main()
 end
