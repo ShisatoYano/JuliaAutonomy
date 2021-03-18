@@ -4,12 +4,13 @@ module TestRobotModel
     using Test
 
     # target modules
-    include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/robot_move/world.jl"))
-    include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/robot_move/robot.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/movement/world.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/movement/robot.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/movement/draw_robot.jl"))
 
     function main()
         @testset "RobotModel" begin
-            @testset "RobotMove" begin
+            @testset "Movement" begin
                 @testset "World" begin
                     world = World(-5.0, 5.0, -5.0, 5.0)
                     @test world.x_min == -5.0
@@ -24,6 +25,9 @@ module TestRobotModel
                     @test robot.radius == 0.5
                     @test robot.color == "red"
                     @test_nowarn draw!(robot)
+                end
+                @testset "DrawRobot" begin
+                    @test_nowarn DrawRobot.main()
                 end
             end
         end
