@@ -24,6 +24,9 @@ module TestRobotModel
                     @test robot.pose == [1, 1, 1]
                     @test robot.radius == 0.5
                     @test robot.color == "red"
+                    @test state_transition(0.1, 0.0, 1.0, [0, 0, 0]) == [0.1, 0.0, 0.0]
+                    @test state_transition(0.1, 10.0/180*pi, 9.0, [0, 0, 0]) == [0.5729577951308232, 0.5729577951308231, 1.5707963267948966]
+                    @test state_transition(0.1, 10.0/180*pi, 18.0, [0, 0, 0]) == [7.016709298534876e-17, 1.1459155902616465, 3.141592653589793]
                     @test_nowarn draw!(robot)
                 end
                 @testset "DrawRobot" begin
