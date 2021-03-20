@@ -4,17 +4,24 @@
 using Plots
 pyplot()
 
+include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/movement/agent.jl"))
+
 mutable struct Robot
     pose
     radius
     color
+    agent
+    poses
 
     # init
-    function Robot(pose::Array, radius::Float64, color::String)
+    function Robot(pose::Array, radius::Float64, color::String,
+                   agent::Agent)
         self = new()
         self.pose = pose
         self.radius = radius
         self.color = color
+        self.agent = agent
+        self.poses = [pose]
         return self
     end
 end
