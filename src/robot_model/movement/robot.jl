@@ -11,7 +11,6 @@ mutable struct Robot
     radius
     color
     agent
-    poses
 
     # init
     function Robot(pose::Array, radius::Float64, color::String,
@@ -21,7 +20,6 @@ mutable struct Robot
         self.radius = radius
         self.color = color
         self.agent = agent
-        self.poses = [pose]
         return self
     end
 end
