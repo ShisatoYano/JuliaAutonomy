@@ -15,5 +15,7 @@ module DrawHistogram
 
         save_path = joinpath(split(@__FILE__, "src")[1], "img/histogram_200_mm.png")
         savefig(save_path)
+
+        return true
     end
 end

@@ -43,7 +43,7 @@ module TestProbStats
                 @test_nowarn PrintSensorData.print_data_600()
             end
             @testset "FreqDist" begin
-                @test_nowarn DrawHistogram.main()
+                @test DrawHistogram.main() == true
                 @test_nowarn HistogramMean.main()
                 @test_nowarn CalcVariance.main()
                 @test_nowarn CalcStdDev.main()
