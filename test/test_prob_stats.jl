@@ -43,35 +43,35 @@ module TestProbStats
                 @test_nowarn PrintSensorData.print_data_600()
             end
             @testset "FreqDist" begin
-                @test DrawHistogram.main() == true
-                @test HistogramMean.main() == true
+                @test_nowarn DrawHistogram.main()
+                @test_nowarn HistogramMean.main()
                 @test_nowarn CalcVariance.main()
                 @test_nowarn CalcStdDev.main()
             end
             @testset "ProbDist" begin
-                @test ProbDist.main() == true
+                @test_nowarn ProbDist.main()
             end
             @testset "ProbModel" begin
                 @testset "GaussDistModel" begin
                     @test GaussDistModel.p(190) == 2.064932530633184e-5
                     @test GaussDistModel.p(210) == 0.08231272044708592
                     @test GaussDistModel.p(230) == 1.2364903952298874e-5
-                    @test GaussDistModel.main() == true
+                    @test_nowarn GaussDistModel.main()
                 end
                 @testset "GaussProbDist" begin
                     @test GaussProbDist.prob(193) == 0.0002254354061377026
                     @test GaussProbDist.prob(210) == 0.08187587024811953
                     @test GaussProbDist.prob(229) == 3.113715670488921e-5
-                    @test GaussProbDist.main() == true
+                    @test_nowarn GaussProbDist.main()
                 end
                 @testset "GaussProbDistPdf" begin
-                    @test GaussProbDistPdf.main() == true
+                    @test_nowarn GaussProbDistPdf.main()
                 end
                 @testset "GaussProbDistCdf" begin
-                    @test GaussProbDistCdf.main() == true
+                    @test_nowarn GaussProbDistCdf.main()
                 end
                 @testset "BarProbDistCdf" begin
-                    @test BarProbDistCdf.main() == true
+                    @test_nowarn BarProbDistCdf.main()
                 end
                 @testset "CalcExpValue" begin
                     @test_nowarn CalcExpValue.main()

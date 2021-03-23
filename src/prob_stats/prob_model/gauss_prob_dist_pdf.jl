@@ -14,7 +14,5 @@ module GaussProbDistPdf
 
         save_path = joinpath(split(@__FILE__, "src")[1], "img/gauss_prob_dist_pdf.png")
         savefig(save_path)
-
-        return true
     end
 end

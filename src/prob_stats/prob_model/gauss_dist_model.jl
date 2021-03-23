@@ -19,7 +19,5 @@ module GaussDistModel
 
         save_path = joinpath(split(@__FILE__, "src")[1], "img/gauss_dist_model.png")
         savefig(save_path)
-
-        return true
     end
 end
