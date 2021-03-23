@@ -36,7 +36,5 @@ module BayesEst630
 
         save_path = joinpath(split(@__FILE__, "src")[1], "img/bayes_estimation_630.png")
         savefig(save_path)
-
-        return true
     end
 end

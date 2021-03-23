@@ -29,7 +29,5 @@ module GroupByHour
         
         save_path = joinpath(split(@__FILE__, "src")[1], "img/group_by_hour.png")
         savefig(save_path)
-
-        return true
     end
 end

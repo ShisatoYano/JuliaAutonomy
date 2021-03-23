@@ -48,7 +48,5 @@ module ProbsBayes
         println("P(t=13|z=630) = $(p_t_13_z_630)")
         println("Bayes P(z=630|t=13) = $(bayes)")
         println("Answer P(z=630|t=13) = $(answer)")
-
-        return true
     end
 end

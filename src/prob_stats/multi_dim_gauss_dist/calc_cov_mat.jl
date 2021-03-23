@@ -22,7 +22,5 @@ module CalcCovMat
         cov_mat_calc = V * L * inv(V)
         println("Calculated Covariance Matrix: $(cov_mat_calc)")
         println("Original Covariance Matrix: $(cov)")
-
-        return true
     end
 end

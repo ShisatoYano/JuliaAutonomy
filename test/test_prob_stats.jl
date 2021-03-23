@@ -79,19 +79,19 @@ module TestProbStats
             end
             @testset "ComplexDist" begin
                 @testset "DrawHist600" begin
-                    @test DrawHist600.main() == true
+                    @test_nowarn DrawHist600.main()
                 end
                 @testset "DrawTimeSeries600" begin
-                    @test DrawTimeSeries600.main() == true
+                    @test_nowarn DrawTimeSeries600.main()
                 end
                 @testset "GroupByHour" begin
-                    @test GroupByHour.main() == true
+                    @test_nowarn GroupByHour.main()
                 end
                 @testset "HistGrpByHour" begin
-                    @test HistGrpByHour.main() == true
+                    @test_nowarn HistGrpByHour.main()
                 end
                 @testset "GrpHrHeatmap" begin
-                    @test GrpHrHeatmap.main() == true
+                    @test_nowarn GrpHrHeatmap.main()
                 end
                 @testset "ProbSumHour" begin
                     @test ProbSumHour.main() == 1.0
@@ -100,19 +100,19 @@ module TestProbStats
                     @test ProbSumLidar.main() == 1.0
                 end
                 @testset "CondZtBar" begin
-                    @test CondZtBar.main() == true
+                    @test_nowarn CondZtBar.main()
                 end
                 @testset "ProbsBayes" begin
-                    @test ProbsBayes.main() == true
+                    @test_nowarn ProbsBayes.main()
                 end
                 @testset "BayesEst630" begin
-                    @test BayesEst630.main() == true
+                    @test_nowarn BayesEst630.main()
                 end
                 @testset "BayesEstAt5" begin
-                    @test BayesEstAt5.main() == true
+                    @test_nowarn BayesEstAt5.main()
                 end
                 @testset "BayesEstAt11" begin
-                    @test BayesEstAt11.main() == true
+                    @test_nowarn BayesEstAt11.main()
                 end    
             end
             @testset "MultiDimGuassDist" begin
@@ -123,19 +123,19 @@ module TestProbStats
                     @test ContourPdf.main() == true
                 end
                 @testset "ContourPdfPlus20" begin
-                    @test ContourPdfPlus20.main() == true
+                    @test_nowarn ContourPdfPlus20.main()
                 end
                 @testset "ContourPdf200" begin
-                    @test ContourPdf200.main() == true
+                    @test_nowarn ContourPdf200.main()
                 end
                 @testset "MultiGaussDist" begin
-                    @test MultiGaussDist.main() == true
+                    @test_nowarn MultiGaussDist.main()
                 end
                 @testset "CalcPlotEigen" begin
-                    @test CalcPlotEigen.main() == true
+                    @test_nowarn CalcPlotEigen.main()
                 end
                 @testset "CalcCovMat" begin
-                    @test CalcCovMat.main() == true
+                    @test_nowarn CalcCovMat.main()
                 end
             end
         end

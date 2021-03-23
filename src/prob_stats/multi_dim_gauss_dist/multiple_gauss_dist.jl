@@ -45,7 +45,5 @@ module MultiGaussDist
         contour!(z_c', label="PDF c", c=:haline)
         save_path = joinpath(split(@__FILE__, "src")[1], "img/multiple_gauss_dist.png")
         savefig(save_path)
-
-        return true
     end
 end
