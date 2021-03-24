@@ -27,7 +27,7 @@ module DrawRobotLandmark
 
         # animation
         delta_time = 1.0
-        anim = @animate for t in 0.0:delta_time:30.0
+        anim = @animate for t in 0.0:delta_time:10.0
             # world
             draw(world)
 

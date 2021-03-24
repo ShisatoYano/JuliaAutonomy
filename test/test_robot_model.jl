@@ -9,6 +9,9 @@ module TestRobotModel
     include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/movement/draw_robot.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/movement/agent.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/movement/draw_moving_robot.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/observation/landmark.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/observation/map.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/observation/draw_robot_landmark.jl"))
 
     function main()
         @testset "RobotModel" begin
@@ -45,6 +48,26 @@ module TestRobotModel
                 end
                 @testset "DrawMovingRobot" begin
                     @test_nowarn DrawMovingRobot.main()
+                end
+            end
+            @testset "Observation" begin
+                @testset "Landmark" begin
+                    lm = Landmark(1.0, 2.0)
+                    @test lm.pose == [1.0, 2.0]
+                    @test lm.id == -1
+                    set_id(lm, 3)
+                    @test lm.id == 3
+                    @test_nowarn draw!(lm)
+                end
+                @testset "Map" begin
+                    m = Map()
+                    @test m.landmarks == []
+                    add_landmark(m, Landmark(1.0, 2.0))
+                    @test m.landmarks[1].pose == [1.0, 2.0]
+                    @test_nowarn draw!(m)
+                end
+                @testset "DrawRobotLandmark" begin
+                    @test_nowarn DrawRobotLandmark.main()
                 end
             end
         end
