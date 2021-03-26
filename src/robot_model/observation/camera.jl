@@ -32,6 +32,8 @@ end
 function data(self::Camera, cam_pose::Array)
     observed = []
     for lm in self.map.landmarks
-        
+        p = observation_function(cam_pose, lm.pose)
+        push!(observed, (p, lm.id))
     end
+    return observed
 end
