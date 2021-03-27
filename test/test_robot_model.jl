@@ -12,6 +12,8 @@ module TestRobotModel
     include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/observation/landmark.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/observation/map.jl"))
     include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/observation/draw_robot_landmark.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/observation/camera.jl"))
+    include(joinpath(split(@__FILE__, "test")[1], "src/robot_model/observation/draw_observation.jl"))
 
     function main()
         @testset "RobotModel" begin
@@ -31,13 +33,10 @@ module TestRobotModel
                     @test yaw_rate == 1.0
                 end         
                 @testset "Robot" begin
-                    agent = Agent(0.1, 1.0)
-                    robot = Robot([1, 1, 1], 0.5, "red", agent)
+                    robot = Robot([1, 1, 1], 0.5, "red")
                     @test robot.pose == [1, 1, 1]
                     @test robot.radius == 0.5
                     @test robot.color == "red"
-                    @test robot.agent.speed == 0.1
-                    @test robot.agent.yaw_rate == 1.0
                     @test state_transition(0.1, 0.0, 1.0, [0, 0, 0]) == [0.1, 0.0, 0.0]
                     @test state_transition(0.1, 10.0/180*pi, 9.0, [0, 0, 0]) == [0.5729577951308232, 0.5729577951308231, 1.5707963267948966]
                     @test state_transition(0.1, 10.0/180*pi, 18.0, [0, 0, 0]) == [7.016709298534876e-17, 1.1459155902616465, 3.141592653589793]
@@ -68,6 +67,22 @@ module TestRobotModel
                 end
                 @testset "DrawRobotLandmark" begin
                     @test_nowarn DrawRobotLandmark.main()
+                end
+                @testset "CameraDefault" begin
+                    m = Map()
+                    add_landmark(m, Landmark(2.0, -2.0))
+                    cam = Camera(m)
+                    @test cam.last_data == []
+                    @test cam.dist_rng == (0.5, 6.0)
+                    @test cam.dir_rng == (-pi/3, pi/3)
+                    @test visible(cam, [0.5, -pi/3]) == true
+                    @test visible(cam, [6.0, pi/3]) == true
+                    @test visible(cam, [0.2, -pi/3]) == false
+                    @test visible(cam, [0.5, pi]) == false
+                    @test observation_function([-2, -1, pi/5*6], [2.0, -2.0]) == [4.123105625617661, 2.2682954597449703]
+                end
+                @testset "DrawObservation" begin
+                    @test_nowarn DrawObservation.main()
                 end
             end
         end

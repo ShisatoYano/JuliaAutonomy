@@ -5,14 +5,10 @@ module DrawRobotLandmark
     include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/observation/landmark.jl"))
     include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/observation/map.jl"))
     include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/movement/robot.jl"))
-    include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/movement/agent.jl"))
 
     function main()
         # world coordinate system
         world = World(-5.0, 5.0, -5.0, 5.0)
-
-        # agents
-        staying = Agent(0.0, 0.0)
 
         # pose
         pose1 = [-1, 1, pi/6]
@@ -35,9 +31,9 @@ module DrawRobotLandmark
             annotate!(-3.0, 4.5, "t = $(t)[s]", "black")
 
             # robots
-            draw!(Robot(pose1, 0.2, "black", staying))
-            draw!(Robot(pose2, 0.2, "red", staying))
-            draw!(Robot(pose3, 0.2, "blue", staying))
+            draw!(Robot(pose1, 0.2, "black"))
+            draw!(Robot(pose2, 0.2, "red"))
+            draw!(Robot(pose3, 0.2, "blue"))
 
             # map
             draw!(map)

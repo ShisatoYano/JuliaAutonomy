@@ -31,9 +31,9 @@ module DrawMovingRobot
             draw(world)
 
             # robots
-            draw!(Robot(pose1, 0.2, "black", straight))
-            draw!(Robot(pose2, 0.2, "red", circling))
-            draw!(Robot(pose3, 0.2, "blue", staying))
+            draw!(Robot(pose1, 0.2, "black"))
+            draw!(Robot(pose2, 0.2, "red"))
+            draw!(Robot(pose3, 0.2, "blue"))
 
             # trajectory
             push!(x1, pose1[1]), push!(y1, pose1[2])
