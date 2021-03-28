@@ -13,6 +13,10 @@ Julia codes for Autonomy, Robotics and Self-Driving Algorithms.
         * [Probabilistic Model](#probabilistic-model)  
         * [Complex Distribution](#complex-distribution)  
         * [Multidimensional Distribution](#multidimensional-distribution)  
+    * [Modeling Autonomous Robot](#modeling-autonomous-robot)  
+        * [Assumed Robot](#assumed-robot)  
+        * [Movement of Robot](#movement-of-robot)  
+        * [Observation of Robot](#observation-of-robot)  
 * [License](#license)  
 * [Contribution](#contribution)  
 * [Author](#author)
@@ -87,6 +91,17 @@ Marginal KDE
 
 Contour of Probability  
 ![](img/contour_pdf_200.png)  
+
+## Modeling Autonomous Robot
+### Assumed Robot
+Simple differential wheeled robot  
+![](img/wheeled_robot.png)  
+
+### Movement of Robot
+![](gif/draw_moving_robot.gif)  
+
+### Observation of Robot
+![](gif/draw_observation.gif)  
 
 # License
 MIT  
