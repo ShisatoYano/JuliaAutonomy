@@ -13,18 +13,23 @@ mutable struct RealRobot
     color
     agent
     delta_time
+    noise_per_meter
+    noise_std
     traj_x
     traj_y
 
     # init
     function RealRobot(pose::Array, radius::Float64, color::String,
-                       agent::Agent, delta_time::Float64)
+                       agent::Agent, delta_time::Float64,
+                       noise_per_meter::Int64, noise_std::Float64)
         self = new()
         self.pose = pose
         self.radius = radius
         self.color = color
         self.agent = agent
         self.delta_time = delta_time
+        self.noise_per_meter = noise_per_meter
+        self.noise_std = noise_std
         self.traj_x = [pose[1]]
         self.traj_y = [pose[2]]
         return self
