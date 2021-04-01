@@ -13,14 +13,14 @@ module Draw100Robots
         # robot objects
         robots = []
         for i in 1:100
-            r = RealRobot([0.0, 0.0, 0.0], 0.2, "black",
+            r = RealRobot([0.0, 0.0, 0.0], 0.2, "gray",
                           Agent(0.2, 10.0/180*pi),
-                          delta_time)
+                          delta_time, 5, pi/30)
             push!(robots, r)
         end
 
         # draw animation
-        anim = @animate for t in 0:delta_time:30
+        anim = @animate for t in 0:delta_time:40
             # world
             draw(world)
 

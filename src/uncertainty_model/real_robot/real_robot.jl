@@ -2,7 +2,7 @@
 # differential two wheeled robot model
 # considering uncertainty because of noise/bias
 
-using Plots
+using Plots, Random, Distributions
 pyplot()
 
 include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/movement/agent.jl"))
@@ -13,8 +13,9 @@ mutable struct RealRobot
     color
     agent
     delta_time
-    noise_per_meter
-    noise_std
+    expon
+    norm
+    dist_until_noise
     traj_x
     traj_y
 
@@ -28,12 +29,23 @@ mutable struct RealRobot
         self.color = color
         self.agent = agent
         self.delta_time = delta_time
-        self.noise_per_meter = noise_per_meter
-        self.noise_std = noise_std
+        self.expon = Exponential(1e-100 + noise_per_meter)
+        self.norm = Normal(0.0, noise_std)
+        self.dist_until_noise = rand(self.expon)
         self.traj_x = [pose[1]]
         self.traj_y = [pose[2]]
         return self
     end
+end
+
+function noise(self::RealRobot, pose::Array, speed::Float64,
+               yaw_rate::Float64, delta_time::Float64)
+    self.dist_until_noise -= abs(speed) * delta_time + self.radius * abs(yaw_rate) * delta_time
+    if self.dist_until_noise <= 0.0
+        self.dist_until_noise += rand(self.expon)
+        pose[3] += rand(self.norm)
+    end
+    return pose
 end
 
 function circle(x, y, r)
@@ -73,7 +85,7 @@ function draw!(self::RealRobot)
     
     # next pose
     spd, yr = decision(self.agent)
-    next_pose = state_transition(spd, yr, self.delta_time, self.pose)
-    self.pose = next_pose
+    self.pose = state_transition(spd, yr, self.delta_time, self.pose)
+    self.pose = noise(self, self.pose, spd, yr, self.delta_time)
     push!(self.traj_x, self.pose[1]), push!(self.traj_y, self.pose[2])
 end
