@@ -7,7 +7,7 @@
 	"settings": { 
 		"terminal.integrated.shell.linux": "/bin/bash",
 		"workbench.editor.enablePreview":false,
-		"julia.usePlotPane": true,
+		"julia.usePlotPane": false,
 		"julia.liveTestFile": "test/runtests.jl"
 	},
 
