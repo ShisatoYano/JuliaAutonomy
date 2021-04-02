@@ -16,13 +16,16 @@ mutable struct RealRobot
     expon
     norm
     dist_until_noise
+    bias_rate_spd
+    bias_rate_yr
     traj_x
     traj_y
 
     # init
     function RealRobot(pose::Array, radius::Float64, color::String,
                        agent::Agent, delta_time::Float64,
-                       noise_per_meter::Int64, noise_std::Float64)
+                       noise_per_meter::Int64, noise_std::Float64,
+                       bias_rate_stds::Array)
         self = new()
         self.pose = pose
         self.radius = radius
@@ -32,6 +35,8 @@ mutable struct RealRobot
         self.expon = Exponential(1e-100 + noise_per_meter)
         self.norm = Normal(0.0, noise_std)
         self.dist_until_noise = rand(self.expon)
+        self.bias_rate_spd = rand(Normal(1.0, bias_rate_stds[1]))
+        self.bias_rate_yr = rand(Normal(1.0, bias_rate_stds[2]))
         self.traj_x = [pose[1]]
         self.traj_y = [pose[2]]
         return self
@@ -46,6 +51,10 @@ function noise(self::RealRobot, pose::Array, speed::Float64,
         pose[3] += rand(self.norm)
     end
     return pose
+end
+
+function bias(self::RealRobot, speed::Float64, yaw_rate::Float64)
+    return speed * self.bias_rate_spd, yaw_rate * self.bias_rate_yr
 end
 
 function circle(x, y, r)
@@ -85,6 +94,7 @@ function draw!(self::RealRobot)
     
     # next pose
     spd, yr = decision(self.agent)
+    spd, yr = bias(self, spd, yr)
     self.pose = state_transition(spd, yr, self.delta_time, self.pose)
     self.pose = noise(self, self.pose, spd, yr, self.delta_time)
     push!(self.traj_x, self.pose[1]), push!(self.traj_y, self.pose[2])
