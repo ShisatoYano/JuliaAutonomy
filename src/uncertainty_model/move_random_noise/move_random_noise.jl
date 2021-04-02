@@ -1,6 +1,7 @@
 # module for drawing 100 moving robots
+# add random noise against robot moving
 
-module Draw100Robots
+module MoveRandomNoise
     include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/movement/world.jl"))
     include(joinpath(split(@__FILE__, "src")[1], "src/uncertainty_model/real_robot/real_robot.jl"))
 
@@ -20,7 +21,7 @@ module Draw100Robots
         end
 
         # draw animation
-        anim = @animate for t in 0:delta_time:40
+        anim = @animate for t in 0:delta_time:30
             # world
             draw(world)
 
@@ -33,7 +34,7 @@ module Draw100Robots
             end
         end
 
-        save_path = joinpath(split(@__FILE__, "src")[1], "gif/draw_100_robots.gif")
+        save_path = joinpath(split(@__FILE__, "src")[1], "gif/move_random_noise.gif")
         gif(anim, fps=15, save_path)
     end
 end
