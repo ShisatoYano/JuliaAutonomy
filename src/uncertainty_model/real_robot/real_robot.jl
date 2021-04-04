@@ -13,8 +13,8 @@ mutable struct RealRobot
     color
     agent
     delta_time
-    expon
-    norm
+    noise_expon
+    noise_norm
     dist_until_noise
     bias_rate_spd
     bias_rate_yr
@@ -22,6 +22,11 @@ mutable struct RealRobot
     escape_exporn
     time_until_stuck
     time_until_escape
+    kidnap_exporn
+    kidnap_x_uniform
+    kidnap_y_uniform
+    kidnap_theta_uniform
+    time_until_kidnap
     is_stuck
     traj_x
     traj_y
@@ -31,22 +36,30 @@ mutable struct RealRobot
                        agent::Agent, delta_time::Float64,
                        noise_per_meter::Int64, noise_std::Float64,
                        bias_rate_stds::Array,
-                       exp_stuck_time::Float64, exp_escape_time::Float64)
+                       exp_stuck_time::Float64, 
+                       exp_escape_time::Float64,
+                       exp_kidnap_time::Float64, 
+                       kidnap_rx::Array, kidnap_ry::Array)
         self = new()
         self.pose = pose
         self.radius = radius
         self.color = color
         self.agent = agent
         self.delta_time = delta_time
-        self.expon = Exponential(1e-100 + noise_per_meter)
-        self.norm = Normal(0.0, noise_std)
-        self.dist_until_noise = rand(self.expon)
+        self.noise_expon = Exponential(1e-100 + noise_per_meter)
+        self.noise_norm = Normal(0.0, noise_std)
+        self.dist_until_noise = rand(self.noise_expon)
         self.bias_rate_spd = rand(Normal(1.0, bias_rate_stds[1]))
         self.bias_rate_yr = rand(Normal(1.0, bias_rate_stds[2]))
         self.stuck_exporn = Exponential(exp_stuck_time)
         self.escape_exporn = Exponential(exp_escape_time)
         self.time_until_stuck = rand(self.stuck_exporn)
         self.time_until_escape = rand(self.escape_exporn)
+        self.kidnap_exporn = Exponential(exp_kidnap_time)
+        self.kidnap_x_uniform = Uniform(kidnap_rx[1], kidnap_rx[2])
+        self.kidnap_y_uniform = Uniform(kidnap_ry[1], kidnap_ry[2])
+        self.kidnap_theta_uniform = Uniform(0.0, 2 * pi)
+        self.time_until_kidnap = rand(self.kidnap_exporn)
         self.is_stuck = false
         self.traj_x = [pose[1]]
         self.traj_y = [pose[2]]
@@ -58,8 +71,8 @@ function noise(self::RealRobot, pose::Array, speed::Float64,
                yaw_rate::Float64, delta_time::Float64)
     self.dist_until_noise -= abs(speed) * delta_time + self.radius * abs(yaw_rate) * delta_time
     if self.dist_until_noise <= 0.0
-        self.dist_until_noise += rand(self.expon)
-        pose[3] += rand(self.norm)
+        self.dist_until_noise += rand(self.noise_expon)
+        pose[3] += rand(self.noise_norm)
     end
     return pose
 end
@@ -84,6 +97,16 @@ function stuck(self::RealRobot, speed::Float64,
         end
     end
     return speed * (!self.is_stuck), yaw_rate * (!self.is_stuck)
+end
+
+function kidnap(self::RealRobot, pose::Array, delta_time::Float64)
+    self.time_until_kidnap -= delta_time
+    if self.time_until_kidnap <= 0.0
+        self.time_until_kidnap += rand(self.kidnap_exporn)
+        return [rand(self.kidnap_x_uniform), rand(self.kidnap_y_uniform), rand(self.kidnap_theta_uniform)]
+    else
+        return pose
+    end
 end
 
 function circle(x, y, r)
@@ -127,5 +150,6 @@ function draw!(self::RealRobot)
     spd, yr = stuck(self, spd, yr, self.delta_time)
     self.pose = state_transition(spd, yr, self.delta_time, self.pose)
     self.pose = noise(self, self.pose, spd, yr, self.delta_time)
+    self.pose = kidnap(self, self.pose, self.delta_time)
     push!(self.traj_x, self.pose[1]), push!(self.traj_y, self.pose[2])
 end
