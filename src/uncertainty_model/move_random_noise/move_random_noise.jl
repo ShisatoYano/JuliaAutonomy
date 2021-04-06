@@ -13,12 +13,19 @@ module MoveRandomNoise
 
         # robot objects
         robots = []
-        for i in 1:100
-            r = RealRobot([0.0, 0.0, 0.0], 0.2, "gray",
-                          Agent(0.2, 10.0/180*pi),
-                          delta_time, 5, pi/30)
-            push!(robots, r)
-        end
+        # has random noise
+        r = RealRobot([0.0, 0.0, 0.0], 0.2, "gray",
+                      Agent(0.2, 10.0/180*pi),
+                      delta_time,
+                      noise_per_meter=5, 
+                      noise_std=pi/30)
+        push!(robots, r)
+        
+        # no random noise
+        r = RealRobot([0.0, 0.0, 0.0], 0.2, "red",
+                      Agent(0.2, 10.0/180*pi),
+                      delta_time)
+        push!(robots, r)
 
         # draw animation
         anim = @animate for t in 0:delta_time:30

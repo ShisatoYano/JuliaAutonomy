@@ -15,18 +15,17 @@ module MoveStuck
         # robot objects
         robots = []
         # stuck
-        for i in 1:100
-            r = RealRobot([0.0, 0.0, 0.0], 0.2, "gray",
-                          Agent(0.2, 10.0/180*pi),
-                          delta_time, 0, 0.0, [0.0, 0.0],
-                          60.0, 60.0)
-            push!(robots, r)
-        end
+        r = RealRobot([0.0, 0.0, 0.0], 0.2, "gray",
+                      Agent(0.2, 10.0/180*pi),
+                      delta_time,
+                      exp_stuck_time=60.0,
+                      exp_escape_time=60.0)
+        push!(robots, r)
+        
         # no stuck
         r = RealRobot([0.0, 0.0, 0.0], 0.2, "red",
                       Agent(0.2, 10.0/180*pi),
-                      delta_time, 0, 0.0, [0.0, 0.0],
-                      1e100, 1e-100)
+                      delta_time)
         push!(robots, r)
 
         # draw animation

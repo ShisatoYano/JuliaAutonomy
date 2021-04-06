@@ -14,10 +14,12 @@ module MoveSpeedBias
         # robot objects
         no_bias_robot = RealRobot([0.0, 0.0, 0.0], 0.2, "gray",
                                   Agent(0.2, 10.0/180*pi),
-                                  delta_time, 0, 0.0, [0.0, 0.0])
+                                  delta_time, 
+                                  bias_rate_stds=[0.0, 0.0])
         bias_robot = RealRobot([0.0, 0.0, 0.0], 0.2, "red",
                                Agent(0.2, 10.0/180*pi),
-                               delta_time, 0, 0.0, [0.2, 0.2])
+                               delta_time, 
+                               bias_rate_stds=[0.2, 0.2])
         
         # draw animation
         anim = @animate for t in 0:delta_time:30

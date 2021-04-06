@@ -33,20 +33,22 @@ mutable struct RealRobot
 
     # init
     function RealRobot(pose::Array, radius::Float64, color::String,
-                       agent::Agent, delta_time::Float64,
-                       noise_per_meter::Int64, noise_std::Float64,
-                       bias_rate_stds::Array,
-                       exp_stuck_time::Float64, 
-                       exp_escape_time::Float64,
-                       exp_kidnap_time::Float64, 
-                       kidnap_rx::Array, kidnap_ry::Array)
+                       agent::Agent, delta_time::Float64;
+                       noise_per_meter::Int64=0, 
+                       noise_std::Float64=0.0,
+                       bias_rate_stds::Array=[0.0, 0.0],
+                       exp_stuck_time::Float64=1e100, 
+                       exp_escape_time::Float64=1e-100,
+                       exp_kidnap_time::Float64=1e100, 
+                       kidnap_rx::Array=[-5.0, 5.0], 
+                       kidnap_ry::Array=[-5.0, 5.0])
         self = new()
         self.pose = pose
         self.radius = radius
         self.color = color
         self.agent = agent
         self.delta_time = delta_time
-        self.noise_expon = Exponential(1e-100 + noise_per_meter)
+        self.noise_expon = Exponential(1.0/(1e-100 + noise_per_meter))
         self.noise_norm = Normal(0.0, noise_std)
         self.dist_until_noise = rand(self.noise_expon)
         self.bias_rate_spd = rand(Normal(1.0, bias_rate_stds[1]))
