@@ -13,21 +13,18 @@ module MoveKidnap
 
         # robot objects
         robots = []
-        # stuck
-        for i in 1:1
-            r = RealRobot([0.0, 0.0, 0.0], 0.2, "gray",
-                          Agent(0.2, 10.0/180*pi),
-                          delta_time, 0, 0.0, [0.0, 0.0],
-                          60.0, 60.0,
-                          5.0, [-5.0, 5.0], [-5.0, 5.0])
-            push!(robots, r)
-        end
-        # no stuck
+        # kidnapped
+        r = RealRobot([0.0, 0.0, 0.0], 0.2, "gray",
+                      Agent(0.2, 10.0/180*pi),
+                      delta_time,
+                      exp_kidnap_time=3.0,
+                      kidnap_rx=[-5.0, 5.0],
+                      kidnap_ry=[-5.0, 5.0])
+        push!(robots, r)
+        # not kidnapped
         r = RealRobot([0.0, 0.0, 0.0], 0.2, "red",
                       Agent(0.2, 10.0/180*pi),
-                      delta_time, 0, 0.0, [0.0, 0.0],
-                      1e100, 1e-100,
-                      1e100, [-5.0, 5.0], [-5.0, 5.0])
+                      delta_time)
         push!(robots, r)
 
         # draw animation
@@ -44,7 +41,7 @@ module MoveKidnap
             end
         end
 
-        save_path = joinpath(split(@__FILE__, "src")[1], "gif/move_kidnap_1.gif")
+        save_path = joinpath(split(@__FILE__, "src")[1], "gif/move_kidnap.gif")
         gif(anim, fps=15, save_path)
     end
 end
