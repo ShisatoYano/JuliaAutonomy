@@ -7,3 +7,13 @@ Mean value of LiDAR Data
 $$
 \mu = \frac{1}{N} \sum_{i=0}^{N-1} z_i
 $$
+
+Sampling variance  
+$$
+\sigma^2 = \frac{1}{N} \sum_{i=0}^{N-1} (z_i - \mu)^2 (N > 0)
+$$
+
+Unbiased variance  
+$$
+\sigma^2 = \frac{1}{N-1} \sum_{i=0}^{N-1} (z_i - \mu)^2 (N > 1)
+$$
