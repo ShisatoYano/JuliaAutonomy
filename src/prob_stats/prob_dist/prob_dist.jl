@@ -14,6 +14,8 @@ module ProbDist
         observs = [Int(obsv) for obsv in names(tbl, 1)]
         probs = freqs ./ length(df_200_mm.lidar)
 
+        println("FreqTable: $(tbl)")
+        println("Frequency: $(freqs)")
         println("Observations: $(observs)")
         println("Probability: $(probs)")
 
