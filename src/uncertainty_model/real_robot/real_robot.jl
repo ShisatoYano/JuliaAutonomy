@@ -1,6 +1,6 @@
 # class for drawing robot
 # differential two wheeled robot model
-# considering uncertainty because of noise/bias
+# considering uncertainty like noise/bias/stuck/kidnap
 
 using Plots, Random, Distributions
 pyplot()
