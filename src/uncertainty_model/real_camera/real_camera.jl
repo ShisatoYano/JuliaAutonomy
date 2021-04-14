@@ -12,14 +12,18 @@ mutable struct RealCamera
     dist_rng
     dir_rng
     dist_noise_rate
-    dir_noise
+    dir_noise # std dev
+    dist_bias_rate_stddev
+    dir_bias_stddev
 
     # init
     function RealCamera(map::Map;
                         dist_rng::Tuple=(0.5, 6.0), 
                         dir_rng::Tuple=(-pi/3, pi/3),
-                        dist_noise_rate=0.1,
-                        dir_noise=pi/90)
+                        dist_noise_rate=0.0,
+                        dir_noise=0.0,
+                        dist_bias_rate_stddev=0.0,
+                        dir_bias_stddev=0.0)
         self = new()
         self.map = map
         self.last_data = []
@@ -27,6 +31,7 @@ mutable struct RealCamera
         self.dir_rng = dir_rng
         self.dist_noise_rate = dist_noise_rate
         self.dir_noise = dir_noise
+        self.dist_bias
         return self
     end
 end
