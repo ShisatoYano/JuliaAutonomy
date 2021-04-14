@@ -6,6 +6,7 @@ using Plots, Random, Distributions
 pyplot()
 
 include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/movement/agent.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/uncertainty_model/real_camera/real_camera.jl"))
 
 mutable struct RealRobot
     pose
@@ -27,13 +28,15 @@ mutable struct RealRobot
     kidnap_y_uniform
     kidnap_theta_uniform
     time_until_kidnap
+    camera
     is_stuck
     traj_x
     traj_y
 
     # init
     function RealRobot(pose::Array, radius::Float64, color::String,
-                       agent::Agent, delta_time::Float64;
+                       agent::Agent, delta_time::Float64,
+                       camera::RealCamera;
                        noise_per_meter::Int64=0, 
                        noise_std::Float64=0.0,
                        bias_rate_stds::Array=[0.0, 0.0],
@@ -62,6 +65,7 @@ mutable struct RealRobot
         self.kidnap_y_uniform = Uniform(kidnap_ry[1], kidnap_ry[2])
         self.kidnap_theta_uniform = Uniform(0.0, 2 * pi)
         self.time_until_kidnap = rand(self.kidnap_exporn)
+        self.camera = camera
         self.is_stuck = false
         self.traj_x = [pose[1]]
         self.traj_y = [pose[2]]
@@ -145,6 +149,9 @@ function draw!(self::RealRobot)
     # draw trajectory
     plot!(self.traj_x, self.traj_y, color=self.color, 
           legend=false, aspect_ratio=true)
+    # draw observation
+    data(self.camera, self.pose)
+    draw!(self.camera, self.pose)
     
     # next pose
     spd, yr = decision(self.agent)

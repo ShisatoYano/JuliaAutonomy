@@ -1,7 +1,7 @@
 # class for camera observing landmark
 # considering uncertainty like noise/bias/phantom/oversight/occulusion
 
-using Plots
+using Plots, Random, Distributions
 pyplot()
 
 include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/observation/map.jl"))
@@ -18,7 +18,7 @@ mutable struct RealCamera
     function RealCamera(map::Map;
                         dist_rng::Tuple=(0.5, 6.0), 
                         dir_rng::Tuple=(-pi/3, pi/3),
-                        dist_noise_rate=0.0,
+                        dist_noise_rate=0.1,
                         dir_noise=pi/90)
         self = new()
         self.map = map
@@ -53,11 +53,18 @@ function observation_function(cam_pose::Array, obj_pos::Array)
     return [hypot(diff_x, diff_y), phi]
 end
 
+function noise(self::RealCamera, obsrv::Array)
+    ell = rand(Normal(obsrv[1], obsrv[1] * self.dist_noise_rate))
+    phi = rand(Normal(obsrv[2], self.dir_noise))
+    return [ell, phi]
+end
+
 function data(self::RealCamera, cam_pose::Array)
     observed = []
     for lm in self.map.landmarks
         obsrv = observation_function(cam_pose, lm.pose)
         if visible(self, obsrv)
+            obsrv = noise(self, obsrv)
             push!(observed, (obsrv, lm.id))
         end
     end
