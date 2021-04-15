@@ -13,8 +13,8 @@ mutable struct RealCamera
     dir_rng
     dist_noise_rate
     dir_noise # std dev
-    dist_bias_rate_stddev
-    dir_bias_stddev
+    dist_bias_rate_std
+    dir_bias
 
     # init
     function RealCamera(map::Map;
@@ -31,7 +31,8 @@ mutable struct RealCamera
         self.dir_rng = dir_rng
         self.dist_noise_rate = dist_noise_rate
         self.dir_noise = dir_noise
-        self.dist_bias
+        self.dist_bias_rate_std = rand(Normal(0.0, dist_bias_rate_stddev))
+        self.dir_bias = rand(Normal(0.0, dir_bias_stddev))
         return self
     end
 end
@@ -64,11 +65,16 @@ function noise(self::RealCamera, obsrv::Array)
     return [ell, phi]
 end
 
+function bias(self::RealCamera, obsrv::Array)
+    return obsrv + [obsrv[1] * self.dist_bias_rate_std, self.dir_bias]
+end
+
 function data(self::RealCamera, cam_pose::Array)
     observed = []
     for lm in self.map.landmarks
         obsrv = observation_function(cam_pose, lm.pose)
         if visible(self, obsrv)
+            obsrv = bias(self, obsrv)
             obsrv = noise(self, obsrv)
             push!(observed, (obsrv, lm.id))
         end
