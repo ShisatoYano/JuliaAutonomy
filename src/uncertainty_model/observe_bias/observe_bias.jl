@@ -31,8 +31,6 @@ module ObserveBias
         robot = RealRobot([0.0, 0.0, 0.0], 0.2, "black",
                           circling, delta_t, 
                           RealCamera(map,
-                                     dist_noise_rate=0.1,
-                                     dir_noise=pi/90,
                                      dist_bias_rate_stddev=0.1,
                                      dir_bias_stddev=pi/90))
         
