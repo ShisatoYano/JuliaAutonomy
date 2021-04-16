@@ -15,6 +15,9 @@ mutable struct RealCamera
     dir_noise # std dev
     dist_bias_rate_std
     dir_bias
+    phantom_dist_x
+    phantom_dist_y
+    phantom_prob
 
     # init
     function RealCamera(map::Map;
@@ -23,7 +26,10 @@ mutable struct RealCamera
                         dist_noise_rate=0.0,
                         dir_noise=0.0,
                         dist_bias_rate_stddev=0.0,
-                        dir_bias_stddev=0.0)
+                        dir_bias_stddev=0.0,
+                        phantom_prob=0.0,
+                        phantom_rng_x::Tuple=(-5.0, 5.0),
+                        phantom_rng_y::Tuple=(-5.0, 5.0))
         self = new()
         self.map = map
         self.last_data = []
@@ -33,6 +39,11 @@ mutable struct RealCamera
         self.dir_noise = dir_noise
         self.dist_bias_rate_std = rand(Normal(0.0, dist_bias_rate_stddev))
         self.dir_bias = rand(Normal(0.0, dir_bias_stddev))
+        rx = phantom_rng_x
+        ry = phantom_rng_y
+        self.phantom_dist_x = Uniform(rx[1], rx[2])
+        self.phantom_dist_y = Uniform(ry[1], ry[2])
+        self.phantom_prob = phantom_prob
         return self
     end
 end
@@ -69,10 +80,20 @@ function bias(self::RealCamera, obsrv::Array)
     return obsrv + [obsrv[1] * self.dist_bias_rate_std, self.dir_bias]
 end
 
+function phantom(self::RealCamera, cam_pose::Array, obsrv::Array)
+    if rand(Uniform()) < self.phantom_prob
+        phantom_pos = [rand(self.phantom_dist_x), rand(self.phantom_dist_y)]
+        return observation_function(cam_pose, phantom_pos)
+    else
+        return obsrv
+    end
+end
+
 function data(self::RealCamera, cam_pose::Array)
     observed = []
     for lm in self.map.landmarks
         obsrv = observation_function(cam_pose, lm.pose)
+        obsrv = phantom(self, cam_pose, obsrv)
         if visible(self, obsrv)
             obsrv = bias(self, obsrv)
             obsrv = noise(self, obsrv)
