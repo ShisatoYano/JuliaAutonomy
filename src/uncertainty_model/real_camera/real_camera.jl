@@ -19,6 +19,7 @@ mutable struct RealCamera
     phantom_dist_y
     phantom_prob
     oversight_prob
+    occlusion_prob
 
     # init
     function RealCamera(map::Map;
@@ -31,7 +32,8 @@ mutable struct RealCamera
                         phantom_prob=0.0,
                         phantom_rng_x::Tuple=(-5.0, 5.0),
                         phantom_rng_y::Tuple=(-5.0, 5.0),
-                        oversight_prob=0.0)
+                        oversight_prob=0.0,
+                        occlusion_prob=0.0)
         self = new()
         self.map = map
         self.last_data = []
@@ -47,6 +49,7 @@ mutable struct RealCamera
         self.phantom_dist_y = Uniform(ry[1], ry[2])
         self.phantom_prob = phantom_prob
         self.oversight_prob = oversight_prob
+        self.occlusion_prob = occlusion_prob
         return self
     end
 end
@@ -100,11 +103,22 @@ function oversight(self::RealCamera, obsrv::Array)
     end
 end
 
+function occlusion(self::RealCamera, obsrv::Array)
+    if rand(Uniform()) < self.occlusion_prob
+        ell = obsrv[1] - rand(Uniform()) * (self.dist_rng[2] - obsrv[1])
+        phi = obsrv[2]
+        return [ell, phi]
+    else
+        return obsrv
+    end
+end
+
 function data(self::RealCamera, cam_pose::Array)
     observed = []
     for lm in self.map.landmarks
         obsrv = observation_function(cam_pose, lm.pose)
         obsrv = phantom(self, cam_pose, obsrv)
+        obsrv = occlusion(self, obsrv)
         obsrv = oversight(self, obsrv)
         if visible(self, obsrv)
             obsrv = bias(self, obsrv)
