@@ -30,9 +30,9 @@ module ObserveBias
         circling = Agent(0.2, 10.0/180*pi)
         robot = RealRobot([0.0, 0.0, 0.0], 0.2, "black",
                           circling, delta_t, 
-                          RealCamera(map,
-                                     dist_bias_rate_stddev=0.1,
-                                     dir_bias_stddev=pi/90))
+                          camera=RealCamera(map,
+                                            dist_bias_rate_stddev=0.1,
+                                            dir_bias_stddev=pi/90))
         
         # draw animation
         anim = @animate for t in 0:delta_t:30

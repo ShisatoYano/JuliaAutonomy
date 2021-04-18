@@ -35,8 +35,8 @@ mutable struct RealRobot
 
     # init
     function RealRobot(pose::Array, radius::Float64, color::String,
-                       agent::Agent, delta_time::Float64,
-                       camera::RealCamera;
+                       agent::Agent, delta_time::Float64;
+                       camera=nothing,
                        noise_per_meter::Int64=0, 
                        noise_std::Float64=0.0,
                        bias_rate_stds::Array=[0.0, 0.0],
@@ -150,8 +150,10 @@ function draw!(self::RealRobot)
     plot!(self.traj_x, self.traj_y, color=self.color, 
           legend=false, aspect_ratio=true)
     # draw observation
-    data(self.camera, self.pose)
-    draw!(self.camera, self.pose)
+    if self.camera != nothing
+        data(self.camera, self.pose)
+        draw!(self.camera, self.pose)    
+    end
     
     # next pose
     spd, yr = decision(self.agent)
