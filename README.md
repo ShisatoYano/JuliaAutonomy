@@ -17,6 +17,16 @@ Julia codes for Autonomy, Robotics and Self-Driving Algorithms.
         * [Assumed Robot](#assumed-robot)  
         * [Movement of Robot](#movement-of-robot)  
         * [Observation of Robot](#observation-of-robot)  
+    * [Modeling Uncertainty](#modeling-uncertainty)  
+        * [Random noise in movement](#random-noise-in-movement)  
+        * [Bias in movement](#bias-in-movement)  
+        * [Stuck in movement](#stuck-in-movement)  
+        * [Kidnap in movement](#kidnap-in-movement)  
+        * [Random noise in observation](#random-noise-in-observation)  
+        * [Bias in observation](#bias-in-observation)  
+        * [Phantom in observation](#phantom-in-observation)  
+        * [Oversight in observation](#oversight-in-observation)  
+        * [Occlusion in observation](#occlusion-in-observation)  
 * [License](#license)  
 * [Contribution](#contribution)  
 * [Author](#author)
@@ -102,6 +112,34 @@ Simple differential wheeled robot
 
 ### Observation of Robot
 ![](gif/draw_observation.gif)  
+
+## Modeling Uncertainty
+### Random noise in movement
+![](gif/move_random_noise.gif)  
+
+### Bias in movement
+![](gif/move_speed_bias.gif)  
+
+### Stuck in movement
+![](gif/move_stuck.gif)  
+
+### Kidnap in movement
+![](gif/move_kidnap.gif)  
+
+### Random noise in observation
+![](gif/observe_noise.gif)  
+
+### Bias in observation
+![](gif/observe_bias.gif)  
+
+### Phantom in observation
+![](gif/observe_phantom.gif)  
+
+### Oversight in observation
+![](gif/observe_oversight.gif)  
+
+### Occlusion in observation
+![](gif/observe_occlusion.gif)  
 
 # License
 MIT  
