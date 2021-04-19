@@ -17,3 +17,10 @@ Unbiased variance
 $$
 \sigma^2 = \frac{1}{N-1} \sum_{i=0}^{N-1} (z_i - \mu)^2 (N > 1)
 $$
+
+Gaussian distribution  
+Probability density function  
+$$
+P(a \le z \le b) = \int_a^b p(z) dz \\
+p(z) = \frac{1}{\sqrt{2\pi\sigma^2}}exp\{-\frac{(z-u)^2}{2\sigma^2}\}
+$$
