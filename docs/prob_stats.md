@@ -24,3 +24,8 @@ $$
 P(a \le z \le b) = \int_a^b p(z) dz \\
 p(z) = \frac{1}{\sqrt{2\pi\sigma^2}}exp\{-\frac{(z-u)^2}{2\sigma^2}\}
 $$
+
+Cumulative distribution function  
+$$
+P(z < a) = \int_{-\infty}^a p(z) dz
+$$
