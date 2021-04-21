@@ -29,3 +29,11 @@ Cumulative distribution function
 $$
 P(z < a) = \int_{-\infty}^a p(z) dz
 $$
+
+Expectation value  
+$$
+\sum_{z=-\infty}^{\infty} z P(z)
+$$
+$$
+\int_{-\infty}^{\infty} z p(z) dz
+$$
