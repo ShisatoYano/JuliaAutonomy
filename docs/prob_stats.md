@@ -37,3 +37,19 @@ $$
 $$
 \int_{-\infty}^{\infty} z p(z) dz
 $$
+
+Conditional probability density function  
+$$
+p_t(\bm{x}|\bm{x}_0, \bm{u}_1,\bm{u}_2,...,\bm{u}_t, \bm{z}_1,\bm{z}_2,...,\bm{z}_t)
+$$
+$$
+p_t(\bm{x}|\bm{x}_0, \bm{u}_{1:t}, \bm{z}_{1:t})
+$$ 
+
+Belief  
+$$
+b_t(\bm{x})=p_t(\bm{x}|\bm{x}_0, \bm{u}_{1:t}, \bm{z}_{1:t})
+$$
+Input: $\bm{x}_0, \bm{u}_{1:t}, \bm{z}_{1:t}$  
+State Transition Model: $\bm{x}_t \sim p(\bm{x}|\bm{x}_{t-1},\bm{u}_t)$  
+Observation Model: $\bm{z}_t \sim p(\bm{z}|\bm{x}_{t})$  

@@ -15,7 +15,7 @@
 	"extensions": [
 		"julialang.language-julia",
 		"shd101wyy.markdown-preview-enhanced",
-		"donjayamanne.githistory",
+		"mhutchie.git-graph",
 		"eamodio.gitlens"
 	],
 
