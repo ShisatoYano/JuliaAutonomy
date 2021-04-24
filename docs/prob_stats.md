@@ -53,3 +53,9 @@ $$
 Input: $\bm{x}_0, \bm{u}_{1:t}, \bm{z}_{1:t}$  
 State Transition Model: $\bm{x}_t \sim p(\bm{x}|\bm{x}_{t-1},\bm{u}_t)$  
 Observation Model: $\bm{z}_t \sim p(\bm{z}|\bm{x}_{t})$  
+
+Belief calculation  
+Belief distribution after transition  
+$$
+\hat{b}_t(\bm{x})=p_t(\bm{x}|\bm{x}_0, \bm{u}_{1:t}, \bm{z}_{1:t-1})
+$$
