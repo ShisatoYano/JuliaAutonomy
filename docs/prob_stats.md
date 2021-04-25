@@ -59,3 +59,22 @@ Belief distribution after transition
 $$
 \hat{b}_t(\bm{x})=p_t(\bm{x}|\bm{x}_0, \bm{u}_{1:t}, \bm{z}_{1:t-1})
 $$
+$$
+\hat{b}_t(\bm{x})=\int_{\bm{x}'\in \chi} p(\bm{x}|\bm{x}',\bm{u}_t) b_{t-1}(\bm{x}') d\bm{x}' = \langle p(\bm{x}|\bm{x}',\bm{u}_t) \rangle_{b_{t-1}(\bm{x}')}
+$$
+
+Density at $\bm{x}'$ before transition: $b_{t-1}(\bm{x'})$  
+
+Reflecting observations $\bm{z}_t$  
+$$
+b_t(\bm{x})=\hat{b}_t(\bm{x}|\bm{z}_t)=\frac{p(\bm{z}_t|\bm{x})\hat{b}_t(\bm{x})}{p(\bm{z}_t)}=\eta p(\bm{z}_t|\bm{x})\hat{b}_t(\bm{x})
+$$
+
+Observation model: $p(\bm{z}_t|\bm{x})$  
+
+Observations list: $\bm{z}_t=\{z_{j,t}|j=0,1,...,N_{m-1}\}$
+
+Each observation $z_{j,t}$ is independent:  
+$$
+b_t(\bm{x})=\eta \hat{b}_t(\bm{x}) \prod_{j=0}^{N_{m-1}} p_j(z_{j,t}|\bm{x})
+$$
