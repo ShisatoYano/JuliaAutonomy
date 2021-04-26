@@ -154,6 +154,8 @@ function draw!(self::RealRobot)
         data(self.camera, self.pose)
         draw!(self.camera, self.pose)    
     end
+
+    draw!(self.agent)
     
     # next pose
     spd, yr = decision(self.agent)

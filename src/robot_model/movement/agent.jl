@@ -17,3 +17,7 @@ end
 function decision(self::Agent)
     return self.speed, self.yaw_rate
 end
+
+function draw!(self::Agent)
+    annotate!(0.0, 0.0, "hoge", "black")
+end
