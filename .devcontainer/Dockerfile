@@ -1,4 +1,4 @@
-FROM julia:1.5.3
+FROM julia:1.6.1
 
 RUN apt-get update
 
