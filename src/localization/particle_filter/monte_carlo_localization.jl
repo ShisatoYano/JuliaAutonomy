@@ -16,5 +16,5 @@ function draw!(self::MonteCarloLocalization)
   py = [p.pose[2] for p in self.particles]
   vx = [cos(p.pose[3]) for p in self.particles]
   vy = [sin(p.pose[3]) for p in self.particles]
-  quiver!(px, py, quiver=(vx, vy), aspect_ratio=:equal)
+  quiver!(px, py, quiver=(vx, vy), aspect_ratio=true)
 end

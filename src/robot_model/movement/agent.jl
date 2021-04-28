@@ -24,5 +24,7 @@ function decision(self::Agent)
 end
 
 function draw!(self::Agent)
-    draw!(self.estimator)
+    if self.estimator != nothing
+        draw!(self.estimator)
+    end
 end
