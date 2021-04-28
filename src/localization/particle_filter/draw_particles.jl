@@ -22,8 +22,10 @@ module DrawParticles
     add_landmark(map, Landmark(3.0, 3.0))
 
     # define robot
-    circling = Agent(0.2, 10.0/180*pi)
-    robot = RealRobot([2.0, 2.0, pi/6], 0.2, "black",
+    initial_pose = [2.0, 2.0, pi/6]
+    circling = Agent(0.2, 10.0/180*pi,
+                     estimator=MonteCarloLocalization(initial_pose, 10))
+    robot = RealRobot(initial_pose, 0.2, "black",
                       circling, delta_t, camera=RealCamera(map))
     
     # draw animation
