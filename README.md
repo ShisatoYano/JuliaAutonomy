@@ -59,7 +59,7 @@ julia> PrintSensorData.main()
 4. Add star to this repository, if you like it.  
 
 # Requirements
-* Julia 1.5.x  
+* Julia 1.6.x  
 * Plots  
 * DataFrames  
 * CSV  
