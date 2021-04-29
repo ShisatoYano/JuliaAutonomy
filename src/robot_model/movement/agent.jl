@@ -6,14 +6,17 @@ include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/m
 mutable struct Agent
     speed
     yaw_rate
+    time_interval
     estimator
 
     # init
     function Agent(speed::Float64, yaw_rate::Float64;
+                   time_interval::Float64=0.1,
                    estimator=nothing)
         self = new()
         self.speed = speed
         self.yaw_rate = yaw_rate
+        self.time_interval = time_interval
         self.estimator = estimator
         return self
     end
