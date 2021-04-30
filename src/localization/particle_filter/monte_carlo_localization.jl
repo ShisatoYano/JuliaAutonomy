@@ -14,8 +14,13 @@ mutable struct MonteCarloLocalization
     v = motion_noise_stds
     c = diagm(0 => [v["nn"]^2, v["no"]^2, v["on"]^2, v["oo"]^2])
     self.motion_noise_rate_pdf = MvNormal(c)
-    println(rand(self.motion_noise_rate_pdf))
     return self
+  end
+end
+
+function motion_update(self::MonteCarloLocalization, speed, yaw_rate, time_interval)
+  for p in self.particles
+    motion_update(p, speed, yaw_rate, time_interval, self.motion_noise_rate_pdf)
   end
 end
 

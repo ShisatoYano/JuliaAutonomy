@@ -8,6 +8,8 @@ mutable struct Agent
     yaw_rate
     time_interval
     estimator
+    prev_spd
+    prev_yr
 
     # init
     function Agent(speed::Float64, yaw_rate::Float64;
@@ -18,11 +20,17 @@ mutable struct Agent
         self.yaw_rate = yaw_rate
         self.time_interval = time_interval
         self.estimator = estimator
+        self.prev_spd = 0.0
+        self.prev_yr = 0.0
         return self
     end
 end
 
 function decision(self::Agent)
+    if self.estimator != nothing
+        motion_update(self.estimator, self.prev_spd, self.prev_yr, self.time_interval)
+    end
+    self.prev_spd, self.prev_yr = self.speed, self.yaw_rate
     return self.speed, self.yaw_rate
 end
 
