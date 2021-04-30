@@ -1,7 +1,7 @@
 # module for drawing particles
 # those particles are used for particle filter
 
-module DrawParticles
+module DrawParticlesNarrow
   include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/movement/world.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/observation/landmark.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/observation/map.jl"))
@@ -19,7 +19,7 @@ module DrawParticles
 
     # define robot
     initial_pose = [0.0, 0.0, 0.0]
-    estimator_mcl = MonteCarloLocalization(initial_pose, 100, Dict("nn"=>0.01, "no"=>0.02, "on"=>0.03, "oo"=>0.04))
+    estimator_mcl = MonteCarloLocalization(initial_pose, 100, Dict("nn"=>0.001, "no"=>0.002, "on"=>0.003, "oo"=>0.004))
     circling = Agent(0.2, 10.0/180*pi, estimator=estimator_mcl)
     robot = RealRobot(initial_pose, 0.2, "black",
                       circling, time_interval,
@@ -39,7 +39,7 @@ module DrawParticles
       draw!(robot)
     end
 
-    save_path = joinpath(split(@__FILE__, "src")[1], "gif/draw_particles.gif")
+    save_path = joinpath(split(@__FILE__, "src")[1], "gif/draw_particles_narrow.gif")
     gif(anim, fps=15, save_path)
   end
 end

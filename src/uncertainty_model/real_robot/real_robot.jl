@@ -146,15 +146,18 @@ function draw!(self::RealRobot)
          legend=false, aspect_ratio=true)
     plot!(circle(x, y, self.radius), linecolor=self.color, 
           aspect_ratio=true)
+    
     # draw trajectory
     plot!(self.traj_x, self.traj_y, color=self.color, 
           legend=false, aspect_ratio=true)
+    
     # draw observation
     if self.camera != nothing
         data(self.camera, self.pose)
         draw!(self.camera, self.pose)    
     end
 
+    # draw pose estimation
     draw!(self.agent)
     
     # next pose
