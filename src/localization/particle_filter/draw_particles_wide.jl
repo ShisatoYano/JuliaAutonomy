@@ -1,5 +1,9 @@
 # module for drawing particles
 # those particles are used for particle filter
+# parameter nn: range std on straight movement
+# parameter no: range std on rotation movement
+# parameter on: direction std on straight movement
+# parameter oo: direction std on rotation movement
 
 module DrawParticlesWide
   include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/movement/world.jl"))

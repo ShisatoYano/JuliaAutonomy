@@ -1,5 +1,9 @@
 # module for drawing particles
 # those particles are used for particle filter
+# parameter nn: range std on straight movement
+# parameter no: range std on rotation movement
+# parameter on: direction std on straight movement
+# parameter oo: direction std on rotation movement
 
 module DrawParticles
   include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/movement/world.jl"))
@@ -19,7 +23,7 @@ module DrawParticles
 
     # define robot
     initial_pose = [0.0, 0.0, 0.0]
-    estimator_mcl = MonteCarloLocalization(initial_pose, 100, Dict("nn"=>0.01, "no"=>0.02, "on"=>0.03, "oo"=>0.04))
+    estimator_mcl = MonteCarloLocalization(initial_pose, 100, Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20))
     circling = Agent(0.2, 10.0/180*pi, estimator=estimator_mcl)
     robot = RealRobot(initial_pose, 0.2, "black",
                       circling, time_interval,
