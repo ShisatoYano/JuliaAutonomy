@@ -1,16 +1,27 @@
 using Distributions, LinearAlgebra
 
 include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/particle.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/observation/map.jl"))
 
 mutable struct MonteCarloLocalization
   particles
   motion_noise_rate_pdf
+  map
+  dist_dev
+  dir_dev
 
   # init
   function MonteCarloLocalization(init_pose::Array, num::Int64,
-                                  motion_noise_stds::Dict)
+                                  motion_noise_stds::Dict;
+                                  env_map=nothing,
+                                  dist_dev_rate=0.0,
+                                  dir_dev=0.0)
     self = new()
-    self.particles = [Particle(init_pose) for i in 1:num]
+    self.particles = [Particle(init_pose, 1.0/num) for i in 1:num]
+    self.map = env_map
+    self.dist_dev = dist_dev_rate
+    self.dir_dev = dir_dev
+    
     v = motion_noise_stds
     c = diagm(0 => [v["nn"]^2, v["no"]^2, v["on"]^2, v["oo"]^2])
     self.motion_noise_rate_pdf = MvNormal(c)
@@ -24,11 +35,17 @@ function motion_update(self::MonteCarloLocalization, speed, yaw_rate, time_inter
   end
 end
 
+function observation_update(self::MonteCarloLocalization, observation)
+  for p in self.particles
+    observation_update(p, observation, self.map, self.dist_dev, self.dir_dev)
+  end
+end
+
 function draw!(self::MonteCarloLocalization)
   px = [p.pose[1] for p in self.particles]
   py = [p.pose[2] for p in self.particles]
   k = 0.5
-  vx = [k * cos(p.pose[3]) for p in self.particles]
-  vy = [k * sin(p.pose[3]) for p in self.particles]
-  quiver!(px, py, quiver=(vx, vy), aspect_ratio=true)
+  vx = [cos(p.pose[3])*k*p.weight*length(self.particles) for p in self.particles]
+  vy = [sin(p.pose[3])*k*p.weight*length(self.particles) for p in self.particles]
+  quiver!(px, py, quiver=(vx, vy), aspect_ratio=true, color="blue")
 end

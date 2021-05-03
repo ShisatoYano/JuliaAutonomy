@@ -152,13 +152,15 @@ function draw!(self::RealRobot)
           legend=false, aspect_ratio=true)
     
     # draw observation
+    observation = []
     if self.camera != nothing
         data(self.camera, self.pose)
-        draw!(self.camera, self.pose)    
+        draw!(self.camera, self.pose)
+        observation = self.camera.last_data    
     end
 
-    # draw pose estimation
-    draw!(self.agent)
+    # draw particles
+    draw!(self.agent, observation)
     
     # next pose
     spd, yr = decision(self.agent)
