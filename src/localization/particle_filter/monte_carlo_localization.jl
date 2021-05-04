@@ -1,4 +1,4 @@
-using Distributions, LinearAlgebra
+using Distributions, LinearAlgebra, StatsBase
 
 include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/particle.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/observation/map.jl"))
@@ -38,6 +38,16 @@ end
 function observation_update(self::MonteCarloLocalization, observation)
   for p in self.particles
     observation_update(p, observation, self.map, self.dist_dev, self.dir_dev)
+  end
+  resampling(self)
+end
+
+function resampling(self::MonteCarloLocalization)
+  ws = [(if p.weight <= 0.0 1e-100 else p.weight end) for p in self.particles]
+  ps = sample(self.particles, Weights(ws), length(self.particles))
+  self.particles = [deepcopy(e) for e in ps]
+  for p in self.particles
+    p.weight = 1.0/length(self.particles)
   end
 end
 

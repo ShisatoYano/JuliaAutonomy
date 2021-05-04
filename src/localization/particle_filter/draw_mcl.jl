@@ -1,12 +1,11 @@
-# module for drawing particles
-# reflecting landmarks observations
-# those particles are used for particle filter
+# module for drawing monte carlo localization
+# localized by particle filter
 # parameter nn: range std on straight movement
 # parameter no: range std on rotation movement
 # parameter on: direction std on straight movement
 # parameter oo: direction std on rotation movement
 
-module DrawParticlesObservations
+module DrawMcl
   include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/movement/world.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/observation/landmark.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/observation/map.jl"))
@@ -61,7 +60,7 @@ module DrawParticlesObservations
       draw!(robot)
     end
 
-    save_path = joinpath(split(@__FILE__, "src")[1], "gif/draw_particles_observations.gif")
+    save_path = joinpath(split(@__FILE__, "src")[1], "gif/draw_mcl_3rd.gif")
     gif(anim, fps=15, save_path)
   end
 end 

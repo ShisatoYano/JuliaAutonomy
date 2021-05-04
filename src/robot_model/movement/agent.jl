@@ -31,10 +31,10 @@ function decision(self::Agent)
 end
 
 function draw!(self::Agent, observation)
-    if self.estimator != nothing
+    if self.estimator !== nothing
         motion_update(self.estimator, self.prev_spd, self.prev_yr, self.time_interval)
-        draw!(self.estimator)
         self.prev_spd, self.prev_yr = self.speed, self.yaw_rate
         observation_update(self.estimator, observation)
+        draw!(self.estimator)
     end
 end
