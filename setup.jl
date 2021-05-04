@@ -7,7 +7,8 @@ module Setup
         :PackageCompiler, :PyCall, :PyPlot,
         :Plots, :DataFrames, :CSV, :Test,
         :StatsPlots, :Statistics, :FreqTables, 
-        :NamedArrays, :Distributions, :LinearAlgebra
+        :NamedArrays, :Distributions, :LinearAlgebra,
+        :StatsBase
     ]
 
     function install_packages()
