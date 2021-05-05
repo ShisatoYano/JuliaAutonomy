@@ -75,8 +75,8 @@ end
 function resampling(self::MonteCarloLocalization)
   ws = [(if p.weight <= 0.0 1e-100 else p.weight end) for p in self.particles]
   
-  ps = sample(self.particles, Weights(ws), length(self.particles))
-  # ps = systematic_sample(self.particles, cumsum(ws), length(self.particles))
+  # ps = sample(self.particles, Weights(ws), length(self.particles))
+  ps = systematic_sample(self.particles, cumsum(ws), length(self.particles))
 
   self.particles = [deepcopy(e) for e in ps]
   for p in self.particles
