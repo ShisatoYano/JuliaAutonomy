@@ -39,12 +39,35 @@ function observation_update(self::MonteCarloLocalization, observation)
   for p in self.particles
     observation_update(p, observation, self.map, self.dist_dev, self.dir_dev)
   end
-  resampling(self)
+  # @time resampling(self)
+  @time systematic_resampling(self)
 end
 
 function resampling(self::MonteCarloLocalization)
   ws = [(if p.weight <= 0.0 1e-100 else p.weight end) for p in self.particles]
   ps = sample(self.particles, Weights(ws), length(self.particles))
+  self.particles = [deepcopy(e) for e in ps]
+  for p in self.particles
+    p.weight = 1.0/length(self.particles)
+  end
+end
+
+function systematic_resampling(self::MonteCarloLocalization)
+  ws = cumsum([(if p.weight <= 0.0 1e-100 else p.weight end) for p in self.particles])
+  step = ws[end]/length(self.particles)
+  r = rand(Uniform(0.0, step))
+  
+  current_index = 1
+  ps = [] # new particles list
+  while length(ps) < length(self.particles)
+    if r < ws[current_index]
+      push!(ps, self.particles[current_index])
+      r += step
+    else
+      current_index += 1
+    end
+  end
+
   self.particles = [deepcopy(e) for e in ps]
   for p in self.particles
     p.weight = 1.0/length(self.particles)

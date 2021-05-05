@@ -60,7 +60,7 @@ module DrawMcl
       draw!(robot)
     end
 
-    save_path = joinpath(split(@__FILE__, "src")[1], "gif/draw_mcl_3rd.gif")
+    save_path = joinpath(split(@__FILE__, "src")[1], "gif/draw_mcl_sys_samp.gif")
     gif(anim, fps=15, save_path)
   end
 end 
