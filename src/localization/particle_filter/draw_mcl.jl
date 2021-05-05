@@ -22,6 +22,9 @@ module DrawMcl
     add_landmark(map, Landmark(-4.0, 2.0))
     add_landmark(map, Landmark(2.0, -3.0))
     add_landmark(map, Landmark(3.0, 3.0))
+    add_landmark(map, Landmark(4.0, 0.0))
+    add_landmark(map, Landmark(-2.0, 4.0))
+    add_landmark(map, Landmark(-3.0, -3.0))
 
     # define sensor including random noise and bias
     cam = RealCamera(map, dist_noise_rate=0.1, dir_noise=pi/90,
@@ -60,7 +63,7 @@ module DrawMcl
       draw!(robot)
     end
 
-    save_path = joinpath(split(@__FILE__, "src")[1], "gif/draw_mcl.gif")
+    save_path = joinpath(split(@__FILE__, "src")[1], "gif/particle_filter/draw_mcl.gif")
     gif(anim, fps=15, save_path)
   end
 end 
