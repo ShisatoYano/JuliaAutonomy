@@ -38,7 +38,7 @@ module DrawMcl
                                            dist_dev_rate=0.14, 
                                            dir_dev=0.05)
     circling = Agent(0.2, 10.0/180*pi, estimator=estimator_mcl)
-    robot = RealRobot(initial_pose, 0.2, "red",
+    robot = RealRobot(initial_pose, 0.2, "black",
                       circling, time_interval,
                       noise_per_meter=5, 
                       noise_std=pi/30,
@@ -60,7 +60,7 @@ module DrawMcl
       draw!(robot)
     end
 
-    save_path = joinpath(split(@__FILE__, "src")[1], "gif/draw_mcl_sys_samp.gif")
+    save_path = joinpath(split(@__FILE__, "src")[1], "gif/draw_mcl.gif")
     gif(anim, fps=15, save_path)
   end
 end 

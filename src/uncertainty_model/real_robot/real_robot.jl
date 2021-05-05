@@ -159,7 +159,7 @@ function draw!(self::RealRobot)
         observation = self.camera.last_data    
     end
 
-    # draw particles
+    # draw estimation
     draw!(self.agent, observation)
     
     # next pose
