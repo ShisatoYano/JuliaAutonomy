@@ -7,6 +7,7 @@ pyplot()
 
 include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/movement/agent.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/uncertainty_model/real_camera/real_camera.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/common/error_calculation.jl"))
 
 mutable struct RealRobot
     pose
@@ -161,6 +162,10 @@ function draw!(self::RealRobot)
 
     # draw estimation
     draw!(self.agent, observation)
+
+    if self.agent.estimator !== nothing
+        draw_lon_lat_error!(self.agent.estimator.estimated_pose, self.pose)
+    end
     
     # next pose
     spd, yr = decision(self.agent)

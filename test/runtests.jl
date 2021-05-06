@@ -11,7 +11,7 @@ module TestSuite
     function main()
         TestProbStats.main()
         TestRobotModel.main()
-        TestUncertaintyModel.main()
+        # TestUncertaintyModel.main()
     end
 end
 
