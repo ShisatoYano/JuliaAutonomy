@@ -1,4 +1,4 @@
-# class for defining world coordinate system
+# module for defining world coordinate system
 
 using Plots
 pyplot()

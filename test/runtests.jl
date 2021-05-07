@@ -9,8 +9,8 @@ module TestSuite
     include(joinpath(split(@__FILE__, "runtests.jl")[1], "test_uncertainty_model.jl"))
 
     function main()
-        TestProbStats.main()
-        TestRobotModel.main()
+        # TestProbStats.main()
+        # TestRobotModel.main()
         # TestUncertaintyModel.main()
     end
 end

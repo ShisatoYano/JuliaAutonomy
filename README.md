@@ -6,7 +6,7 @@ Julia codes for Autonomy, Robotics and Self-Driving Algorithms.
 * [About this repository](#about-this-repository)  
 * [How to use](#how-to-use)
 * [Requirements](#requirements)  
-* [Julia scripts](#julia-scripts)
+<!-- * [Julia scripts](#julia-scripts)
     * [Basics of Probability and Statistics](#basics-of-probability-and-statistics)  
         * [Sensor data collection](#sensor-data-collection)  
         * [Frequency/Probability distribution](#frequencyprobability-distribution)  
@@ -26,7 +26,7 @@ Julia codes for Autonomy, Robotics and Self-Driving Algorithms.
         * [Bias in observation](#bias-in-observation)  
         * [Phantom in observation](#phantom-in-observation)  
         * [Oversight in observation](#oversight-in-observation)  
-        * [Occlusion in observation](#occlusion-in-observation)  
+        * [Occlusion in observation](#occlusion-in-observation)   -->
 * [License](#license)  
 * [Contribution](#contribution)  
 * [Author](#author)
@@ -72,7 +72,7 @@ julia> PrintSensorData.main()
 * LinearAlgebra
 
 # Julia scripts
-## Basics of Probability and Statistics
+<!-- ## Basics of Probability and Statistics
 ### Sensor data collection
 Sensor data with LiDAR  
 ![](img/sensor_data_description.PNG)  
@@ -139,7 +139,7 @@ Simple differential wheeled robot
 ![](gif/observe_oversight.gif)  
 
 ### Occlusion in observation
-![](gif/observe_occlusion.gif)  
+![](gif/observe_occlusion.gif)   -->
 
 # License
 MIT  
