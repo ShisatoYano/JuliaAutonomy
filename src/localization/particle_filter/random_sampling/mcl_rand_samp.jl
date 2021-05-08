@@ -1,5 +1,6 @@
 # module for estimating pose by monte carlo localization
 # based on particle filter
+# particles are resampled by random sampling
 # parameter nn: range std on straight movement
 # parameter no: range std on rotation movement
 # parameter on: direction std on straight movement
