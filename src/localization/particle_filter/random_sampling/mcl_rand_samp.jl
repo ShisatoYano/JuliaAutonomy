@@ -8,7 +8,7 @@
 
 using Distributions, LinearAlgebra, StatsBase
 
-include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/particle.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/particle/particle.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/map/map.jl"))
 
 mutable struct MclRandSamp
