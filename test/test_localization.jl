@@ -26,12 +26,7 @@ module TestLocalization
         @test_nowarn AnimeMclSysSamp.main(is_test=true)
       end
       @testset "ParameterAdjustment" begin
-        @testset "NarrowStd" begin
-          @test_nowarn AnimeNarrowStd.main(is_test=true)
-        end
-        @testset "WideStd" begin
-          @test_nowarn AnimeWideStd.main(is_test=true)
-        end
+        
       end
     end
   end
