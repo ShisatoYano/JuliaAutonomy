@@ -4,9 +4,9 @@ module TestSuite
     using Test
 
     # test modules
-    include(joinpath(split(@__FILE__, "runtests.jl")[1], "test_prob_stats.jl"))
-    include(joinpath(split(@__FILE__, "runtests.jl")[1], "test_robot_model.jl"))
-    include(joinpath(split(@__FILE__, "runtests.jl")[1], "test_uncertainty_model.jl"))
+    # include(joinpath(split(@__FILE__, "runtests.jl")[1], "test_prob_stats.jl"))
+    # include(joinpath(split(@__FILE__, "runtests.jl")[1], "test_robot_model.jl"))
+    # include(joinpath(split(@__FILE__, "runtests.jl")[1], "test_uncertainty_model.jl"))
 
     function main()
         # TestProbStats.main()

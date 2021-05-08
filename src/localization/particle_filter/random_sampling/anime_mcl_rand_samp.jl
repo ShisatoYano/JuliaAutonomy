@@ -3,14 +3,33 @@
 
 module AnimeMclRandSamp
   include(joinpath(split(@__FILE__, "src")[1], "src/model/world/world.jl"))
-  include(joinpath(split(@__FILE__, "src")[1], "src/model/map/map.jl"))
-  include(joinpath(split(@__FILE__, "src")[1], "src/model/object/object.jl"))
+  include(joinpath(split(@__FILE__, "src")[1], "src/model/robot/differential_wheeled_robot/differential_wheeled_robot.jl"))
 
   function main(time_interval=0.1)
     w = World(-5.0, 5.0, -5.0, 5.0)
     
     m = Map()
-    add_object(m, Object(-4.0, 2.0))
+    add_object(m, Object(-4.0, 2.0, id=1))
+    add_object(m, Object(2.0, -3.0, id=2))
+    add_object(m, Object(3.0, 3.0, id=3))
+    add_object(m, Object(4.0, 0.0, id=4))
+    add_object(m, Object(-2.0, 4.0, id=5))
+    add_object(m, Object(-3.0, -3.0, id=6))
+
+    s = Sensor(m, dist_noise_rate=0.1, dir_noise=pi/90,
+               dist_bias_rate_stddev=0.1, dir_bias_stddev=pi/90)
+    
+    init_pose = [0.0, 0.0, 0.0]
+    noises = Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20)
+    e = MclRandSamp(init_pose, 100, noises, env_map=m, 
+                    dist_dev_rate=0.14, dir_dev=0.05)
+    circling = Agent(0.2, 10.0/180*pi, estimator=e)
+    r = DifferentialWheeledRobot(init_pose, 0.2, "black",
+                                 circling, time_interval,
+                                 noise_per_meter=5, 
+                                 noise_std=pi/30,
+                                 bias_rate_stds=[0.1, 0.1],
+                                 sensor=s)
 
     anime = @animate for t in 0:time_interval:30
       draw(w)
@@ -18,6 +37,8 @@ module AnimeMclRandSamp
       annotate!(-3.5, 4.5, "t = $(t)", "black")
 
       draw!(m)
+
+      draw!(r)
     end
 
     path = "src/localization/particle_filter/random_sampling/anime_mcl_rand_samp.gif"

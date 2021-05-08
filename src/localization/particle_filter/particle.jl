@@ -1,9 +1,6 @@
-# class for representing particle
+# module for calculating particle motion
 
 using Distributions, LinearAlgebra
-
-include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/movement/robot.jl"))
-include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/observation/camera.jl"))
 
 mutable struct Particle
   pose
@@ -18,6 +15,21 @@ mutable struct Particle
   end
 end
 
+function state_transition(speed, yaw_rate, time, pose)
+  theta = pose[3]
+
+  # yaw rate is almost zero or not
+  if abs(yaw_rate) < 1e-10
+      return pose + [speed*cos(theta)*time,
+                     speed*sin(theta)*time,
+                     yaw_rate*time]
+  else
+      return pose + [speed/yaw_rate*(sin(theta+yaw_rate*time)-sin(theta)),
+                     speed/yaw_rate*(-cos(theta+yaw_rate*time)+cos(theta)),
+                     yaw_rate*time]
+  end
+end
+
 function motion_update(self::Particle, speed, yaw_rate, 
                        time_interval, noise_rate_pdf)
   ns = rand(noise_rate_pdf) # [nn, no, on, oo]
@@ -26,14 +38,27 @@ function motion_update(self::Particle, speed, yaw_rate,
   self.pose = state_transition(noised_spd, noised_yr, time_interval, self.pose)
 end
 
+function observation_function(sns_pose::Array, obj_pose::Array)
+  diff_x = obj_pose[1] - sns_pose[1]
+  diff_y = obj_pose[2] - sns_pose[2]
+  phi = atan(diff_y, diff_x) - sns_pose[3]
+  while phi >= pi
+    phi -= 2 * pi
+  end
+  while phi < -pi
+    phi += 2 * pi
+  end
+  return [hypot(diff_x, diff_y), phi]
+end
+
 function observation_update(self::Particle, observation, env_map, 
                             dist_dev_rate, dir_dev)
   for obs in observation
     obs_pose = obs[1] # [distance, direction]
     obs_id = obs[2]
 
-    # calculate distance and direction from particle pos to landmark
-    pos_on_map = env_map.landmarks[obs_id].pose
+    # calculate distance and direction from particle pos to object
+    pos_on_map = env_map.objects[obs_id].pose
     obs_from_particle = observation_function(self.pose, pos_on_map) # [distance, direction]
 
     # calculate likelihood

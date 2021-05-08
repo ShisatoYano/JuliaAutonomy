@@ -1,9 +1,16 @@
+# module for estimating pose by monte carlo localization
+# based on particle filter
+# parameter nn: range std on straight movement
+# parameter no: range std on rotation movement
+# parameter on: direction std on straight movement
+# parameter oo: direction std on rotation movement
+
 using Distributions, LinearAlgebra, StatsBase
 
 include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/particle.jl"))
-include(joinpath(split(@__FILE__, "src")[1], "src/robot_model/observation/map.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/model/map/map.jl"))
 
-mutable struct MonteCarloLocalization
+mutable struct MclRandSamp
   particles
   motion_noise_rate_pdf
   map
@@ -13,11 +20,11 @@ mutable struct MonteCarloLocalization
   estimated_pose
 
   # init
-  function MonteCarloLocalization(init_pose::Array, num::Int64,
-                                  motion_noise_stds::Dict;
-                                  env_map=nothing,
-                                  dist_dev_rate=0.0,
-                                  dir_dev=0.0)
+  function MclRandSamp(init_pose::Array, num::Int64,
+                       motion_noise_stds::Dict;
+                       env_map=nothing,
+                       dist_dev_rate=0.0,
+                       dir_dev=0.0)
     self = new()
     self.particles = [Particle(init_pose, 1.0/num) for i in 1:num]
     self.map = env_map
@@ -33,19 +40,19 @@ mutable struct MonteCarloLocalization
   end
 end
 
-function motion_update(self::MonteCarloLocalization, speed, yaw_rate, time_interval)
+function motion_update(self::MclRandSamp, speed, yaw_rate, time_interval)
   for p in self.particles
     motion_update(p, speed, yaw_rate, time_interval, self.motion_noise_rate_pdf)
   end
 end
 
-function set_max_likelihood_pose(self::MonteCarloLocalization)
+function set_max_likelihood_pose(self::MclRandSamp)
   max_index = argmax([p.weight for p in self.particles])
   self.max_likelihood_particle = self.particles[max_index]
   self.estimated_pose = self.max_likelihood_particle.pose
 end
 
-function observation_update(self::MonteCarloLocalization, observation)
+function observation_update(self::MclRandSamp, observation)
   for p in self.particles
     observation_update(p, observation, self.map, self.dist_dev, self.dir_dev)
   end
@@ -53,38 +60,17 @@ function observation_update(self::MonteCarloLocalization, observation)
   @time resampling(self)
 end
 
-function systematic_sample(particles, weights, sample_num)
-  sampled_particles = [] 
-
-  step = weights[end]/sample_num
-  r = rand(Uniform(0.0, step))
-
-  current_index = 1
-  while length(sampled_particles) < sample_num
-    if r < weights[current_index]
-      push!(sampled_particles, particles[current_index])
-      r += step
-    else
-      current_index += 1
-    end
-  end
-
-  return sampled_particles
-end
-
-function resampling(self::MonteCarloLocalization)
+function resampling(self::MclRandSamp)
   ws = [(if p.weight <= 0.0 1e-100 else p.weight end) for p in self.particles]
   
-  # ps = sample(self.particles, Weights(ws), length(self.particles))
-  ps = systematic_sample(self.particles, cumsum(ws), length(self.particles))
-
+  ps = sample(self.particles, Weights(ws), length(self.particles))
   self.particles = [deepcopy(e) for e in ps]
   for p in self.particles
     p.weight = 1.0/length(self.particles)
   end
 end
 
-function draw!(self::MonteCarloLocalization)
+function draw!(self::MclRandSamp)
   k = 0.5 # scale for length of arrows
   # all of particles
   px = [p.pose[1] for p in self.particles]

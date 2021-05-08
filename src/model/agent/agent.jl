@@ -1,7 +1,8 @@
-# class for agent
-# deciding control order to robot
+# module for representing agent
+# decide control order to robot
 
-include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/monte_carlo_localization.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/random_sampling/mcl_rand_samp.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/systematic_sampling/mcl_sys_samp.jl"))
 
 mutable struct Agent
     speed
