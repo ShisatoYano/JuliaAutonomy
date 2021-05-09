@@ -1,0 +1,42 @@
+# estimate observed time by bayes theorem
+
+module BayesEst630
+    using DataFrames, CSV, FreqTables, Plots
+
+    function bayes_estimation(sensor_value, cond_z_t, current_estimation)
+        new_estimation = zeros(24)
+        for i in Array(1:24)
+            new_estimation[i] = cond_z_t[Name(sensor_value), Name(i - 1)] * current_estimation[i]
+        end
+        return new_estimation / sum(new_estimation)
+    end
+
+    function main(is_test=false)
+        data_path = joinpath(split(@__FILE__, "src")[1], "data/sensor_data_600.txt")
+        df_org = CSV.read(data_path, DataFrame, 
+                      header=["date", "time", "ir", "lidar"],
+                      delim=' ')
+        
+        hours = [Int64(floor(e/10000)) for e in df_org.time]
+
+        # add hour array to df
+        df_h = DataFrame(hour=hours)
+        df_new = hcat(df_org, df_h)
+
+        # P(t)
+        freqs = freqtable(df_new, :lidar, :hour)
+        probs = freqs / length(df_org.lidar)
+        keys = names(probs, 2)
+        p_t = [sum(probs[begin:end, Name(key)]) for key in keys]
+        cond_z_t = probs / p_t[findfirst(==(0), keys)]
+
+        # estimate
+        estimation = bayes_estimation(630, cond_z_t, p_t)
+        plot(estimation, label="P(t|z=630)")
+
+        if is_test == false
+            save_path = joinpath(split(@__FILE__, "src")[1], "src/prob_stats/complex_dist/bayes_estimation_630/bayes_estimation_630.png")
+            savefig(save_path)
+        end
+    end
+end

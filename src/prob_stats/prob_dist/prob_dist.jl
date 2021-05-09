@@ -3,7 +3,7 @@ module ProbDist
     using DataFrames, CSV, Plots, FreqTables, NamedArrays
     pyplot()
 
-    function main()
+    function main(is_test=false)
         data_path = joinpath(split(@__FILE__, "src")[1], "data/sensor_data_200.txt")
         df_200_mm = CSV.read(data_path, DataFrame, 
                              header=["date", "time", "ir", "lidar"],
@@ -21,7 +21,9 @@ module ProbDist
 
         bar(probs, xticks=observs, label="prob dist")
 
-        save_path = joinpath(split(@__FILE__, "src")[1], "img/prob_dist.png")
-        savefig(save_path)
+        if is_test == false
+            save_path = joinpath(split(@__FILE__, "src")[1], "src/prob_stats/prob_dist/prob_dist.png")
+            savefig(save_path)
+        end
     end
 end
