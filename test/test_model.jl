@@ -10,6 +10,10 @@ module TestModel
   include(joinpath(split(@__FILE__, "test")[1], "src/model/object/object.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/sensor/sensor.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/robot/differential_wheeled_robot/differential_wheeled_robot.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/movement/kidnap/anime_move_kidnap.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/movement/random_noise/anime_move_random_noise.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/movement/speed_bias/anime_move_speed_bias.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/movement/stuck/anime_move_stuck.jl"))
 
   function main()
     @testset "Model" begin
@@ -70,6 +74,22 @@ module TestModel
         @test state_transition(0.1, 0.0, 1.0, [0, 0, 0]) == [0.1, 0.0, 0.0]
         @test state_transition(0.1, 10.0/180*pi, 9.0, [0, 0, 0]) == [0.5729577951308232, 0.5729577951308231, 1.5707963267948966]
         @test state_transition(0.1, 10.0/180*pi, 18.0, [0, 0, 0]) == [7.016709298534876e-17, 1.1459155902616465, 3.141592653589793]
+      end
+      @testset "uncertainty" begin
+        @testset "Movement" begin
+          @testset "Kidnap" begin
+            @test_nowarn AnimeMoveKidnap.main(is_test=true)
+          end
+          @testset "RandomNoise" begin
+            @test_nowarn AnimeMoveRandomNoise.main(is_test=true)
+          end
+          @testset "SpeedBias" begin
+            @test_nowarn AnimeMoveSpeedBias.main(is_test=true)
+          end
+          @testset "Stuck" begin
+            @test_nowarn AnimeMoveStuck.main(is_test=true)
+          end
+        end
       end
     end
   end
