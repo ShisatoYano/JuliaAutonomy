@@ -14,6 +14,11 @@ module TestModel
   include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/movement/random_noise/anime_move_random_noise.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/movement/speed_bias/anime_move_speed_bias.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/movement/stuck/anime_move_stuck.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/observation/bias/anime_observe_bias.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/observation/noise/anime_observe_noise.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/observation/occlusion/anime_observe_occlusion.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/observation/oversight/anime_observe_oversight.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/observation/phantom/anime_observe_phantom.jl"))
 
   function main()
     @testset "Model" begin
@@ -88,6 +93,23 @@ module TestModel
           end
           @testset "Stuck" begin
             @test_nowarn AnimeMoveStuck.main(is_test=true)
+          end
+        end
+        @testset "Observation" begin
+          @testset "Bias" begin
+            @test_nowarn AnimeObserveBias.main(is_test=true)
+          end
+          @testset "Noise" begin
+            @test_nowarn AnimeObserveNoise.main(is_test=true)
+          end
+          @testset "Occlusion" begin
+            @test_nowarn AnimeObserveOcclusion.main(is_test=true)
+          end
+          @testset "Oversight" begin
+            @test_nowarn AnimeObserveOversight.main(is_test=true)
+          end
+          @testset "Phantom" begin
+            @test_nowarn AnimeObservePhantom.main(is_test=true)
           end
         end
       end
