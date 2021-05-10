@@ -6,27 +6,9 @@ Julia codes for Autonomy, Robotics and Self-Driving Algorithms.
 * [About this repository](#about-this-repository)  
 * [How to use](#how-to-use)
 * [Requirements](#requirements)  
-<!-- * [Julia scripts](#julia-scripts)
-    * [Basics of Probability and Statistics](#basics-of-probability-and-statistics)  
-        * [Sensor data collection](#sensor-data-collection)  
-        * [Frequency/Probability distribution](#frequencyprobability-distribution)  
-        * [Probabilistic Model](#probabilistic-model)  
-        * [Complex Distribution](#complex-distribution)  
-        * [Multidimensional Distribution](#multidimensional-distribution)  
-    * [Modeling Autonomous Robot](#modeling-autonomous-robot)  
-        * [Assumed Robot](#assumed-robot)  
-        * [Movement of Robot](#movement-of-robot)  
-        * [Observation of Robot](#observation-of-robot)  
-    * [Modeling Uncertainty](#modeling-uncertainty)  
-        * [Random noise in movement](#random-noise-in-movement)  
-        * [Bias in movement](#bias-in-movement)  
-        * [Stuck in movement](#stuck-in-movement)  
-        * [Kidnap in movement](#kidnap-in-movement)  
-        * [Random noise in observation](#random-noise-in-observation)  
-        * [Bias in observation](#bias-in-observation)  
-        * [Phantom in observation](#phantom-in-observation)  
-        * [Oversight in observation](#oversight-in-observation)  
-        * [Occlusion in observation](#occlusion-in-observation)   -->
+* [Sample codes](#sample-codes)  
+    * [Localization](#localization)  
+        * [Particle Filter](#particle-filter)  
 * [License](#license)  
 * [Contribution](#contribution)  
 * [Author](#author)
@@ -52,8 +34,8 @@ julia> Setup.install_packages()
 3. Execute Julia script in each directory.  
 For example,  
 ```julia
-julia> include("src/prob_stats/sensor_data/print_sensor_data.jl")
-julia> PrintSensorData.main()
+julia> include("src/localization/particle_filter/random_sampling/anime_mcl_rand_samp.jl")
+julia> AnimeMclRandSamp.main()
 ```
 
 4. Add star to this repository, if you like it.  
@@ -71,75 +53,12 @@ julia> PrintSensorData.main()
 * Distributions
 * LinearAlgebra
 
-# Julia scripts
-<!-- ## Basics of Probability and Statistics
-### Sensor data collection
-Sensor data with LiDAR  
-![](img/sensor_data_description.PNG)  
-
-### Frequency/Probability distribution
-Frequency distribution  
-![](img/histogram_200_mm.png)  
-
-Probability distribution  
-![](img/prob_dist.png)  
-
-### Probabilistic Model
-Gaussian Distribution Model vs Observation  
-![](img/gauss_prob_dist.png)  
-
-### Complex Distribution
-Frequency histogram grouped by hour  
-![](img/hist_grp_by_hour.png)  
-
-Probability Heatmap  
-![](img/group_hour_heatmap.png)  
-
-### Multidimensional Distribution
-Marginal KDE  
-![](img/marginal_kde_200.png)  
-
-Contour of Probability  
-![](img/contour_pdf_200.png)  
-
-## Modeling Autonomous Robot
-### Assumed Robot
-Simple differential wheeled robot  
-![](img/wheeled_robot.png)  
-
-### Movement of Robot
-![](gif/draw_moving_robot.gif)  
-
-### Observation of Robot
-![](gif/draw_observation.gif)  
-
-## Modeling Uncertainty
-### Random noise in movement
-![](gif/move_random_noise.gif)  
-
-### Bias in movement
-![](gif/move_speed_bias.gif)  
-
-### Stuck in movement
-![](gif/move_stuck.gif)  
-
-### Kidnap in movement
-![](gif/move_kidnap.gif)  
-
-### Random noise in observation
-![](gif/observe_noise.gif)  
-
-### Bias in observation
-![](gif/observe_bias.gif)  
-
-### Phantom in observation
-![](gif/observe_phantom.gif)  
-
-### Oversight in observation
-![](gif/observe_oversight.gif)  
-
-### Occlusion in observation
-![](gif/observe_occlusion.gif)   -->
+# Sample codes
+## Localization
+### Particle Filter
+Monte Carlo Localization by Particle Filter  
+considering Random Sampling  
+![](src/localization/particle_filter/random_sampling/anime_mcl_rand_samp.gif)  
 
 # License
 MIT  
