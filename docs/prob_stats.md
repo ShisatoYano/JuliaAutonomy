@@ -78,3 +78,11 @@ Each observation $z_{j,t}$ is independent:
 $$
 b_t(\bm{x})=\eta \hat{b}_t(\bm{x}) \prod_{j=0}^{N_{m-1}} p_j(z_{j,t}|\bm{x})
 $$
+
+Conditional Probability  
+$$
+P(z|t \in 6時台)
+$$
+$$
+P(y|x)
+$$
