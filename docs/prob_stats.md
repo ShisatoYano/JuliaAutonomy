@@ -86,3 +86,32 @@ $$
 $$
 P(y|x)
 $$
+
+Joint Probability Distribution  
+$$
+P(t) = \sum_{z}^{} P(z,t)
+$$
+
+$$
+P(z) = \sum_{t}^{} P(z,t)
+$$
+
+$$
+P(z|t) = P(z,t)/P(t)
+$$
+
+$$
+P(z,t) = P(z|t)P(t)
+$$
+$$
+P(x,y) = P(x|y)P(y) = P(y|x)P(x)
+$$
+
+Bayes' theorem  
+$$
+P(x|y) = \frac{P(y|x) P(x)}{P(y)}
+$$
+
+$$
+P(y) = \sum_{x \in \chi}^{}{P(x,y)}
+$$
