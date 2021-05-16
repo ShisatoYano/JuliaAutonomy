@@ -115,3 +115,20 @@ $$
 $$
 P(y) = \sum_{x \in \chi}^{}{P(x,y)}
 $$
+
+$$
+P(x|y) = \frac{P(y|x)P(x)}{\sum_{x' \in \chi}^{}{P(x',y)}} = \frac{P(y|x)P(x)}{\sum_{x' \in \chi}^{}{P(y|x')P(x')}} = \frac{P(y|x)P(x)}{\langle P(y|x') \rangle_{P(x')}}
+$$
+
+$$
+P(x|y) = \eta P(y|x) P(x)
+$$
+
+Multiple observations  
+$$
+P(t|z_1, z_2, z_3) = \eta P(z_1, z_2, z_3|t) P(t)
+$$
+
+$$
+P(t|630, 632, 636) = \eta P(630, 632, 636|t) P(t)
+$$
