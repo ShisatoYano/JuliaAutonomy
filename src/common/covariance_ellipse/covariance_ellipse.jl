@@ -14,10 +14,14 @@ function draw_covariance_ellipse!(pose, cov, n)
     small_idx = 1
   end
 
-  t = 0:0.1:(pi * 2 + 0.1)
+  t = 0:1:(pi * 2)
   a = sqrt(eig_vals[big_idx])
   b = sqrt(eig_vals[small_idx])
   x = [a * n * cos(it) for it in t]
   y = [b * n * sin(it) for it in t]
-  
+  angle = atan(eig_vecs[big_idx, 2], eig_vecs[big_idx, 1])
+  rot_mat = [cos(angle) sin(angle); -sin(angle) cos(angle)]
+  println(x)
+  println(y)
+  println(rot_mat * [x y]')
 end
