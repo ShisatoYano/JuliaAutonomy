@@ -1,4 +1,4 @@
-# class for calculating error between two poses
+# calculating error between two poses
 
 using Plots
 pyplot()

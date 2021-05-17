@@ -26,10 +26,8 @@ module AnimeEkf
                dist_bias_rate_stddev=0.1, dir_bias_stddev=pi/90)
     
     init_pose = [0.0, 0.0, 0.0]
-    noises = Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20)
-    e = MclSysSamp(init_pose, 100, noises, env_map=m, 
-                   dist_dev_rate=0.14, dir_dev=0.05)
-    circling = Agent(0.2, 10.0/180*pi, estimator=e)
+    ekf = ExtendedKalmanFilter(init_pose, env_map=m)
+    circling = Agent(0.2, 10.0/180*pi, estimator=ekf)
     r = DifferentialWheeledRobot(init_pose, 0.2, "black",
                                  circling, time_interval,
                                  noise_per_meter=5, 
