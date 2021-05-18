@@ -14,14 +14,29 @@ function draw_covariance_ellipse!(pose, cov, n)
     small_idx = 1
   end
 
-  t = 0:1:(pi * 2)
+  # 3 sigma covariance, x-y
+  t = 0:0.1:(pi * 2 + 0.1)
   a = sqrt(eig_vals[big_idx])
   b = sqrt(eig_vals[small_idx])
   x = [a * n * cos(it) for it in t]
   y = [b * n * sin(it) for it in t]
   angle = atan(eig_vecs[big_idx, 2], eig_vecs[big_idx, 1])
   rot_mat = [cos(angle) sin(angle); -sin(angle) cos(angle)]
-  println(x)
-  println(y)
-  println(rot_mat * [x y]')
+  rot_xy = rot_mat * [x y]'
+  px = rot_xy[1, begin:end] .+ pose_xy[1]
+  py = rot_xy[2, begin:end] .+ pose_xy[2]
+  plot!(px, py, color="blue", legend=false, 
+        aspect_ratio=true, alpha=0.5)
+  
+  # 3 sigma covariance, theta
+  pose_theta = pose[3]
+  theta_3_sigma = sqrt(cov[3, 3]) * n
+  xs = [pose_xy[1] + cos(pose_theta - theta_3_sigma),
+        pose_xy[1],
+        pose_xy[1] + cos(pose_theta + theta_3_sigma)]
+  ys = [pose_xy[2] + sin(pose_theta - theta_3_sigma),
+        pose_xy[2],
+        pose_xy[2] + sin(pose_theta + theta_3_sigma)]
+  plot!(xs, ys, color="blue", legend=false, 
+        aspect_ratio=true, alpha=0.5)
 end
