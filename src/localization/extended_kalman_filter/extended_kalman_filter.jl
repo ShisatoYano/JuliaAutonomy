@@ -20,8 +20,26 @@ mutable struct ExtendedKalmanFilter
   end
 end
 
+function mat_M(speed, yaw_rate, time, stds)
+  return diagm(0 => [stds["nn"]^2*abs(speed)/time + stds["no"]^2*abs(yaw_rate)/time,
+                     stds["on"]^2*abs(speed)/time + stds["oo"]^2*abs(yaw_rate)/time])
+end
+
+function mat_A(speed, yaw_rate, time, theta)
+  st, ct = sin(theta), cos(theta)
+  stw, ctw = sin(theta + yaw_rate * time), cos(theta + yaw_rate * time)
+  return [(stw - st)/yaw_rate  -speed/(yaw_rate^2)*(stw - st) + speed/yaw_rate*time*ctw;
+          (-ctw + ct)/yaw_rate -speed/(yaw_rate^2)*(-ctw + ct) + speed/yaw_rate*time*stw;
+          0                    time]
+end
+
+function mat_F(speed, yaw_rate, time, theta)
+  F = diagm(0 => [1.0, 1.0, 1.0])
+  
+end
+
 function motion_update(self::ExtendedKalmanFilter, speed, 
-                       yaw_rate, time_interval)
+                       yaw_rate, time)
   
 end
 
