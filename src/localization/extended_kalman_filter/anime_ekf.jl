@@ -27,9 +27,9 @@ module AnimeEkf
     
     init_pose = [0.0, 0.0, 0.0]
     ekf = ExtendedKalmanFilter(init_pose, env_map=m)
-    circling = Agent(0.2, 10.0/180*pi, estimator=ekf)
-    r = DifferentialWheeledRobot(init_pose, 0.2, "black",
-                                 circling, time_interval,
+    a = Agent(0.2, 10.0/180*pi, estimator=ekf)
+    r = DifferentialWheeledRobot(init_pose, 0.2, "red",
+                                 a, time_interval,
                                  noise_per_meter=5, 
                                  noise_std=pi/30,
                                  bias_rate_stds=[0.1, 0.1],

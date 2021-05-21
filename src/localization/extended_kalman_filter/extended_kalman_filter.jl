@@ -1,20 +1,23 @@
 # module for estimating pose by extended kalman filter
 
-using Distributions, LinearAlgebra, StatsBase
+using Distributions, LinearAlgebra, StatsBase, PDMats
 
 include(joinpath(split(@__FILE__, "src")[1], "src/model/map/map.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/common/covariance_ellipse/covariance_ellipse.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/common/state_transition/state_transition.jl"))
 
 mutable struct ExtendedKalmanFilter
   belief
+  motion_noise_stds
   estimated_pose
 
   function ExtendedKalmanFilter(init_pose::Array;
                                 motion_noise_stds::Dict=Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20),
                                 env_map=nothing)
     self = new()
-    self.belief = MvNormal([0.0, 0.0, pi/4], 
-                           diagm(0 => [0.1, 0.2, 0.01]))
+    self.belief = MvNormal([0.0, 0.0, 0.0], 
+                           diagm(0 => [1e-10, 1e-10, 1e-10]))
+    self.motion_noise_stds = motion_noise_stds
     self.estimated_pose = self.belief.μ
     return self
   end
@@ -35,12 +38,22 @@ end
 
 function mat_F(speed, yaw_rate, time, theta)
   F = diagm(0 => [1.0, 1.0, 1.0])
-  
+  F[1, 3] = speed / yaw_rate * (cos(theta + yaw_rate * time) - cos(theta))
+  F[2, 3] = speed / yaw_rate * (sin(theta + yaw_rate * time) - sin(theta))
+  return F
 end
 
 function motion_update(self::ExtendedKalmanFilter, speed, 
                        yaw_rate, time)
-  
+  if abs(yaw_rate) < 1e-5 # to prevent division by zero
+    yaw_rate = 1e-5
+  end
+  M = mat_M(speed, yaw_rate, time, self.motion_noise_stds)
+  A = mat_A(speed, yaw_rate, time, self.belief.μ[3])
+  F = mat_F(speed, yaw_rate, time, self.belief.μ[3])
+  self.belief.Σ = PDMat(F * Matrix(self.belief.Σ) * F' + A * M * A')
+  self.belief.μ = state_transition(speed, yaw_rate, time, self.belief.μ)
+  self.estimated_pose = self.belief.μ
 end
 
 function observation_update(self::ExtendedKalmanFilter, observation)
