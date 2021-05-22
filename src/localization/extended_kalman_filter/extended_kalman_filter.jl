@@ -1,6 +1,6 @@
 # module for estimating pose by extended kalman filter
 
-using Distributions, LinearAlgebra, StatsBase, PDMats
+using Distributions, LinearAlgebra, StatsBase
 
 include(joinpath(split(@__FILE__, "src")[1], "src/model/map/map.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/common/covariance_ellipse/covariance_ellipse.jl"))
@@ -10,6 +10,7 @@ mutable struct ExtendedKalmanFilter
   belief
   motion_noise_stds
   estimated_pose
+  estimated_cov
 
   function ExtendedKalmanFilter(init_pose::Array;
                                 motion_noise_stds::Dict=Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20),
@@ -19,6 +20,7 @@ mutable struct ExtendedKalmanFilter
                            diagm(0 => [1e-10, 1e-10, 1e-10]))
     self.motion_noise_stds = motion_noise_stds
     self.estimated_pose = self.belief.μ
+    self.estimated_cov = self.belief.Σ
     return self
   end
 end
@@ -49,11 +51,10 @@ function motion_update(self::ExtendedKalmanFilter, speed,
     yaw_rate = 1e-5
   end
   M = mat_M(speed, yaw_rate, time, self.motion_noise_stds)
-  A = mat_A(speed, yaw_rate, time, self.belief.μ[3])
-  F = mat_F(speed, yaw_rate, time, self.belief.μ[3])
-  self.belief.Σ = PDMat(F * Matrix(self.belief.Σ) * F' + A * M * A')
-  self.belief.μ = state_transition(speed, yaw_rate, time, self.belief.μ)
-  self.estimated_pose = self.belief.μ
+  A = mat_A(speed, yaw_rate, time, self.estimated_pose[3])
+  F = mat_F(speed, yaw_rate, time, self.estimated_pose[3])
+  self.estimated_cov = F * self.estimated_cov * F' + A * M * A'
+  self.estimated_pose = state_transition(speed, yaw_rate, time, self.estimated_pose)
 end
 
 function observation_update(self::ExtendedKalmanFilter, observation)
@@ -61,5 +62,5 @@ function observation_update(self::ExtendedKalmanFilter, observation)
 end
 
 function draw!(self::ExtendedKalmanFilter)
-  draw_covariance_ellipse!(self.belief.μ, self.belief.Σ, 3)
+  draw_covariance_ellipse!(self.estimated_pose, self.estimated_cov, 3)
 end
