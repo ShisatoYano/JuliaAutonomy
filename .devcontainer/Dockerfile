@@ -12,10 +12,9 @@ RUN git config --global user.name Shisato
 
 RUN git config --global user.email shisatoyano@gmail.com
 
-RUN julia -e 'using Pkg; Pkg.add("PackageCompiler")'
 RUN julia -e 'ENV["CONDA_JL_VERSION"]=3; using Pkg; Pkg.add(["PyCall", "PyPlot"])'
 RUN julia -e 'using Pkg; Pkg.add(["Plots", "DataFrames", "CSV"])'
 RUN julia -e 'using Pkg; Pkg.add(["Test", "StatsPlots", "Statistics"])'
 RUN julia -e 'using Pkg; Pkg.add(["FreqTables", "NamedArrays", "Distributions"])'
 RUN julia -e 'using Pkg; Pkg.add(["LinearAlgebra", "StatsBase"])'
-RUN julia -e 'ENV["PYTHON"]=""; using Pkg; Pkg.build("PyCall")'
+RUN julia -e 'ENV["PYTHON"]=""; using Pkg; Pkg.add("Conda"); Pkg.update(); Pkg.build("PyCall"); using PyPlot'
