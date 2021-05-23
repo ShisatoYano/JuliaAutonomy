@@ -35,11 +35,17 @@ jobs:
         run: set CONDA_JL_VERSION=3
 
       - name: "Install packages"
-        run: julia -e 'include("setup.jl");Setup.install_packages()'
+        run: julia -e "using Pkg; Pkg.add(String(":PyCall")); Pkg.add(String(":PyPlot"))"
+        run: julia -e "using Pkg; Pkg.add(String(":Plots")); Pkg.add(String(":DataFrames")); Pkg.add(String(":CSV"))"
+        run: julia -e "using Pkg; Pkg.add(String(":Test")); Pkg.add(String(":StatsPlots")); Pkg.add(String(":Statistics"))"
+        run: julia -e "using Pkg; Pkg.add(String(":FreqTables")); Pkg.add(String(":NamedArrays")); Pkg.add(String(":Distributions"))"
+        run: julia -e "using Pkg; Pkg.add(String(":LinearAlgebra")); Pkg.add(String(":StatsBase"))"
       
+      - name: "Set Python"
+        run: set PYTHON=""
+
       - name: "Install matplotlib"
-        run: julia -e 'ENV["PYTHON"]=""; using Pkg; Pkg.add("Conda"); Pkg.update(); Pkg.build("PyCall"); using PyPlot'
-        shell: bash
+        run: julia -e "using Pkg; Pkg.add(String(":Conda")); Pkg.update(); Pkg.build(String(":PyCall")); using PyPlot"
 
       - name: "Run test suite"
         run: julia test/runtests.jl
