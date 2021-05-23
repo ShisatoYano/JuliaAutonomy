@@ -34,11 +34,19 @@ jobs:
       - name: "Set conda jl version"
         run: set CONDA_JL_VERSION=3
 
-      - name: "Install packages"
+      - name: "Install PyCall, PyPlot"
         run: julia -e "using Pkg; Pkg.add(String(":PyCall")); Pkg.add(String(":PyPlot"))"
+      
+      - name: "Install Plots, DataFrames, CSV"
         run: julia -e "using Pkg; Pkg.add(String(":Plots")); Pkg.add(String(":DataFrames")); Pkg.add(String(":CSV"))"
+      
+      - name: "Install Test, StatsPlots, Statistics"
         run: julia -e "using Pkg; Pkg.add(String(":Test")); Pkg.add(String(":StatsPlots")); Pkg.add(String(":Statistics"))"
+      
+      - name: "Install FreqTables, NamedArrays, Distributions"
         run: julia -e "using Pkg; Pkg.add(String(":FreqTables")); Pkg.add(String(":NamedArrays")); Pkg.add(String(":Distributions"))"
+      
+      - name: "Install LinearAlgebra, StatsBase"
         run: julia -e "using Pkg; Pkg.add(String(":LinearAlgebra")); Pkg.add(String(":StatsBase"))"
       
       - name: "Set Python"
