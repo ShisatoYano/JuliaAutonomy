@@ -1,5 +1,5 @@
 # JuliaAutonomy
-[![Build Status](https://travis-ci.org/ShisatoYano/JuliaAutonomy.svg?branch=main)](https://travis-ci.org/ShisatoYano/JuliaAutonomy) ![Linux_CI](https://github.com/ShisatoYano/JuliaAutonomy/workflows/Linux_CI/badge.svg) [![codecov](https://codecov.io/gh/ShisatoYano/JuliaAutonomy/branch/main/graph/badge.svg?token=7UQN0H01OW)](https://codecov.io/gh/ShisatoYano/JuliaAutonomy)  
+[![Build Status](https://travis-ci.org/ShisatoYano/JuliaAutonomy.svg?branch=main)](https://travis-ci.org/ShisatoYano/JuliaAutonomy) [![Build status](https://ci.appveyor.com/api/projects/status/3u43w72pkinpuc48?svg=true)](https://ci.appveyor.com/project/ShisatoYano/juliaautonomy) ![Linux_CI](https://github.com/ShisatoYano/JuliaAutonomy/workflows/Linux_CI/badge.svg) [![codecov](https://codecov.io/gh/ShisatoYano/JuliaAutonomy/branch/main/graph/badge.svg?token=7UQN0H01OW)](https://codecov.io/gh/ShisatoYano/JuliaAutonomy)  
 Julia codes for Autonomy, Robotics and Self-Driving Algorithms.  
 
 # Table of Contents
