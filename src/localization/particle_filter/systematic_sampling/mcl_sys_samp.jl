@@ -58,7 +58,7 @@ function observation_update(self::MclSysSamp, observation)
     observation_update(p, observation, self.map, self.dist_dev, self.dir_dev)
   end
   set_max_likelihood_pose(self)
-  @time resampling(self)
+  resampling(self)
 end
 
 function systematic_sample(particles, weights, sample_num)
