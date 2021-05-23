@@ -1,0 +1,42 @@
+name: Windows_CI
+
+
+
+on: [push, pull_request]
+
+
+
+jobs:
+
+  test:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+
+      matrix:
+
+        julia-version: ['1.6']
+
+        os: [windows-latest]
+
+    
+
+    steps:
+
+      - uses: actions/checkout@v1.0.0
+
+      - name: "Set up Julia"
+        uses: julia-actions/setup-julia@v1
+        with:
+          version: ${{ matrix.julia-version }}
+
+      - name: "Install packages"
+        run: julia -e 'ENV["CONDA_JL_VERSION"]=3;include("setup.jl");Setup.install_packages()'
+      
+      - name: "Install matplotlib"
+        run: julia -e 'ENV["PYTHON"]=""; using Pkg; Pkg.add("Conda"); Pkg.update(); Pkg.build("PyCall"); using PyPlot'
+        shell: bash
+
+      - name: "Run test suite"
+        run: julia test/runtests.jl
