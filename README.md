@@ -52,6 +52,7 @@ julia> AnimeMclRandSamp.main()
 * NamedArrays
 * Distributions
 * LinearAlgebra
+* StatsBase
 
 # Sample codes
 ## Localization
@@ -59,6 +60,10 @@ julia> AnimeMclRandSamp.main()
 Monte Carlo Localization by Particle Filter  
 considering Random Sampling  
 ![](src/localization/particle_filter/random_sampling/anime_mcl_rand_samp.gif)  
+
+### Kalman Filter
+Localization by Extended Kalman Filter  
+![](src/localization/extended_kalman_filter/anime_ekf.gif)
 
 # License
 MIT  
