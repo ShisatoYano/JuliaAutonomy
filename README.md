@@ -9,6 +9,7 @@ Julia codes for Autonomy, Robotics and Self-Driving Algorithms.
 * [Sample codes](#sample-codes)  
     * [Localization](#localization)  
         * [Particle Filter](#particle-filter)  
+        * [Kalman Filter](#kalman-filter)
 * [License](#license)  
 * [Contribution](#contribution)  
 * [Author](#author)
