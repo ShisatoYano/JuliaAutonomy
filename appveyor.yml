@@ -26,8 +26,7 @@ install:
   - ps: iex ((new-object net.webclient).DownloadString("https://raw.githubusercontent.com/JuliaCI/Appveyor.jl/version-1/bin/install.ps1"))
 
 build_script:
-  - set CONDA_JL_VERSION=3
-  - C:\julia\bin\julia -e "using Pkg; Pkg.add([`"PyCall`", `"PyPlot`"])"
+  - C:\julia\bin\julia -e "ENV[`"CONDA_JL_VERSION`"]=3; using Pkg; Pkg.add(`"PyCall`"); Pkg.add(`"PyPlot`")"
   - C:\julia\bin\julia -e "using Pkg; Pkg.add(["Plots", "DataFrames", "CSV"])"
   - C:\julia\bin\julia -e "using Pkg; Pkg.add(["Test", "StatsPlots", "Statistics"])"
   - C:\julia\bin\julia -e "using Pkg; Pkg.add(["FreqTables", "NamedArrays", "Distributions"])"
