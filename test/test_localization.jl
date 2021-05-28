@@ -8,6 +8,7 @@ module TestLocalization
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/random_sampling/anime_mcl_rand_samp.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/systematic_sampling/anime_mcl_sys_samp.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/kld_sampling/particle_num_kld.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/kld_sampling/particle_num_wh.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/parameter_adjustment/motion_test_forward/motion_test_forward.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/parameter_adjustment/motion_test_forward_bias/motion_test_forward_bias.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/parameter_adjustment/motion_test_rot_bias/motion_test_rot_bias.jl"))
@@ -32,6 +33,11 @@ module TestLocalization
       @testset "KldSampling" begin
         @testset "ParticleNumKld" begin
           @test_nowarn ParticleNumKld.main(true)
+        end
+        @testset "ParticleNumWh" begin
+          @test ParticleNumWh.num(0.1, 0.01, 2) == 34.0
+          @test ParticleNumWh.num_wh(0.1, 0.01, 2) == 33.0
+          @test_nowarn ParticleNumWh.main()
         end
       end
       @testset "ParameterAdjustment" begin
