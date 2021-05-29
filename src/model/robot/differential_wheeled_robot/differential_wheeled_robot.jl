@@ -7,6 +7,7 @@ pyplot()
 include(joinpath(split(@__FILE__, "src")[1], "src/model/agent/agent.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/sensor/sensor.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/common/error_calculation/error_calculation.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/common/state_transition/state_transition.jl"))
 
 mutable struct DifferentialWheeledRobot
   pose
@@ -121,21 +122,6 @@ end
 function circle(x, y, r)
   theta = LinRange(0, 2*pi, 500)
   x .+ r * sin.(theta), y .+ r * cos.(theta)
-end
-
-function state_transition(speed, yaw_rate, time, pose)
-  theta = pose[3]
-
-  # yaw rate is almost zero or not
-  if abs(yaw_rate) < 1e-10
-    return pose + [speed*cos(theta)*time,
-                   speed*sin(theta)*time,
-                   yaw_rate*time]
-  else
-    return pose + [speed/yaw_rate*(sin(theta+yaw_rate*time)-sin(theta)),
-                   speed/yaw_rate*(-cos(theta+yaw_rate*time)+cos(theta)),
-                   yaw_rate*time]
-  end
 end
 
 function draw!(self::DifferentialWheeledRobot)

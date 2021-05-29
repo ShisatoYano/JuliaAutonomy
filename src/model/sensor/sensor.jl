@@ -4,6 +4,7 @@ using Plots, Random, Distributions
 pyplot()
 
 include(joinpath(split(@__FILE__, "src")[1], "src/model/map/map.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/common/observation_function/observation_function.jl"))
 
 mutable struct Sensor
   map
@@ -60,19 +61,6 @@ function visible(self::Sensor, obsrv=nothing)
 
   return ((self.dist_rng[1] <= obsrv[1] <= self.dist_rng[2])
     && (self.dir_rng[1] <= obsrv[2] <= self.dir_rng[2]))
-end
-
-function observation_function(sns_pose::Array, obj_pose::Array)
-  diff_x = obj_pose[1] - sns_pose[1]
-  diff_y = obj_pose[2] - sns_pose[2]
-  phi = atan(diff_y, diff_x) - sns_pose[3]
-  while phi >= pi
-    phi -= 2 * pi
-  end
-  while phi < -pi
-    phi += 2 * pi
-  end
-  return [hypot(diff_x, diff_y), phi]
 end
 
 function noise(self::Sensor, obsrv::Array)
