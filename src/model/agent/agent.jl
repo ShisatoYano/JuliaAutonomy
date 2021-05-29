@@ -3,6 +3,7 @@
 
 include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/random_sampling/mcl_rand_samp.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/systematic_sampling/mcl_sys_samp.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/kld_sampling/kld_mcl.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/localization/extended_kalman_filter/extended_kalman_filter.jl"))
 
 mutable struct Agent
