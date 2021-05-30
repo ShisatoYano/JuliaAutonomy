@@ -6,7 +6,7 @@ include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/s
 include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/kld_sampling/kld_mcl.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/localization/extended_kalman_filter/extended_kalman_filter.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/localization/global_localization/global_kf.jl"))
-include(joinpath(split(@__FILE__, "src")[1], "src/localization/global_localization/global_mcl.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/localization/global_localization/global_kld_mcl.jl"))
 
 mutable struct Agent
     speed
