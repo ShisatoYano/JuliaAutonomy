@@ -63,6 +63,9 @@ Monte Carlo Localization by Particle Filter
 considering Random Sampling  
 ![](src/localization/particle_filter/random_sampling/anime_mcl_rand_samp.gif)  
 
+KLD(Kullback-Leibler Divergance) Sampling  
+![](src/localization/particle_filter/kld_sampling/anime_kld_mcl.gif)  
+
 ### Kalman Filter
 Localization by Extended Kalman Filter  
 ![](src/localization/extended_kalman_filter/anime_ekf.gif)
