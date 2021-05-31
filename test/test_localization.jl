@@ -18,6 +18,7 @@ module TestLocalization
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/global_localization/test_global_kf.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/global_localization/test_global_mcl.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/global_localization/test_global_kld_mcl.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/localization/reset_process/anime_reset_mcl.jl"))
 
   function main()
     @testset "ParticleFilter" begin
@@ -76,6 +77,11 @@ module TestLocalization
       end
       @testset "GlobalKldMcl" begin
         @test_nowarn TestGlobalKldMcl.main(5)
+      end
+    end
+    @testset "ResetProcess" begin
+      @testset "ResetMcl" begin
+        @test_nowarn AnimeResetMcl.main(is_test=true)
       end
     end
   end
