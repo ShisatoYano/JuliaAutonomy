@@ -64,6 +64,20 @@ function random_reset(self::ResetMcl)
   end
 end
 
+function sensor_reset_draw(self::ResetMcl, p::Particle, obj_pose::Array, obs_data::Array)
+  
+end
+
+function sensor_reset(self::ResetMcl, observation)
+  nearest_idx = argmin([obs[1][1] for obs in observation])
+  data = observation[nearest_idx][1]
+  id = observation[nearest_idx][2]
+
+  for p in self.particles
+    sensor_reset_draw(self, p, self.map.objects[id].pose, data)
+  end
+end
+
 function observation_update(self::ResetMcl, observation)
   for p in self.particles
     observation_update(p, observation, self.map, self.dist_dev, self.dir_dev)
@@ -72,7 +86,8 @@ function observation_update(self::ResetMcl, observation)
   set_max_likelihood_pose(self)
 
   if sum([p.weight for p in self.particles]) < self.alpha_threshold
-    random_reset(self)
+    # random_reset(self)
+    sensor_reset(self, observation)
   else
     resampling(self)  
   end
