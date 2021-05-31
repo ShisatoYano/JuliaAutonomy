@@ -15,6 +15,9 @@ module TestLocalization
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/parameter_adjustment/motion_test_rot_bias/motion_test_rot_bias.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/parameter_adjustment/sensor_test_static/sensor_test_static.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/extended_kalman_filter/anime_ekf.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/localization/global_localization/test_global_kf.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/localization/global_localization/test_global_mcl.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/localization/global_localization/test_global_kld_mcl.jl"))
 
   function main()
     @testset "ParticleFilter" begin
@@ -62,6 +65,17 @@ module TestLocalization
     @testset "KalmanFilter" begin
       @testset "ExtendedKalmanFilter" begin
         @test_nowarn AnimeEkf.main(is_test=true)  
+      end
+    end
+    @testset "GlobalLocalization" begin
+      @testset "GlobalKf" begin
+        @test_nowarn TestGlobalKf.main(5)
+      end
+      @testset "GlobalMcl" begin
+        @test_nowarn TestGlobalMcl.main(5)
+      end
+      @testset "GlobalKldMcl" begin
+        @test_nowarn TestGlobalKldMcl.main(5)
       end
     end
   end

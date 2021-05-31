@@ -4,6 +4,7 @@
 module AnimeKldMcl
   include(joinpath(split(@__FILE__, "src")[1], "src/model/world/world.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/robot/differential_wheeled_robot/differential_wheeled_robot.jl"))
+  include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/kld_sampling/kld_mcl.jl"))
 
   function animate_per_time(time_interval, world, map, robot)
     draw(world)
