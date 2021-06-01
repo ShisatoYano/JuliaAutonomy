@@ -65,7 +65,20 @@ function random_reset(self::ResetMcl)
 end
 
 function sensor_reset_draw(self::ResetMcl, p::Particle, obj_pose::Array, obs_data::Array)
-  
+  # distance and direction from nearest observation
+  dir_from_obs = rand(Uniform(-pi, pi))
+  dist_from_obs = rand(Normal(obs_data[1], (obs_data[1]*self.dist_dev)^2))
+
+  # particle's position
+  p.pose[1] = obj_pose[1] + dist_from_obs * cos(dir_from_obs)
+  p.pose[2] = obj_pose[2] + dist_from_obs * sin(dir_from_obs)
+
+  # particle's direction
+  dir_to_obs = rand(Normal(obs_data[2], self.dir_dev^2))
+  p.pose[3] = atan(obj_pose[2]-p.pose[2], obj_pose[1]-p.pose[1]) - dir_to_obs
+
+  # normalize weight
+  p.weight = 1.0 / length(self.particles)
 end
 
 function sensor_reset(self::ResetMcl, observation)
