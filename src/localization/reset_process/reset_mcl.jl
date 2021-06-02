@@ -125,14 +125,14 @@ function observation_update(self::ResetMcl, observation)
 
   set_max_likelihood_pose(self)
 
-  adaptive_reset(self, observation)
+  # adaptive_reset(self, observation)
 
-  # if sum([p.weight for p in self.particles]) < self.alpha_threshold
-  #   # random_reset(self)
-  #   sensor_reset(self, observation)
-  # else
-  #   resampling(self)  
-  # end
+  if sum([p.weight for p in self.particles]) < self.alpha_threshold
+    # random_reset(self)
+    sensor_reset(self, observation)
+  else
+    resampling(self)  
+  end
 end
 
 function resampling(self::ResetMcl)
