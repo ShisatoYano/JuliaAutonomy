@@ -21,12 +21,16 @@ mutable struct ResetMcl
   max_likelihood_particle
   estimated_pose
   alpha_threshold
+  amcl_params
+  slow_term_alpha
+  fast_term_alpha
 
   # init
   function ResetMcl(init_pose::Array, num::Int64;
                     motion_noise_stds::Dict=Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20),
                     env_map=nothing, dist_dev_rate=0.14, dir_dev=0.05,
-                    alpha_threshold=0.001)
+                    alpha_threshold=0.001,
+                    amcl_params::Dict=Dict("slow"=>0.001, "fast"=>0.1, "nu"=>3.0))
     self = new()
     self.particles = [Particle(init_pose, 1.0/num) for i in 1:num]
     self.map = env_map
@@ -40,6 +44,9 @@ mutable struct ResetMcl
     self.motion_noise_rate_pdf = MvNormal(c)
 
     self.alpha_threshold = alpha_threshold
+    self.amcl_params = amcl_params
+    self.slow_term_alpha = 1.0
+    self.fast_term_alpha = 1.0
 
     return self
   end
@@ -91,6 +98,26 @@ function sensor_reset(self::ResetMcl, observation)
   end
 end
 
+function adaptive_reset(self::ResetMcl, observation)
+  if length(observation) > 0
+    # decide how many particles are reset
+    alpha = sum([p.weight for p in self.particles])
+    self.slow_term_alpha += self.amcl_params["slow"] * (alpha - self.slow_term_alpha)
+    self.fast_term_alpha += self.amcl_params["fast"] * (alpha - self.fast_term_alpha)
+    reset_num = length(self.particles) * maximum([0, (1.0 - self.amcl_params["nu"]*self.fast_term_alpha/self.slow_term_alpha)])
+
+    resampling(self)
+
+    nearest_idx = argmin([obs[1][1] for obs in observation])
+    data = observation[nearest_idx][1]
+    id = observation[nearest_idx][2]
+    for i in 1:reset_num
+      p = sample(self.particles)
+      sensor_reset_draw(self, p, self.map.objects[id].pose, data)
+    end
+  end
+end
+
 function observation_update(self::ResetMcl, observation)
   for p in self.particles
     observation_update(p, observation, self.map, self.dist_dev, self.dir_dev)
@@ -98,12 +125,14 @@ function observation_update(self::ResetMcl, observation)
 
   set_max_likelihood_pose(self)
 
-  if sum([p.weight for p in self.particles]) < self.alpha_threshold
-    # random_reset(self)
-    sensor_reset(self, observation)
-  else
-    resampling(self)  
-  end
+  adaptive_reset(self, observation)
+
+  # if sum([p.weight for p in self.particles]) < self.alpha_threshold
+  #   # random_reset(self)
+  #   sensor_reset(self, observation)
+  # else
+  #   resampling(self)  
+  # end
 end
 
 function resampling(self::ResetMcl)

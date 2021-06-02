@@ -22,7 +22,8 @@ module AnimeResetMcl
     add_object(m, Object(3.0, 3.0, id=3))
 
     s = Sensor(m, dist_noise_rate=0.1, dir_noise=pi/90,
-               dist_bias_rate_stddev=0.1, dir_bias_stddev=pi/90)
+               dist_bias_rate_stddev=0.1, dir_bias_stddev=pi/90,
+               phantom_prob=0.1)
     
     init_pose = [0.0, 0.0, 0.0]
     e = ResetMcl(init_pose, 100, env_map=m)
