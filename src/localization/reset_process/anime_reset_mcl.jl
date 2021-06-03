@@ -34,6 +34,8 @@ module AnimeResetMcl
                                  noise_std=pi/30,
                                  bias_rate_stds=[0.1, 0.1],
                                  exp_kidnap_time=10.0,
+                                 kidnap_rx=[-4.0, 4.0], 
+                                 kidnap_ry=[-4.0, 4.0],
                                  sensor=s)
     
     if is_test == false

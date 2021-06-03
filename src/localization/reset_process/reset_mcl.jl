@@ -24,6 +24,7 @@ mutable struct ResetMcl
   amcl_params
   slow_term_alpha
   fast_term_alpha
+  reset_num
 
   # init
   function ResetMcl(init_pose::Array, num::Int64;
@@ -47,6 +48,7 @@ mutable struct ResetMcl
     self.amcl_params = amcl_params
     self.slow_term_alpha = 1.0
     self.fast_term_alpha = 1.0
+    self.reset_num = 0
 
     return self
   end
@@ -105,15 +107,20 @@ function adaptive_reset(self::ResetMcl, observation)
     self.slow_term_alpha += self.amcl_params["slow"] * (alpha - self.slow_term_alpha)
     self.fast_term_alpha += self.amcl_params["fast"] * (alpha - self.fast_term_alpha)
     reset_num = length(self.particles) * maximum([0, (1.0 - self.amcl_params["nu"]*self.fast_term_alpha/self.slow_term_alpha)])
-
+    
     resampling(self)
 
     nearest_idx = argmin([obs[1][1] for obs in observation])
     data = observation[nearest_idx][1]
     id = observation[nearest_idx][2]
-    for i in 1:reset_num
-      p = sample(self.particles)
-      sensor_reset_draw(self, p, self.map.objects[id].pose, data)
+    reset_particles = sample(self.particles, Int64(floor(reset_num)))
+    if length(reset_particles) > 0
+      self.reset_num = length(reset_particles)
+      for p in reset_particles
+        sensor_reset_draw(self, p, self.map.objects[id].pose, data)
+      end
+    else
+      self.reset_num = 0
     end
   end
 end
@@ -125,14 +132,16 @@ function observation_update(self::ResetMcl, observation)
 
   set_max_likelihood_pose(self)
 
-  # adaptive_reset(self, observation)
+  adaptive_reset(self, observation)
 
-  if sum([p.weight for p in self.particles]) < self.alpha_threshold
-    # random_reset(self)
-    sensor_reset(self, observation)
-  else
-    resampling(self)  
-  end
+  # if sum([p.weight for p in self.particles]) < self.alpha_threshold
+  #   # random_reset(self)
+  #   sensor_reset(self, observation)
+  #   self.reset_num = length(self.particles)
+  # else
+  #   resampling(self)
+  #   self.reset_num = 0  
+  # end
 end
 
 function resampling(self::ResetMcl)
@@ -159,4 +168,5 @@ function draw!(self::ResetMcl)
   mvx = [cos(self.estimated_pose[3])*k]
   mvy = [sin(self.estimated_pose[3])*k]
   quiver!(mx, my, quiver=(mvx, mvy), aspect_ratio=true, color="red")
+  annotate!(-4.5, -4.5, text("Reset Num:$(self.reset_num)", :left, :black))
 end
