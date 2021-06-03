@@ -25,13 +25,15 @@ mutable struct ResetMcl
   slow_term_alpha
   fast_term_alpha
   reset_num
+  expansion_rate
 
   # init
   function ResetMcl(init_pose::Array, num::Int64;
                     motion_noise_stds::Dict=Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20),
                     env_map=nothing, dist_dev_rate=0.14, dir_dev=0.05,
                     alpha_threshold=0.001,
-                    amcl_params::Dict=Dict("slow"=>0.001, "fast"=>0.1, "nu"=>3.0))
+                    amcl_params::Dict=Dict("slow"=>0.001, "fast"=>0.1, "nu"=>3.0),
+                    expansion_rate=0.2)
     self = new()
     self.particles = [Particle(init_pose, 1.0/num) for i in 1:num]
     self.map = env_map
@@ -49,6 +51,7 @@ mutable struct ResetMcl
     self.slow_term_alpha = 1.0
     self.fast_term_alpha = 1.0
     self.reset_num = 0
+    self.expansion_rate = expansion_rate
 
     return self
   end
@@ -125,6 +128,14 @@ function adaptive_reset(self::ResetMcl, observation)
   end
 end
 
+function expansion_reset(self::ResetMcl)
+  for p in self.particles
+    p.pose += rand(MvNormal(Matrix{Int64}(I,3,3).*(self.expansion_rate^2)))
+    p.weight = 1.0/length(self.particles)
+  end
+  
+end
+
 function observation_update(self::ResetMcl, observation)
   for p in self.particles
     observation_update(p, observation, self.map, self.dist_dev, self.dir_dev)
@@ -132,16 +143,17 @@ function observation_update(self::ResetMcl, observation)
 
   set_max_likelihood_pose(self)
 
-  adaptive_reset(self, observation)
+  # adaptive_reset(self, observation)
 
-  # if sum([p.weight for p in self.particles]) < self.alpha_threshold
-  #   # random_reset(self)
-  #   sensor_reset(self, observation)
-  #   self.reset_num = length(self.particles)
-  # else
-  #   resampling(self)
-  #   self.reset_num = 0  
-  # end
+  if sum([p.weight for p in self.particles]) < self.alpha_threshold
+    # random_reset(self)
+    # sensor_reset(self, observation)
+    expansion_reset(self)
+    self.reset_num = length(self.particles)
+  else
+    resampling(self)
+    self.reset_num = 0  
+  end
 end
 
 function resampling(self::ResetMcl)
