@@ -2,13 +2,14 @@
 # based on particle filter
 # particles are resampled by random sampling
 # considering false estimation by reset process
+# sensor reset
 
 using Distributions, LinearAlgebra, StatsBase
 
 include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/particle/particle.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/map/map.jl"))
 
-mutable struct RandomResetMcl
+mutable struct SensorResetMcl
   particles
   motion_noise_rate_pdf
   map
@@ -19,7 +20,7 @@ mutable struct RandomResetMcl
   alpha_threshold
 
   # init
-  function RandomResetMcl(init_pose::Array, num::Int64;
+  function SensorResetMcl(init_pose::Array, num::Int64;
                           motion_noise_stds::Dict=Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20),
                           env_map=nothing, dist_dev_rate=0.14, dir_dev=0.05,
                           alpha_threshold=0.001)
@@ -41,26 +42,46 @@ mutable struct RandomResetMcl
   end
 end
 
-function motion_update(self::RandomResetMcl, speed, yaw_rate, time_interval)
+function motion_update(self::SensorResetMcl, speed, yaw_rate, time_interval)
   for p in self.particles
     motion_update(p, speed, yaw_rate, time_interval, self.motion_noise_rate_pdf)
   end
 end
 
-function set_max_likelihood_pose(self::RandomResetMcl)
+function set_max_likelihood_pose(self::SensorResetMcl)
   max_index = argmax([p.weight for p in self.particles])
   self.max_likelihood_particle = self.particles[max_index]
   self.estimated_pose = self.max_likelihood_particle.pose
 end
 
-function random_reset(self::RandomResetMcl)
+function sensor_reset_draw(self::SensorResetMcl, p::Particle, obj_pose::Array, obs_data::Array)
+  # distance and direction from nearest observation
+  dir_from_obs = rand(Uniform(-pi, pi))
+  dist_from_obs = rand(Normal(obs_data[1], (obs_data[1]*self.dist_dev)^2))
+
+  # particle's position
+  p.pose[1] = obj_pose[1] + dist_from_obs * cos(dir_from_obs)
+  p.pose[2] = obj_pose[2] + dist_from_obs * sin(dir_from_obs)
+
+  # particle's direction
+  dir_to_obs = rand(Normal(obs_data[2], self.dir_dev^2))
+  p.pose[3] = atan(obj_pose[2]-p.pose[2], obj_pose[1]-p.pose[1]) - dir_to_obs
+
+  # normalize weight
+  p.weight = 1.0 / length(self.particles)
+end
+
+function sensor_reset(self::SensorResetMcl, observation)
+  nearest_idx = argmin([obs[1][1] for obs in observation])
+  data = observation[nearest_idx][1]
+  id = observation[nearest_idx][2]
+
   for p in self.particles
-    p.pose = [rand(Uniform(-5.0, 5.0)), rand(Uniform(-5.0, 5.0)), rand(Uniform(-pi, pi))]
-    p.weight = 1.0/length(self.particles)
+    sensor_reset_draw(self, p, self.map.objects[id].pose, data)
   end
 end
 
-function observation_update(self::RandomResetMcl, observation)
+function observation_update(self::SensorResetMcl, observation)
   for p in self.particles
     observation_update(p, observation, self.map, self.dist_dev, self.dir_dev)
   end
@@ -68,13 +89,13 @@ function observation_update(self::RandomResetMcl, observation)
   set_max_likelihood_pose(self)
 
   if sum([p.weight for p in self.particles]) < self.alpha_threshold
-    random_reset(self)
+    sensor_reset(self, observation)
   else
     resampling(self)  
   end
 end
 
-function resampling(self::RandomResetMcl)
+function resampling(self::SensorResetMcl)
   ws = [(if p.weight <= 0.0 1e-100 else p.weight end) for p in self.particles]
   
   ps = sample(self.particles, Weights(ws), length(self.particles))
@@ -84,7 +105,7 @@ function resampling(self::RandomResetMcl)
   end
 end
 
-function draw!(self::RandomResetMcl)
+function draw!(self::SensorResetMcl)
   k = 0.5 # scale for length of arrows
   # all of particles
   px = [p.pose[1] for p in self.particles]
