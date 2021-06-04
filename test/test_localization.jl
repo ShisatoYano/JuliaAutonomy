@@ -22,6 +22,7 @@ module TestLocalization
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/reset_process/sensor_reset_mcl/anime_sensor_reset_mcl.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/reset_process/adaptive_reset_mcl/anime_adaptive_reset_mcl.jl"))  
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/reset_process/expansion_reset_mcl/anime_expansion_reset_mcl.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/localization/reset_process/expansion_sensor_reset_mcl/anime_expansion_sensor_reset_mcl.jl"))
 
   function main()
     @testset "ParticleFilter" begin
@@ -94,6 +95,9 @@ module TestLocalization
       end
       @testset "ExpansionResetMcl" begin
         @test_nowarn AnimeExpansionResetMcl.main(is_test=true)
+      end
+      @testset "ExpansionSensorResetMcl" begin
+        @test_nowarn AnimeExpansionSensorResetMcl.main(is_test=true)
       end
     end
   end

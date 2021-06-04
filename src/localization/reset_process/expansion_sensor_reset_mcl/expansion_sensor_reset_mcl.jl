@@ -1,18 +1,15 @@
 # module for estimating pose by monte carlo localization
 # based on particle filter
 # particles are resampled by random sampling
-# parameter nn: range std on straight movement
-# parameter no: range std on rotation movement
-# parameter on: direction std on straight movement
-# parameter oo: direction std on rotation movement
 # considering false estimation by reset process
+# expansion reset + sensor reset
 
 using Distributions, LinearAlgebra, StatsBase
 
 include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/particle/particle.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/map/map.jl"))
 
-mutable struct ResetMcl
+mutable struct ExpansionSensorResetMcl
   particles
   motion_noise_rate_pdf
   map
@@ -21,19 +18,14 @@ mutable struct ResetMcl
   max_likelihood_particle
   estimated_pose
   alpha_threshold
-  amcl_params
-  slow_term_alpha
-  fast_term_alpha
-  reset_num
   expansion_rate
+  reset_count
 
   # init
-  function ResetMcl(init_pose::Array, num::Int64;
-                    motion_noise_stds::Dict=Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20),
-                    env_map=nothing, dist_dev_rate=0.14, dir_dev=0.05,
-                    alpha_threshold=0.001,
-                    amcl_params::Dict=Dict("slow"=>0.001, "fast"=>0.1, "nu"=>3.0),
-                    expansion_rate=0.2)
+  function ExpansionSensorResetMcl(init_pose::Array, num::Int64;
+                                   motion_noise_stds::Dict=Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20),
+                                   env_map=nothing, dist_dev_rate=0.14, dir_dev=0.05,
+                                   alpha_threshold=0.001, expansion_rate=0.2)
     self = new()
     self.particles = [Particle(init_pose, 1.0/num) for i in 1:num]
     self.map = env_map
@@ -47,36 +39,26 @@ mutable struct ResetMcl
     self.motion_noise_rate_pdf = MvNormal(c)
 
     self.alpha_threshold = alpha_threshold
-    self.amcl_params = amcl_params
-    self.slow_term_alpha = 1.0
-    self.fast_term_alpha = 1.0
-    self.reset_num = 0
     self.expansion_rate = expansion_rate
+    self.reset_count = 0
 
     return self
   end
 end
 
-function motion_update(self::ResetMcl, speed, yaw_rate, time_interval)
+function motion_update(self::ExpansionSensorResetMcl, speed, yaw_rate, time_interval)
   for p in self.particles
     motion_update(p, speed, yaw_rate, time_interval, self.motion_noise_rate_pdf)
   end
 end
 
-function set_max_likelihood_pose(self::ResetMcl)
+function set_max_likelihood_pose(self::ExpansionSensorResetMcl)
   max_index = argmax([p.weight for p in self.particles])
   self.max_likelihood_particle = self.particles[max_index]
   self.estimated_pose = self.max_likelihood_particle.pose
 end
 
-function random_reset(self::ResetMcl)
-  for p in self.particles
-    p.pose = [rand(Uniform(-5.0, 5.0)), rand(Uniform(-5.0, 5.0)), rand(Uniform(-pi, pi))]
-    p.weight = 1.0/length(self.particles)
-  end
-end
-
-function sensor_reset_draw(self::ResetMcl, p::Particle, obj_pose::Array, obs_data::Array)
+function sensor_reset_draw(self::ExpansionSensorResetMcl, p::Particle, obj_pose::Array, obs_data::Array)
   # distance and direction from nearest observation
   dir_from_obs = rand(Uniform(-pi, pi))
   dist_from_obs = rand(Normal(obs_data[1], (obs_data[1]*self.dist_dev)^2))
@@ -93,7 +75,7 @@ function sensor_reset_draw(self::ResetMcl, p::Particle, obj_pose::Array, obs_dat
   p.weight = 1.0 / length(self.particles)
 end
 
-function sensor_reset(self::ResetMcl, observation)
+function sensor_reset(self::ExpansionSensorResetMcl, observation)
   nearest_idx = argmin([obs[1][1] for obs in observation])
   data = observation[nearest_idx][1]
   id = observation[nearest_idx][2]
@@ -103,32 +85,7 @@ function sensor_reset(self::ResetMcl, observation)
   end
 end
 
-function adaptive_reset(self::ResetMcl, observation)
-  if length(observation) > 0
-    # decide how many particles are reset
-    alpha = sum([p.weight for p in self.particles])
-    self.slow_term_alpha += self.amcl_params["slow"] * (alpha - self.slow_term_alpha)
-    self.fast_term_alpha += self.amcl_params["fast"] * (alpha - self.fast_term_alpha)
-    reset_num = length(self.particles) * maximum([0, (1.0 - self.amcl_params["nu"]*self.fast_term_alpha/self.slow_term_alpha)])
-    
-    resampling(self)
-
-    nearest_idx = argmin([obs[1][1] for obs in observation])
-    data = observation[nearest_idx][1]
-    id = observation[nearest_idx][2]
-    reset_particles = sample(self.particles, Int64(floor(reset_num)))
-    if length(reset_particles) > 0
-      self.reset_num = length(reset_particles)
-      for p in reset_particles
-        sensor_reset_draw(self, p, self.map.objects[id].pose, data)
-      end
-    else
-      self.reset_num = 0
-    end
-  end
-end
-
-function expansion_reset(self::ResetMcl)
+function expansion_reset(self::ExpansionSensorResetMcl)
   for p in self.particles
     p.pose += rand(MvNormal(Matrix{Int64}(I,3,3).*(self.expansion_rate^2)))
     p.weight = 1.0/length(self.particles)
@@ -136,27 +93,26 @@ function expansion_reset(self::ResetMcl)
   
 end
 
-function observation_update(self::ResetMcl, observation)
+function observation_update(self::ExpansionSensorResetMcl, observation)
   for p in self.particles
     observation_update(p, observation, self.map, self.dist_dev, self.dir_dev)
   end
 
   set_max_likelihood_pose(self)
 
-  # adaptive_reset(self, observation)
-
   if sum([p.weight for p in self.particles]) < self.alpha_threshold
-    # random_reset(self)
-    # sensor_reset(self, observation)
-    expansion_reset(self)
-    self.reset_num = length(self.particles)
+    self.reset_count += 1
+    if self.reset_count < 5
+      expansion_reset(self)
+    else
+      sensor_reset(self, observation)
+    end
   else
-    resampling(self)
-    self.reset_num = 0  
+    resampling(self)  
   end
 end
 
-function resampling(self::ResetMcl)
+function resampling(self::ExpansionSensorResetMcl)
   ws = [(if p.weight <= 0.0 1e-100 else p.weight end) for p in self.particles]
   
   ps = sample(self.particles, Weights(ws), length(self.particles))
@@ -166,7 +122,7 @@ function resampling(self::ResetMcl)
   end
 end
 
-function draw!(self::ResetMcl)
+function draw!(self::ExpansionSensorResetMcl)
   k = 0.5 # scale for length of arrows
   # all of particles
   px = [p.pose[1] for p in self.particles]
@@ -180,5 +136,4 @@ function draw!(self::ResetMcl)
   mvx = [cos(self.estimated_pose[3])*k]
   mvy = [sin(self.estimated_pose[3])*k]
   quiver!(mx, my, quiver=(mvx, mvy), aspect_ratio=true, color="red")
-  annotate!(-4.5, -4.5, text("Reset Num:$(self.reset_num)", :left, :black))
 end
