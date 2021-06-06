@@ -108,7 +108,8 @@ function observation_update(self::ExpansionSensorResetMcl, observation)
       sensor_reset(self, observation)
     end
   else
-    resampling(self)  
+    resampling(self)
+    self.reset_count = 0
   end
 end
 

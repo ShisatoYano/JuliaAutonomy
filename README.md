@@ -68,7 +68,14 @@ KLD(Kullback-Leibler Divergance) Sampling
 
 ### Kalman Filter
 Localization by Extended Kalman Filter  
-![](src/localization/extended_kalman_filter/anime_ekf.gif)
+![](src/localization/extended_kalman_filter/anime_ekf.gif)  
+
+### Reset Process
+Adaptive reset MCL for kidnapped robot problem  
+![](src/localization/reset_process/adaptive_reset_mcl/anime_adaptive_reset_mcl.gif)  
+
+Expansion + Sensor reset MCL for kidnapped robot problem  
+![](src/localization/reset_process/expansion_sensor_reset_mcl/anime_expansion_sensor_reset_mcl.gif)  
 
 # License
 MIT  

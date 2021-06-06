@@ -14,6 +14,8 @@ module TestLocalization
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/parameter_adjustment/motion_test_forward_bias/motion_test_forward_bias.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/parameter_adjustment/motion_test_rot_bias/motion_test_rot_bias.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/parameter_adjustment/sensor_test_static/sensor_test_static.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/occlusion_free_mcl/occlusion_free_particle.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/localization/particle_filter/occlusion_free_mcl/anime_occlusion_free_mcl.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/extended_kalman_filter/anime_ekf.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/global_localization/test_global_kf.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/localization/global_localization/test_global_mcl.jl"))
@@ -50,6 +52,18 @@ module TestLocalization
         end
         @testset "KldMcl" begin
           @test_nowarn AnimeKldMcl.main(is_test=true)
+        end
+        @testset "OcclusionFree" begin
+          @testset "OcclusionFreeParticle" begin
+            op = OcclusionFreeParticle([0.0, 0.0, 0.0], 0.0)
+            @test op.pose[1] == 0.0
+            @test op.pose[2] == 0.0
+            @test op.pose[3] == 0.0
+            @test op.weight == 0.0
+          end
+          @testset "OcclusionFreeMcl" begin
+            @test_nowarn AnimeOcclusionFreeMcl.main(is_test=true)
+          end
         end
       end
       @testset "ParameterAdjustment" begin
