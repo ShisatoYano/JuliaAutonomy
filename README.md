@@ -11,6 +11,7 @@ Julia codes for Autonomy, Robotics and Self-Driving Algorithms.
     * [Localization](#localization)  
         * [Particle Filter](#particle-filter)  
         * [Kalman Filter](#kalman-filter)
+        * [Reset Process](#reset-process)
 * [License](#license)  
 * [Contribution](#contribution)  
 * [Author](#author)
