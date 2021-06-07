@@ -29,14 +29,16 @@ function draw_covariance_ellipse!(pose, cov, n)
         aspect_ratio=true, alpha=0.5)
   
   # 3 sigma covariance, theta
-  pose_theta = pose[3]
-  theta_3_sigma = sqrt(cov[3, 3]) * n
-  xs = [pose_xy[1] + cos(pose_theta - theta_3_sigma),
-        pose_xy[1],
-        pose_xy[1] + cos(pose_theta + theta_3_sigma)]
-  ys = [pose_xy[2] + sin(pose_theta - theta_3_sigma),
-        pose_xy[2],
-        pose_xy[2] + sin(pose_theta + theta_3_sigma)]
-  plot!(xs, ys, color="blue", legend=false, 
-        aspect_ratio=true, alpha=0.5)
+  if size(pose) == (1, 3) && size(cov) == (3, 3) 
+    pose_theta = pose[3]
+    theta_3_sigma = sqrt(cov[3, 3]) * n
+    xs = [pose_xy[1] + cos(pose_theta - theta_3_sigma),
+          pose_xy[1],
+          pose_xy[1] + cos(pose_theta + theta_3_sigma)]
+    ys = [pose_xy[2] + sin(pose_theta - theta_3_sigma),
+          pose_xy[2],
+          pose_xy[2] + sin(pose_theta + theta_3_sigma)]
+    plot!(xs, ys, color="blue", legend=false, 
+          aspect_ratio=true, alpha=0.5)
+  end
 end
