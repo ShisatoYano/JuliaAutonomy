@@ -17,7 +17,7 @@ mutable struct Map
     end
 end
 
-function add_object(self::Map, object::Object)
+function add_object(self::Map, object)
     push!(self.objects, object)
 end
 

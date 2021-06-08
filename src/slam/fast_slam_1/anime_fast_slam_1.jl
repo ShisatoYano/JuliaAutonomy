@@ -1,10 +1,10 @@
-# module for playing monte carlo localization by particle filter
+# module for playing mapping and localization by fast slam 1.0
 # particles are resampled by random sampling
 
-module AnimeMclRandSamp
+module AnimeFastSlam1
   include(joinpath(split(@__FILE__, "src")[1], "src/model/world/world.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/robot/differential_wheeled_robot/differential_wheeled_robot.jl"))
-  include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/random_sampling/mcl_rand_samp.jl"))
+  include(joinpath(split(@__FILE__, "src")[1], "src/slam/fast_slam_1/fast_slam_1.jl"))
 
   function animate_per_time(time_interval, world, map, robot)
     draw(world)
@@ -20,17 +20,15 @@ module AnimeMclRandSamp
     add_object(m, Object(-4.0, 2.0, id=1))
     add_object(m, Object(2.0, -3.0, id=2))
     add_object(m, Object(3.0, 3.0, id=3))
-    add_object(m, Object(4.0, 0.0, id=4))
-    add_object(m, Object(-2.0, 4.0, id=5))
-    add_object(m, Object(-3.0, -3.0, id=6))
+    # add_object(m, Object(4.0, 0.0, id=4))
+    # add_object(m, Object(-2.0, 4.0, id=5))
+    # add_object(m, Object(-3.0, -3.0, id=6))
 
     s = Sensor(m, dist_noise_rate=0.1, dir_noise=pi/90,
                dist_bias_rate_stddev=0.1, dir_bias_stddev=pi/90)
     
     init_pose = [0.0, 0.0, 0.0]
-    noises = Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20)
-    e = MclRandSamp(init_pose, 100, noises, env_map=m, 
-                    dist_dev_rate=0.14, dir_dev=0.05)
+    e = FastSlam1(init_pose, objects_num=length(m.objects), env_map=m)
     circling = Agent(0.2, 10.0/180*pi, estimator=e)
     r = DifferentialWheeledRobot(init_pose, 0.2, "black",
                                  circling, time_interval,
@@ -43,7 +41,7 @@ module AnimeMclRandSamp
       anime = @animate for t in 0:time_interval:30
         animate_per_time(t, w, m, r)
       end
-      path = "src/localization/particle_filter/random_sampling/anime_mcl_rand_samp.gif"
+      path = "src/slam/fast_slam_1/anime_fast_slam_1.gif"
       gif(anime, fps=15, joinpath(split(@__FILE__, "src")[1], path))
     else
       for t in 0:time_interval:10

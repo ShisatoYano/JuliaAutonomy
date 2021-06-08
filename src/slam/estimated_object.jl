@@ -36,6 +36,6 @@ function draw!(self::EstimatedObject)
       annotate!(self.pose[1], self.pose[2], 
                 text("id:$(self.id)", :black, :left, 10))
     end
-    draw_covariance_ellipse(self.pose, self.cov, 3)  
+    draw_covariance_ellipse!(self.pose, self.cov, 3)  
   end
 end

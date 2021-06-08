@@ -13,7 +13,7 @@ mutable struct FastSlam1
   dist_dev
   dir_dev
   max_likelihood_particle
-  estimate_pose
+  estimated_pose
 
   function FastSlam1(init_pose; particle_num=100, objects_num=0,
                      motion_noise_stds=Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20),
@@ -79,10 +79,9 @@ function draw!(self::FastSlam1)
   mvy = [sin(self.estimated_pose[3])*k]
   quiver!(mx, my, quiver=(mvx, mvy), aspect_ratio=true, color="red")
 
-  # estimated landmarks on each particle
-  for mp in self.particles
-    for elm in mp.map.objects
-      draw!(elm)
-    end
+  # estimated landmarks on map
+  # the max likelihood particle
+  for elm in self.max_likelihood_particle.map.objects
+    draw!(elm)
   end
 end
