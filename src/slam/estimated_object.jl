@@ -22,8 +22,7 @@ mutable struct EstimatedObject
     self.shape = shape
     self.color = color
     self.size = size
-    self.cov = [1 0;
-                0 2]
+    self.cov = cov
     return self
   end
 end

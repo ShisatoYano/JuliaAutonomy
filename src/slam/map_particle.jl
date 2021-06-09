@@ -22,7 +22,7 @@ mutable struct MapParticle
     self.object_num = object_num
     self.map = Map()
     for i in 1:object_num
-      add_object(self.map, EstimatedObject(0.0, 0.0))
+      add_object(self.map, EstimatedObject(0.0, 0.0, id=i))
     end
     return self
   end
@@ -36,19 +36,15 @@ function motion_update(self::MapParticle, speed, yaw_rate,
   self.pose = state_transition(noised_spd, noised_yr, time_interval, self.pose)
 end
 
-function observation_update(self::MapParticle, observation, env_map, 
+function observation_update(self::MapParticle, observation, 
                             dist_dev_rate, dir_dev)
   for obs in observation
     obs_pose = obs[1] # [distance, direction]
     obs_id = obs[2]
+    landmark = self.map.objects[obs_id]
 
-    # calculate distance and direction from particle pos to object
-    pos_on_map = env_map.objects[obs_id].pose
-    obs_from_particle = observation_function(self.pose, pos_on_map) # [distance, direction]
-
-    # calculate likelihood
-    dist_dev = dist_dev_rate * obs_from_particle[1]
-    cov = diagm(0 => [dist_dev^2, dir_dev^2])
-    self.weight *= pdf(MvNormal(obs_from_particle, cov), obs_pose)
+    if landmark.cov === nothing
+      # init landmark estimation
+    end
   end
 end
