@@ -36,6 +36,29 @@ function motion_update(self::MapParticle, speed, yaw_rate,
   self.pose = state_transition(noised_spd, noised_yr, time_interval, self.pose)
 end
 
+function mat_H(mu_pose, obj_pose)
+  obj_x, obj_y = obj_pose[1], obj_pose[2]
+  mu_x, mu_y = mu_pose[1], mu_pose[2]
+  mu_l = sqrt((mu_x - obj_x)^2 + (mu_y - obj_y)^2)
+  return [(obj_x - mu_x)/mu_l (obj_y - mu_y)/mu_l;
+          (mu_y - obj_y)/(mu_l^2) (obj_x - mu_x)/(mu_l^2)]
+end
+
+function mat_Q(dist_dev, dir_dev)
+  return [dist_dev^2 0.0;
+          0.0 dir_dev^2]
+end
+
+function init_landmark_estimation(self::MapParticle, landmark, obs_pose,
+                                  dist_dev_rate, dir_dev)
+  lx = obs_pose[1] * cos(self.pose[3] + obs_pose[2]) + self.pose[1]
+  ly = obs_pose[1] * sin(self.pose[3] + obs_pose[2]) + self.pose[2]
+  landmark.pose = [lx, ly]
+  H = mat_H(self.pose, landmark.pose)
+  Q = mat_Q(dist_dev_rate * obs_pose[1], dir_dev)
+  landmark.cov = inv(H' * inv(Q) * H)
+end
+
 function observation_update(self::MapParticle, observation, 
                             dist_dev_rate, dir_dev)
   for obs in observation
@@ -44,7 +67,8 @@ function observation_update(self::MapParticle, observation,
     landmark = self.map.objects[obs_id]
 
     if landmark.cov === nothing
-      # init landmark estimation
+      init_landmark_estimation(self, landmark, obs_pose, 
+                               dist_dev_rate, dir_dev)
     end
   end
 end
