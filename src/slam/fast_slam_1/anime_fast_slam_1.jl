@@ -20,9 +20,9 @@ module AnimeFastSlam1
     add_object(m, Object(-4.0, 2.0, id=1))
     add_object(m, Object(2.0, -3.0, id=2))
     add_object(m, Object(3.0, 3.0, id=3))
-    # add_object(m, Object(4.0, 0.0, id=4))
-    # add_object(m, Object(-2.0, 4.0, id=5))
-    # add_object(m, Object(-3.0, -3.0, id=6))
+    add_object(m, Object(4.0, 0.0, id=4))
+    add_object(m, Object(-2.0, 4.0, id=5))
+    add_object(m, Object(-3.0, -3.0, id=6))
 
     s = Sensor(m, dist_noise_rate=0.1, dir_noise=pi/90,
                dist_bias_rate_stddev=0.1, dir_bias_stddev=pi/90)

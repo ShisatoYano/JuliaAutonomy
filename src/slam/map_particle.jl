@@ -1,7 +1,7 @@
 # module for calculating particle motion
 # particle has a map data for slam
 
-using Distributions, LinearAlgebra
+using Distributions, LinearAlgebra, PDMats
 
 include(joinpath(split(@__FILE__, "src")[1], "src/common/state_transition/state_transition.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/common/observation_function/observation_function.jl"))
@@ -64,9 +64,16 @@ function observation_update_landmark(self::MapParticle, landmark, obs_pose,
   est_obs_pose = observation_function(self.pose, landmark.pose)
   # not calculate when distance is too close
   if est_obs_pose[1] > 0.01
+    # calculate kalman gain
     H = mat_H(self.pose, landmark.pose)
     Q = mat_Q(dist_dev_rate * est_obs_pose[1], dir_dev)
     K = landmark.cov * H' * inv(Q + H*landmark.cov*H')
+
+    # update weight
+    Q_obs = H * landmark.cov * H' + Q
+    self.weight *= pdf(MvNormal(est_obs_pose, Symmetric(Q_obs)), obs_pose)
+
+    # update landmark estimation
     landmark.pose += K * (obs_pose - est_obs_pose)
     landmark.cov = (Matrix{Float64}(I, 2, 2) - K*H) * landmark.cov
   end
