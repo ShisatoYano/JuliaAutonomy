@@ -30,7 +30,7 @@ build_script:
   - C:\julia\bin\julia -e "using Pkg; Pkg.add(String(":Plots")); Pkg.add(String(":DataFrames")); Pkg.add(String(":CSV"))"
   - C:\julia\bin\julia -e "using Pkg; Pkg.add(String(":Test")); Pkg.add(String(":StatsPlots")); Pkg.add(String(":Statistics"))"
   - C:\julia\bin\julia -e "using Pkg; Pkg.add(String(":FreqTables")); Pkg.add(String(":NamedArrays")); Pkg.add(String(":Distributions"))"
-  - C:\julia\bin\julia -e "using Pkg; Pkg.add(String(":LinearAlgebra")); Pkg.add(String(":StatsBase"))"
+  - C:\julia\bin\julia -e "using Pkg; Pkg.add(String(":LinearAlgebra")); Pkg.add(String(":StatsBase")); Pkg.add(String(":PDMats"))"
   - set PYTHON=""
   - C:\julia\bin\julia -e "using Pkg; Pkg.add(String(":Conda")); Pkg.update(); Pkg.build(String(":PyCall")); using PyPlot"
 
