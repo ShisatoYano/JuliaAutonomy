@@ -28,10 +28,10 @@ mutable struct EstimatedObject
 end
 
 function draw!(self::EstimatedObject)
-  if self.cov != nothing
+  if !(self.cov === nothing)
     scatter!([self.pose[1]], [self.pose[2]], markershape=self.shape, 
              markercolor=self.color, markersize=self.size)
-    if self.id !== -1
+    if !(self.id === -1)
       annotate!(self.pose[1], self.pose[2], 
                 text("id:$(self.id)", :black, :left, 10))
     end

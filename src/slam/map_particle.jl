@@ -59,6 +59,19 @@ function init_landmark_estimation(self::MapParticle, landmark, obs_pose,
   landmark.cov = inv(H' * inv(Q) * H)
 end
 
+function observation_update_landmark(self::MapParticle, landmark, obs_pose,
+                                     dist_dev_rate, dir_dev)
+  est_obs_pose = observation_function(self.pose, landmark.pose)
+  # not calculate when distance is too close
+  if est_obs_pose[1] > 0.01
+    H = mat_H(self.pose, landmark.pose)
+    Q = mat_Q(dist_dev_rate * est_obs_pose[1], dir_dev)
+    K = landmark.cov * H' * inv(Q + H*landmark.cov*H')
+    landmark.pose += K * (obs_pose - est_obs_pose)
+    landmark.cov = (Matrix{Float64}(I, 2, 2) - K*H) * landmark.cov
+  end
+end
+
 function observation_update(self::MapParticle, observation, 
                             dist_dev_rate, dir_dev)
   for obs in observation
@@ -69,6 +82,9 @@ function observation_update(self::MapParticle, observation,
     if landmark.cov === nothing
       init_landmark_estimation(self, landmark, obs_pose, 
                                dist_dev_rate, dir_dev)
+    else
+      observation_update_landmark(self, landmark, obs_pose,
+                                  dist_dev_rate, dir_dev)
     end
   end
 end

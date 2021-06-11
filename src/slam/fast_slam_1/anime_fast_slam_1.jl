@@ -28,7 +28,7 @@ module AnimeFastSlam1
                dist_bias_rate_stddev=0.1, dir_bias_stddev=pi/90)
     
     init_pose = [0.0, 0.0, 0.0]
-    e = FastSlam1(init_pose, objects_num=length(m.objects), env_map=m)
+    e = FastSlam1(init_pose, objects_num=length(m.objects))
     circling = Agent(0.2, 10.0/180*pi, estimator=e)
     r = DifferentialWheeledRobot(init_pose, 0.2, "black",
                                  circling, time_interval,

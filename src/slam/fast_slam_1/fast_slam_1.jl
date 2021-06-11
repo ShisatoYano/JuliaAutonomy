@@ -9,7 +9,6 @@ include(joinpath(split(@__FILE__, "src")[1], "src/slam/map_particle.jl"))
 mutable struct FastSlam1
   particles
   motion_noise_rate_pdf
-  map
   dist_dev
   dir_dev
   max_likelihood_particle
@@ -17,10 +16,9 @@ mutable struct FastSlam1
 
   function FastSlam1(init_pose; particle_num=100, objects_num=0,
                      motion_noise_stds=Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20),
-                     env_map=nothing, dist_dev_rate=0.14, dir_dev=0.05)
+                     dist_dev_rate=0.14, dir_dev=0.05)
     self = new()
     self.particles = [MapParticle(init_pose, 1.0/particle_num, objects_num) for i in 1:particle_num]
-    self.map = env_map
     self.dist_dev = dist_dev_rate
     self.dir_dev = dir_dev
     self.max_likelihood_particle = self.particles[1]
@@ -47,7 +45,7 @@ end
 
 function observation_update(self::FastSlam1, observation)
   for p in self.particles
-    observation_update(p, observation, self.map, self.dist_dev, self.dir_dev)
+    observation_update(p, observation, self.dist_dev, self.dir_dev)
   end
   set_max_likelihood_pose(self)
   resampling(self)
