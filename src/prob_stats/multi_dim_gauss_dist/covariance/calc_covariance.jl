@@ -19,6 +19,9 @@ module CalcCovariance
         
         diff_ir = df_ext.ir .- mean(df_ext.ir)
         diff_lidar = df_ext.lidar .- mean(df_ext.lidar)
+
+        println("Mean of ir: $(mean(df_ext.ir))")
+        println("Mean of lidar: $(mean(df_ext.lidar))")
         
         a = diff_ir .* diff_lidar
         println("Covariance: $(sum(a)/size(df_ext)[1])")

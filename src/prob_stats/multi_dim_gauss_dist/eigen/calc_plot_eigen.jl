@@ -48,8 +48,7 @@ module CalcPlotEigen
 
         # plot
         z = [pdf([x; y], mu, cov) for x in vx, y in vy]
-        contour(z', label="contour", c=:haline, xlabel="x", 
-                ylabel="y", aspect_ratio=:equal)
+        contour(vx, vy, z', label="contour", c=:haline, aspect_ratio=:equal)
         long = 2 * sqrt(long_val) * long_vec
         short = 2 * sqrt(short_val) * short_vec
         quiver!([mu[1]], [mu[2]], quiver=([long[1]], [long[2]]), 

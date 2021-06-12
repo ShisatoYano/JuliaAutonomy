@@ -42,8 +42,7 @@ module ContourPdf200
         vx = 280:340
         vy = 190:230
         z = [pdf([x; y], mu, cov_mat) for x in vx, y in vy]
-        contour(z', label="contour", c=:haline, xlabel="x", 
-                ylabel="y", aspect_ratio=:equal)
+        contour(vx, vy, z', label="contour", c=:haline, aspect_ratio=:equal)
         
         if is_test == false
             save_path = joinpath(split(@__FILE__, "src")[1], "src/prob_stats/multi_dim_gauss_dist/contour_pdf/contour_pdf_200.png")
