@@ -132,3 +132,135 @@ $$
 $$
 P(t|630, 632, 636) = \eta P(630, 632, 636|t) P(t)
 $$
+
+Multiple dimension probability density function  
+$$
+p(\bm{x}) = \frac{1}{(2\pi)^{\frac{n}{2}} \sqrt{|\Sigma|}} exp\{-\frac{1}{2}(\bm{x}-\bm{\mu})^T\Sigma^{-1}(\bm{x}-\bm{\mu})\}
+$$
+
+Covariance matrix  
+$$
+\Sigma =
+\left(
+\begin{array}{rr}
+\sigma_x^2 & \sigma_{xy} \\
+\sigma_{xy} & \sigma_y^2 \\
+\end{array}
+\right)
+$$
+
+Inversed covariance matrix  
+$$
+\Lambda = \Sigma^{-1} = \frac{1}{\sigma_x^2\sigma_x^2 - \sigma_{xy}^2}
+\left(
+\begin{array}{rr}
+\sigma_y^2 & -\sigma_{xy} \\
+-\sigma_{xy} & \sigma_x^2 \\
+\end{array}
+\right)
+$$
+
+$$
+\bm{\mu} =
+\left(
+\begin{array}{c}
+19.9 \\
+729 \\
+\end{array}
+\right), \Sigma = 
+\left(
+\begin{array}{cc}
+42.1 & -0.317 \\
+-0.317 & 17.7 \\
+\end{array}
+\right)
+$$
+
+2-dimension covariance
+$$
+\sigma_{xy} = \frac{1}{N-1} \sum_{i=0}^{N-1} (x_i - \mu_x)(y_i - \mu_y)
+$$
+
+$$
+a(x,y) = \Nu \left[
+\bm{\mu} =
+\left(
+\begin{array}{c}
+50 \\
+50 \\
+\end{array}
+\right), \Sigma=
+\left(
+\begin{array}{c}
+50 & 0 \\
+0 & 100 \\
+\end{array}
+\right)\right]
+$$
+$$
+b(x,y) = \Nu \left[
+\bm{\mu} =
+\left(
+\begin{array}{c}
+100 \\
+50 \\
+\end{array}
+\right), \Sigma=
+\left(
+\begin{array}{c}
+125 & 0 \\
+0 & 25 \\
+\end{array}
+\right)\right]
+$$
+$$
+c(x,y) = \Nu \left[
+\bm{\mu} =
+\left(
+\begin{array}{c}
+150 \\
+50 \\
+\end{array}
+\right), \Sigma=
+\left(
+\begin{array}{c}
+100 & -25\sqrt{3} \\
+-25\sqrt{3} & 50 \\
+\end{array}
+\right)\right]
+$$
+
+$$
+  \bm{v}_1 = 
+  \left(
+    \begin{array}{cc}
+    -0.87 & 0.5
+    \end{array}
+  \right)^T, \bm{v}_2 =
+  \left(
+    \begin{array}{cc}
+    -0.5 & -0.87
+    \end{array}
+  \right)^T
+$$
+
+$$
+V = 
+\left(
+    \begin{array}{cc}
+    \bm{v}_1 & \bm{v}_2
+    \end{array}
+  \right)
+$$
+$$
+L = 
+\left(
+    \begin{array}{cc}
+    l_1 & 0 \\
+    0 & l_2 \\
+    \end{array}
+  \right)
+$$
+$$
+\Sigma = VLV^{-1}
+$$

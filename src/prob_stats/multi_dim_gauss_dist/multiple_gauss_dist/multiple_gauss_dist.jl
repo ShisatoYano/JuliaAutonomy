@@ -40,9 +40,9 @@ module MultiGaussDist
         z_c = [pdf([x; y], mu_c, cov_c) for x in vx, y in vy]
 
         # plot contours
-        contour(vx, vy, z_a', label="PDF a", c=:haline)
-        contour!(vx, vy, z_b', label="PDF b", c=:haline)
-        contour!(vx, vy, z_c', label="PDF c", c=:haline)
+        contour(vx, vy, z_a', c=:haline, aspect_ratio=:equal)
+        contour!(vx, vy, z_b', c=:haline, aspect_ratio=:equal)
+        contour!(vx, vy, z_c', c=:haline, aspect_ratio=:equal)
         
         if is_test == false
             save_path = joinpath(split(@__FILE__, "src")[1], "src/prob_stats/multi_dim_gauss_dist/multiple_gauss_dist/multiple_gauss_dist.png")
