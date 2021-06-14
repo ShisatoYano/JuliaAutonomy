@@ -78,6 +78,10 @@ Adaptive reset MCL for kidnapped robot problem
 Expansion + Sensor reset MCL for kidnapped robot problem  
 ![](src/localization/reset_process/expansion_sensor_reset_mcl/anime_expansion_sensor_reset_mcl.gif)  
 
+### SLAM
+FastSLAM 1.0  
+![](src/slam/fast_slam_1/anime_fast_slam_1.gif)  
+
 # License
 MIT  
 
