@@ -12,8 +12,8 @@ mutable struct FastSlam2Agent
 
   # init
   function FastSlam2Agent(speed::Float64, yaw_rate::Float64;
-                 time_interval::Float64=0.1,
-                 estimator=nothing)
+                          time_interval::Float64=0.1,
+                          estimator=nothing)
       self = new()
       self.speed = speed
       self.yaw_rate = yaw_rate
@@ -25,7 +25,7 @@ mutable struct FastSlam2Agent
   end
 end
 
-function decision(self::FastSlam2Agent, observation)
+function decision(self::FastSlam2Agent)
   return self.speed, self.yaw_rate
 end
 
