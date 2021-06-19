@@ -24,15 +24,12 @@ mutable struct Agent
     end
 end
 
-function decision(self::Agent)
-    return self.speed, self.yaw_rate
-end
-
-function draw!(self::Agent, observation)
+function draw_decision!(self::Agent, observation)
     if self.estimator !== nothing
         motion_update(self.estimator, self.prev_spd, self.prev_yr, self.time_interval)
         self.prev_spd, self.prev_yr = self.speed, self.yaw_rate
         observation_update(self.estimator, observation)
         draw!(self.estimator)
     end
+    return self.speed, self.yaw_rate
 end

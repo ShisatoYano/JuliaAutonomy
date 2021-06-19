@@ -4,6 +4,7 @@
 using Plots, Random, Distributions
 pyplot()
 
+include(joinpath(split(@__FILE__, "src")[1], "src/slam/fast_slam_2_agent.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/agent/agent.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/sensor/sensor.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/common/error_calculation/error_calculation.jl"))
@@ -36,7 +37,7 @@ mutable struct DifferentialWheeledRobot
 
   # init
   function DifferentialWheeledRobot(pose::Array, radius::Float64, 
-                                    color::String, agent::Agent, 
+                                    color::String, agent, 
                                     delta_time::Float64; sensor=nothing,
                                     noise_per_meter::Int64=0, 
                                     noise_std::Float64=0.0,
@@ -149,14 +150,13 @@ function draw!(self::DifferentialWheeledRobot)
   end
 
   # draw estimation
-  draw!(self.agent, observation)
+  spd, yr = draw_decision!(self.agent, observation)
 
   if self.agent.estimator !== nothing
     draw_lon_lat_error!(self.agent.estimator.estimated_pose, self.pose)
   end
   
   # next pose
-  spd, yr = decision(self.agent)
   spd, yr = bias(self, spd, yr)
   spd, yr = stuck(self, spd, yr, self.delta_time)
   self.pose = state_transition(spd, yr, self.delta_time, self.pose)

@@ -32,7 +32,8 @@ module TestModel
       end
       @testset "Agent" begin
         a = Agent(0.1, 1.0)
-        speed, yaw_rate = decision(a)
+        obsrv = []
+        speed, yaw_rate = draw_decision!(a, obsrv)
         @test speed == 0.1
         @test yaw_rate == 1.0
         @test a.time_interval == 0.1

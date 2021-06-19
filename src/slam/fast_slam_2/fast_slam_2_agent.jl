@@ -1,6 +1,7 @@
 # module for representing agent
 # decide control order to robot
 # used for fastslam 2.0
+# motion update considering observation
 
 mutable struct FastSlam2Agent
   speed
@@ -25,15 +26,12 @@ mutable struct FastSlam2Agent
   end
 end
 
-function decision(self::FastSlam2Agent)
-  return self.speed, self.yaw_rate
-end
-
-function draw!(self::Agent, observation)
+function draw_decision!(self::FastSlam2Agent, observation)
   if self.estimator !== nothing
-      motion_update(self.estimator, self.prev_spd, self.prev_yr, self.time_interval)
-      self.prev_spd, self.prev_yr = self.speed, self.yaw_rate
-      observation_update(self.estimator, observation)
-      draw!(self.estimator)
+    motion_update(self.estimator, self.prev_spd, self.prev_yr, self.time_interval)
+    self.prev_spd, self.prev_yr = self.speed, self.yaw_rate
+    observation_update(self.estimator, observation)
+    draw!(self.estimator)
   end
+  return self.speed, self.yaw_rate
 end
