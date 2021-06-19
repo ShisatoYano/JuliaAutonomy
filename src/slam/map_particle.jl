@@ -36,7 +36,7 @@ function motion_update(self::MapParticle, speed, yaw_rate,
   self.pose = state_transition(noised_spd, noised_yr, time_interval, self.pose)
 end
 
-function mat_H(mu_pose, obj_pose)
+function mat_H_m(mu_pose, obj_pose)
   obj_x, obj_y = obj_pose[1], obj_pose[2]
   mu_x, mu_y = mu_pose[1], mu_pose[2]
   mu_l = sqrt((mu_x - obj_x)^2 + (mu_y - obj_y)^2)
@@ -44,9 +44,67 @@ function mat_H(mu_pose, obj_pose)
           (mu_y - obj_y)/(mu_l^2) (obj_x - mu_x)/(mu_l^2)]
 end
 
+function mat_H_x(mu_pose, obj_pose)
+  obj_x, obj_y = obj_pose[1], obj_pose[2]
+  mu_x, mu_y = mu_pose[1], mu_pose[2]
+  mu_l = sqrt((mu_x - obj_x)^2 + (mu_y - obj_y)^2)
+  return [(mu_x - obj_x)/mu_l (mu_y - obj_y)/mu_l 0.0;
+          (obj_y - mu_y)/(mu_l^2) (mu_x - obj_x)/(mu_l^2) -1.0]
+end
+
 function mat_Q(dist_dev, dir_dev)
   return [dist_dev^2 0.0;
           0.0 dir_dev^2]
+end
+
+function mat_M(speed, yaw_rate, time, stds)
+  return diagm(0 => [stds["nn"]^2*abs(speed)/time + stds["no"]^2*abs(yaw_rate)/time,
+                     stds["on"]^2*abs(speed)/time + stds["oo"]^2*abs(yaw_rate)/time])
+end
+
+function mat_A(speed, yaw_rate, time, theta)
+  st, ct = sin(theta), cos(theta)
+  stw, ctw = sin(theta + yaw_rate * time), cos(theta + yaw_rate * time)
+  return [(stw - st)/yaw_rate  -speed/(yaw_rate^2)*(stw - st) + speed/yaw_rate*time*ctw;
+          (-ctw + ct)/yaw_rate -speed/(yaw_rate^2)*(-ctw + ct) + speed/yaw_rate*time*stw;
+          0                    time]
+end
+
+function params_for_drawing(pred_pose, landmark, dist_dev, dir_dev)
+  # linearize observation function
+  diff_x = pred_pose[1] - landmark.pose[1]
+  diff_y = pred_pose[2] - landmark.pose[2]
+  dist = hypot(diff_x, diff_y)
+  Q = mat_Q(dist_dev * dist, dir_dev)
+  pred_z = observation_function(pred_pose, landmark.pose)
+  H_m = mat_H_m(pred_pose, landmark.pose) # 2x2
+  H_x = mat_H_x(pred_pose, landmark.pose) # 2x3
+
+  # calculate covariance matrix of sensor data
+  # based on particle's pose and map
+  Q_z = H_m * landmark.cov * H_m' + Q
+
+  return pred_z, Q_z, H_x
+end
+
+function gauss_for_drawing(pred_pose, pred_cov, z, 
+                           landmark, dist_dev, dir_dev)
+
+end
+
+function motion_update_2(self::MapParticle, speed, yaw_rate, 
+                         time_interval, motion_noise_stds,
+                         observation, dist_dev, dir_dev)
+  # distribution after movement
+  M = mat_M(speed, yaw_rate, time_interval, motion_noise_stds)
+  A = mat_A(speed, yaw_rate, time_interval, self.pose[3])
+  pred_cov = A * M * A'
+  pred_pose = state_transition(speed, yaw_rate, time_interval, self.pose)
+
+  # considering observation
+  for obs in observation
+    est_pose, est_cov = gauss_for_drawing() 
+  end
 end
 
 function init_landmark_estimation(self::MapParticle, landmark, obs_pose,

@@ -4,7 +4,7 @@
 using Plots, Random, Distributions
 pyplot()
 
-include(joinpath(split(@__FILE__, "src")[1], "src/slam/fast_slam_2_agent.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/slam/fast_slam_2/fast_slam_2_agent.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/agent/agent.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/sensor/sensor.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/common/error_calculation/error_calculation.jl"))
