@@ -34,8 +34,26 @@ mutable struct FastSlam2
 end
 
 function motion_update(self::FastSlam2, speed, yaw_rate, time_interval, observation)
-  for p in self.particles
-    motion_update(p, speed, yaw_rate, time_interval, self.motion_noise_rate_pdf)
+  # create list of observed landmarks
+  observed_landmarks = []
+  for obs in observation
+    # decide first partilce's map
+    if self.particles[1].map.objects[obs[2]].cov !== nothing
+      push!(observed_landmarks, obs)
+    end
+  end
+  
+  # update each particle's pose
+  # considering observation
+  if length(observed_landmarks) > 0
+    for p in self.particles
+      motion_update_2(p, speed, yaw_rate, time_interval, self.motion_noise_stds,
+                      observed_landmarks, self.dist_dev, self.dir_dev)
+    end  
+  else
+    for p in self.particles
+      motion_update(p, speed, yaw_rate, time_interval, self.motion_noise_rate_pdf)
+    end
   end
 end
 

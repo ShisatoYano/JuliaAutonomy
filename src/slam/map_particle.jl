@@ -89,7 +89,12 @@ end
 
 function gauss_for_drawing(pred_pose, pred_cov, z, 
                            landmark, dist_dev, dir_dev)
-
+  pred_z, Q_z, H_x = params_for_drawing(pred_pose, landmark, 
+                                        dist_dev, dir_dev)
+  K = pred_cov * H_x' * inv(Q_z + H_x*pred_cov*H_x')
+  est_pose = K * (z - pred_z) + pred_pose
+  est_cov = (Matrix{Float64}(I, 3, 3) - K*H_x) * pred_cov
+  return est_pose, est_cov
 end
 
 function motion_update_2(self::MapParticle, speed, yaw_rate, 
@@ -98,13 +103,26 @@ function motion_update_2(self::MapParticle, speed, yaw_rate,
   # distribution after movement
   M = mat_M(speed, yaw_rate, time_interval, motion_noise_stds)
   A = mat_A(speed, yaw_rate, time_interval, self.pose[3])
-  pred_cov = A * M * A'
-  pred_pose = state_transition(speed, yaw_rate, time_interval, self.pose)
+  est_cov = A * M * A'
+  est_pose = state_transition(speed, yaw_rate, time_interval, self.pose)
 
-  # considering observation
+  # update weight of particle
   for obs in observation
-    est_pose, est_cov = gauss_for_drawing() 
+    pred_z, Q_z, H_x = params_for_drawing(est_pose, 
+                                          self.map.objects[obs[2]], 
+                                          dist_dev, dir_dev)
+    sigma_z = H_x*est_cov*H_x' + Q_z
+    self.weight *= pdf(MvNormal(pred_z, Symmetric(sigma_z)), obs[1])
   end
+
+  # update pose and covariance of particle
+  for obs in observation
+    est_pose, est_cov = gauss_for_drawing(est_pose, est_cov, obs[1],
+                                          self.map.objects[obs[2]],
+                                          dist_dev, dir_dev)
+  end
+  est_cov += Matrix{Float64}(I,3,3).*0.00001
+  self.pose = rand(MvNormal(est_pose, Symmetric(est_cov)))
 end
 
 function init_landmark_estimation(self::MapParticle, landmark, obs_pose,
@@ -112,7 +130,7 @@ function init_landmark_estimation(self::MapParticle, landmark, obs_pose,
   lx = obs_pose[1] * cos(self.pose[3] + obs_pose[2]) + self.pose[1]
   ly = obs_pose[1] * sin(self.pose[3] + obs_pose[2]) + self.pose[2]
   landmark.pose = [lx, ly]
-  H = mat_H(self.pose, landmark.pose)
+  H = mat_H_m(self.pose, landmark.pose)
   Q = mat_Q(dist_dev_rate * obs_pose[1], dir_dev)
   landmark.cov = inv(H' * inv(Q) * H)
 end
@@ -123,13 +141,9 @@ function observation_update_landmark(self::MapParticle, landmark, obs_pose,
   # not calculate when distance is too close
   if est_obs_pose[1] > 0.01
     # calculate kalman gain
-    H = mat_H(self.pose, landmark.pose)
+    H = mat_H_m(self.pose, landmark.pose)
     Q = mat_Q(dist_dev_rate * est_obs_pose[1], dir_dev)
     K = landmark.cov * H' * inv(Q + H*landmark.cov*H')
-
-    # update weight
-    Q_obs = H * landmark.cov * H' + Q
-    self.weight *= pdf(MvNormal(est_obs_pose, Symmetric(Q_obs)), obs_pose)
 
     # update landmark estimation
     landmark.pose += K * (obs_pose - est_obs_pose)
