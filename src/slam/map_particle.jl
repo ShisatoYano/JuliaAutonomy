@@ -136,7 +136,7 @@ function init_landmark_estimation(self::MapParticle, landmark, obs_pose,
 end
 
 function observation_update_landmark(self::MapParticle, landmark, obs_pose,
-                                     dist_dev_rate, dir_dev)
+                                     dist_dev_rate, dir_dev, is_fastslam_1)
   est_obs_pose = observation_function(self.pose, landmark.pose)
   # not calculate when distance is too close
   if est_obs_pose[1] > 0.01
@@ -145,6 +145,13 @@ function observation_update_landmark(self::MapParticle, landmark, obs_pose,
     Q = mat_Q(dist_dev_rate * est_obs_pose[1], dir_dev)
     K = landmark.cov * H' * inv(Q + H*landmark.cov*H')
 
+    # update weight of particle
+    # this process is for only fastslam 1.0
+    if is_fastslam_1 == true
+      Q_z = H * landmark.cov * H' + Q
+      self.weight *= pdf(MvNormal(est_obs_pose, Symmetric(Q_z)), obs_pose)
+    end
+
     # update landmark estimation
     landmark.pose += K * (obs_pose - est_obs_pose)
     landmark.cov = (Matrix{Float64}(I, 2, 2) - K*H) * landmark.cov
@@ -152,7 +159,7 @@ function observation_update_landmark(self::MapParticle, landmark, obs_pose,
 end
 
 function observation_update(self::MapParticle, observation, 
-                            dist_dev_rate, dir_dev)
+                            dist_dev_rate, dir_dev, is_fastslam_1)
   for obs in observation
     obs_pose = obs[1] # [distance, direction]
     obs_id = obs[2]
@@ -163,7 +170,7 @@ function observation_update(self::MapParticle, observation,
                                dist_dev_rate, dir_dev)
     else
       observation_update_landmark(self, landmark, obs_pose,
-                                  dist_dev_rate, dir_dev)
+                                  dist_dev_rate, dir_dev, is_fastslam_1)
     end
   end
 end

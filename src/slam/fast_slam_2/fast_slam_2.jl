@@ -65,7 +65,7 @@ end
 
 function observation_update(self::FastSlam2, observation)
   for p in self.particles
-    observation_update(p, observation, self.dist_dev, self.dir_dev)
+    observation_update(p, observation, self.dist_dev, self.dir_dev, false)
   end
   set_max_likelihood_pose(self)
   resampling(self)
