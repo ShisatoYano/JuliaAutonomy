@@ -7,6 +7,7 @@ module TestSlam
   include(joinpath(split(@__FILE__, "test")[1], "src/slam/estimated_object.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/slam/map_particle.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/slam/fast_slam_1/anime_fast_slam_1.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/slam/fast_slam_2/anime_fast_slam_2.jl"))
 
   function main()
     @testset "Slam" begin
@@ -29,6 +30,9 @@ module TestSlam
       end
       @testset "FastSlam1.0" begin
         @test_nowarn AnimeFastSlam1.main(is_test=true)
+      end
+      @testset "FastSlam2.0" begin
+        @test_nowarn AnimeFastSlam2.main(is_test=true)
       end
     end
   end
