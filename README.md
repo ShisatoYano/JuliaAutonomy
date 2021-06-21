@@ -57,6 +57,7 @@ julia> AnimeMclRandSamp.main()
 * Distributions
 * LinearAlgebra
 * StatsBase
+* PDMats
 
 # Sample codes
 ## Localization
@@ -82,6 +83,9 @@ Expansion + Sensor reset MCL for kidnapped robot problem
 ### SLAM
 FastSLAM 1.0  
 ![](src/slam/fast_slam_1/anime_fast_slam_1.gif)  
+
+FastSLAM 2.0  
+![](src/slam/fast_slam_2/anime_fast_slam_2.gif)  
 
 # License
 MIT  
