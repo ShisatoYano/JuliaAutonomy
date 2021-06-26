@@ -1,18 +1,23 @@
 # module for representing agent
 # decide control order to robot
+# log pose and observation into text file
 
-mutable struct Agent
+mutable struct LoggerAgent
   speed
   yaw_rate
   time_interval
   estimator
   prev_spd
   prev_yr
+  pose
+  step
+  log
 
   # init
-  function Agent(speed::Float64, yaw_rate::Float64;
-                 time_interval::Float64=0.1,
-                 estimator=nothing)
+  function LoggerAgent(speed::Float64, yaw_rate::Float64;
+                       time_interval::Float64=0.1,
+                       estimator=nothing,
+                       init_pose=[0.0, 0.0, 0.0])
       self = new()
       self.speed = speed
       self.yaw_rate = yaw_rate
@@ -20,6 +25,8 @@ mutable struct Agent
       self.estimator = estimator
       self.prev_spd = 0.0
       self.prev_yr = 0.0
+      self.pose = init_pose
+      self.step = 0
       return self
   end
 end
