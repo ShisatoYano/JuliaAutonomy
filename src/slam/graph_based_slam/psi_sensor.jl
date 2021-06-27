@@ -106,7 +106,7 @@ function data(self::PsiSensor, sns_pose::Array; orient_noise=pi/90)
     # calculate orientation
     diff_x = sns_pose[1] - obj.pose[1]
     diff_y = sns_pose[2] - obj.pose[2]
-    psi = rand(MvNormal(atan(diff_y, diff_x), orient_noise))
+    psi = rand(Normal(atan(diff_y, diff_x), orient_noise))
 
     # calculate observation
     obsrv = observation_function(sns_pose, obj.pose)

@@ -29,7 +29,8 @@ mutable struct LoggerAgent
       self.prev_yr = 0.0
       self.pose = init_pose
       self.step = 0
-      self.log = open("log.txt", "w")
+      log_path = "src/slam/graph_based_slam/log.txt"
+      self.log = open(joinpath(split(@__FILE__, "src")[1], log_path), "w")
       return self
   end
 end
@@ -41,9 +42,9 @@ end
 function draw_decision!(self::LoggerAgent, observation)
   # logging trajectory and observation
   if length(observation) > 0
-    write(self.log, "x $(self.step) $(self.pose[1]) $(self.pose[2]) $(self.pose[3])") # step x y theta
+    write(self.log, "x $(self.step) $(self.pose[1]) $(self.pose[2]) $(self.pose[3])\n") # step x y theta
     for obs in observation
-      write(self.log, "z $(self.step) $(obs[2]) $(obs[1][1]) $(obs[1][2]) $(obs[1][3])") # step id distance direction orientation
+      write(self.log, "z $(self.step) $(obs[2]) $(obs[1][1]) $(obs[1][2]) $(obs[1][3])\n") # step id distance direction orientation
     end
     self.step += 1
   end
