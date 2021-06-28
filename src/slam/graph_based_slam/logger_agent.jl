@@ -29,7 +29,7 @@ mutable struct LoggerAgent
       self.prev_yr = 0.0
       self.pose = init_pose
       self.step = 0
-      log_path = "src/slam/graph_based_slam/log.txt"
+      log_path = "src/slam/graph_based_slam/traj_obsrv_log.txt"
       self.log = open(joinpath(split(@__FILE__, "src")[1], log_path), "w")
       return self
   end

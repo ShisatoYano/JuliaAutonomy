@@ -1,6 +1,7 @@
-# module for playing mapping and localization by graph based slam
+# module for logging robot's trajectory and observation
+# logged data is used for graph based slam simulation
 
-module AnimeGraphBasedSlam
+module TrajObsrvLogger
   include(joinpath(split(@__FILE__, "src")[1], "src/model/world/world.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/robot/differential_wheeled_robot/differential_wheeled_robot.jl"))
 
@@ -37,7 +38,7 @@ module AnimeGraphBasedSlam
       anime = @animate for t in 0:time_interval:180
         animate_per_time(t, w, m, r)
       end
-      path = "src/slam/graph_based_slam/anime_graph_based_slam.gif"
+      path = "src/slam/graph_based_slam/traj_obsrv_log.gif"
       gif(anime, fps=15, joinpath(split(@__FILE__, "src")[1], path))
       close_log_file(a)
     else
