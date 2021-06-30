@@ -1,8 +1,13 @@
 # module for simulate and draw graph based slam
 
 module AnimeGraphBasedSlam
+  # packages
+  using Combinatorics
   using Plots
   pyplot()
+
+  # external modules
+  include(joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/obsrv_edge.jl"))
   
   # read logged trajectory and observation data
   function read_data()
@@ -58,19 +63,53 @@ module AnimeGraphBasedSlam
     plot!(x_list, y_list, linewidth=0.5, color="black")
   end
 
-  function draw(pose_list, obsrv_list)
+  function make_edges(pose_list, obsrv_list)
+    # record time and observation
+    landmark_keys_list = Dict()
+    for step in 0:length(pose_list)-1
+      step_str = string(step)
+      for obsrv in obsrv_list[step_str]
+        id_str = string(obsrv[1])
+        if !haskey(landmark_keys_list, id_str)
+          landmark_keys_list[id_str] = []
+        end
+        push!(landmark_keys_list[id_str], (step, obsrv))
+      end
+    end
+
+    edges = []
+    for key_id in keys(landmark_keys_list)
+      step_pairs =[pair for pair in combinations(landmark_keys_list[key_id], 2)]
+      for pair in step_pairs
+        push!(edges, ObsrvEdge(pair[1][1], pair[2][1], pair[1][2], pair[2][2], pose_list))
+      end
+    end
+
+    return edges
+  end
+
+  function draw_edges(edges)
+    for e in edges
+      plot!([e.x1[1], e.x2[1]], [e.x1[2], e.x2[2]], color="red", alpha=0.5)
+    end
+  end
+
+  function draw(pose_list, obsrv_list, edges)
     make_axis()
     draw_observation(pose_list, obsrv_list)
+    draw_edges(edges)
     draw_trajectory(pose_list)
   end
 
   function main(is_test=false)
     pose_list, obsrv_list = read_data()
+
+    edges = make_edges(pose_list, obsrv_list)
     
-    draw(pose_list, obsrv_list)
+    draw(pose_list, obsrv_list, edges)
 
     if is_test == false
-      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/traj_obsrv_log.png")
+      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/obsrv_edges_log.png")
       savefig(save_path)
     end
   end
