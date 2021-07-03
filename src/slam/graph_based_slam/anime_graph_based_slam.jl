@@ -88,6 +88,20 @@ module AnimeGraphBasedSlam
     return edges
   end
 
+  function add_edge(edge, omega, xi)
+    # index of precision matrix, xi vector
+    f1, f2 = edge.t1*3+1, edge.t2*3+1
+    t1, t2 = f1+2, f2+2
+    # set matrix
+    omega[f1:t1, f1:t1] += edge.omega_upper_left
+    omega[f1:t1, f2:t2] += edge.omega_upper_right
+    omega[f2:t2, f1:t1] += edge.omega_lower_left
+    omega[f2:t2, f2:t2] += edge.omega_lower_right
+    # set xi
+    xi[f1:t1] += edge.xi_upper
+    xi[f2:t2] += edge.xi_lower
+  end
+
   function draw_edges(edges)
     for e in edges
       plot!([e.x1[1], e.x2[1]], [e.x1[2], e.x2[2]], color="red", alpha=0.5)
@@ -104,13 +118,31 @@ module AnimeGraphBasedSlam
   function main(is_test=false)
     pose_list, obsrv_list = read_data()
 
-    edges = make_edges(pose_list, obsrv_list)
+    # dimension of trajectory vector
+    dim = length(pose_list) * 3
     
-    draw(pose_list, obsrv_list, edges)
+    # iterate for optimization
+    for n in 1:1
+      edges = make_edges(pose_list, obsrv_list)
+      
+      # initialize precision matrix for graph
+      omega_graph = zeros(dim, dim)
+      omega_graph[1:3, 1:3] += Matrix{Float64}(I,3,3).*1000000
 
-    if is_test == false
-      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/obsrv_edges_log.png")
-      savefig(save_path)
+      # initialize coefficient vector for graph
+      xi_graph = zeros(dim)
+
+      # calculate difference of trajectory
+      for e in edges
+        add_edge(e, omega_graph, xi_graph)
+      end
     end
+    
+    # draw(pose_list, obsrv_list, edges)
+
+    # if is_test == false
+    #   save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/obsrv_edges_log.png")
+    #   savefig(save_path)
+    # end
   end
 end
