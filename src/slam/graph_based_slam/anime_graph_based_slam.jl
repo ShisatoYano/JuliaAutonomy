@@ -14,8 +14,10 @@ module AnimeGraphBasedSlam
   function read_data()
     pose_list = Dict() # trajectory
     obsrv_list = Dict() # observation
+    delta = 0.0
+    input_list = Dict()
 
-    log_path = "src/slam/graph_based_slam/traj_obsrv_log.txt"
+    log_path = "src/slam/graph_based_slam/traj_obsrv_edge_input_log.txt"
     open(joinpath(split(@__FILE__, "src")[1], log_path), "r") do fp
       for line in eachline(fp)
         tmp = split(line)
@@ -29,11 +31,15 @@ module AnimeGraphBasedSlam
             obsrv_list[step] = []
           end
           push!(obsrv_list[step], (parse(Int64, tmp[3]), [parse(Float64, tmp[4]), parse(Float64, tmp[5]), parse(Float64, tmp[6])]))
+        elseif type == "delta" # time interval
+          delta = parse(Float64, tmp[2])
+        elseif type == "u" # input
+          input_list[step] = [parse(Float64, tmp[3]), parse(Float64, tmp[4])]
         end
       end
     end
 
-    return pose_list, obsrv_list
+    return pose_list, obsrv_list, input_list, delta
   end
 
   function make_axis()
