@@ -3,6 +3,7 @@
 module AnimeGraphBasedSlam
   # packages
   using Combinatorics
+  using LinearAlgebra
   using Plots
   pyplot()
 
@@ -111,7 +112,7 @@ module AnimeGraphBasedSlam
   function draw(pose_list, obsrv_list, edges)
     make_axis()
     draw_observation(pose_list, obsrv_list)
-    draw_edges(edges)
+    # draw_edges(edges)
     draw_trajectory(pose_list)
   end
 
@@ -122,7 +123,7 @@ module AnimeGraphBasedSlam
     dim = length(pose_list) * 3
     
     # iterate for optimization
-    for n in 1:1
+    for n in 1:10000
       edges = make_edges(pose_list, obsrv_list)
       
       # initialize precision matrix for graph
@@ -136,13 +137,25 @@ module AnimeGraphBasedSlam
       for e in edges
         add_edge(e, omega_graph, xi_graph)
       end
-    end
-    
-    # draw(pose_list, obsrv_list, edges)
+      delta_traj = inv(omega_graph) * xi_graph
+      
+      # update trajectory
+      for i in 0:length(pose_list)-1
+        pose_list[string(i)] += delta_traj[(i*3+1):((i+1)*3)]
+      end
 
-    # if is_test == false
-    #   save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/obsrv_edges_log.png")
-    #   savefig(save_path)
-    # end
+      # convergence dicision
+      diff = norm(delta_traj)
+      println("iteration times:$(n) diff:$(diff)")
+      if diff < 0.01
+        draw(pose_list, obsrv_list, edges)
+        break
+      end
+    end
+
+    if is_test == false
+      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/est_poses_only_obsrv_edge.png")
+      savefig(save_path)
+    end
   end
 end
