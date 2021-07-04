@@ -95,7 +95,7 @@ module AnimeGraphBasedSlam
       end
     end
 
-    return edges
+    return edges, landmark_keys_list
   end
 
   function add_edge(edge, omega, xi)
@@ -132,8 +132,8 @@ module AnimeGraphBasedSlam
     dim = length(pose_list) * 3
     
     # iterate for optimization
-    for n in 1:10000
-      edges = make_edges(pose_list, obsrv_list)
+    for n in 1:1
+      edges, landmark_keys_list = make_edges(pose_list, obsrv_list)
 
       # add motion edges
       for i in 0:length(pose_list)-2
@@ -167,9 +167,9 @@ module AnimeGraphBasedSlam
       end
     end
 
-    if is_test == false
-      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/est_poses_obsrv_motion_edge.png")
-      savefig(save_path)
-    end
+    # if is_test == false
+    #   save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/est_poses_obsrv_motion_edge.png")
+    #   savefig(save_path)
+    # end
   end
 end
