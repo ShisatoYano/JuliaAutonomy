@@ -38,7 +38,7 @@ module TrajObsrvLogger
       anime = @animate for t in 0:time_interval:180
         animate_per_time(t, w, m, r)
       end
-      path = "src/slam/graph_based_slam/traj_obsrv_log.gif"
+      path = "src/slam/graph_based_slam/traj_obsrv_edge_input_log.gif"
       gif(anime, fps=15, joinpath(split(@__FILE__, "src")[1], path))
       close_log_file(a)
     else

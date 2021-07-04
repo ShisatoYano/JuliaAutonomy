@@ -29,8 +29,10 @@ mutable struct LoggerAgent
       self.prev_yr = 0.0
       self.pose = init_pose
       self.step = 0
-      log_path = "src/slam/graph_based_slam/traj_obsrv_log.txt"
+      log_path = "src/slam/graph_based_slam/traj_obsrv_edge_input_log.txt"
       self.log = open(joinpath(split(@__FILE__, "src")[1], log_path), "w")
+      # record delta time
+      write(self.log, "delta $(time_interval)\n")
       return self
   end
 end
@@ -41,13 +43,12 @@ end
 
 function draw_decision!(self::LoggerAgent, observation)
   # logging trajectory and observation
-  if length(observation) > 0
-    write(self.log, "x $(self.step) $(self.pose[1]) $(self.pose[2]) $(self.pose[3])\n") # step x y theta
-    for obs in observation
-      write(self.log, "z $(self.step) $(obs[2]) $(obs[1][1]) $(obs[1][2]) $(obs[1][3])\n") # step id distance direction orientation
-    end
-    self.step += 1
+  write(self.log, "u $(self.step) $(self.speed) $(self.yaw_rate)\n")
+  write(self.log, "x $(self.step) $(self.pose[1]) $(self.pose[2]) $(self.pose[3])\n") # step x y theta
+  for obs in observation
+    write(self.log, "z $(self.step) $(obs[2]) $(obs[1][1]) $(obs[1][2]) $(obs[1][3])\n") # step id distance direction orientation
   end
+  self.step += 1
 
   # draw estimated pose
   if self.estimator !== nothing

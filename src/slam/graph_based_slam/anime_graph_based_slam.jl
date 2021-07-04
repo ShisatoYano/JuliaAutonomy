@@ -144,7 +144,7 @@ module AnimeGraphBasedSlam
         pose_list[string(i)] += delta_traj[(i*3+1):((i+1)*3)]
       end
 
-      # convergence dicision
+      # convergence
       diff = norm(delta_traj)
       println("iteration times:$(n) diff:$(diff)")
       if diff < 0.01
