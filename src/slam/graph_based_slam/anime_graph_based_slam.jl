@@ -9,6 +9,7 @@ module AnimeGraphBasedSlam
 
   # external modules
   include(joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/obsrv_edge.jl"))
+  include(joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/motion_edge.jl"))
   
   # read logged trajectory and observation data
   function read_data()
@@ -75,12 +76,14 @@ module AnimeGraphBasedSlam
     landmark_keys_list = Dict()
     for step in 0:length(pose_list)-1
       step_str = string(step)
-      for obsrv in obsrv_list[step_str]
-        id_str = string(obsrv[1])
-        if !haskey(landmark_keys_list, id_str)
-          landmark_keys_list[id_str] = []
+      if haskey(obsrv_list, step_str)
+        for obsrv in obsrv_list[step_str]
+          id_str = string(obsrv[1])
+          if !haskey(landmark_keys_list, id_str)
+            landmark_keys_list[id_str] = []
+          end
+          push!(landmark_keys_list[id_str], (step, obsrv))
         end
-        push!(landmark_keys_list[id_str], (step, obsrv))
       end
     end
 
@@ -123,7 +126,7 @@ module AnimeGraphBasedSlam
   end
 
   function main(is_test=false)
-    pose_list, obsrv_list = read_data()
+    pose_list, obsrv_list, input_list, delta = read_data()
 
     # dimension of trajectory vector
     dim = length(pose_list) * 3
@@ -131,6 +134,11 @@ module AnimeGraphBasedSlam
     # iterate for optimization
     for n in 1:10000
       edges = make_edges(pose_list, obsrv_list)
+
+      # add motion edges
+      for i in 0:length(pose_list)-2
+        push!(edges, MotionEdge(i, i+1, pose_list, input_list, delta))
+      end
       
       # initialize precision matrix for graph
       omega_graph = zeros(dim, dim)
@@ -160,7 +168,7 @@ module AnimeGraphBasedSlam
     end
 
     if is_test == false
-      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/est_poses_only_obsrv_edge.png")
+      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/est_poses_obsrv_motion_edge.png")
       savefig(save_path)
     end
   end

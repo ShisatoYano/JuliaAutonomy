@@ -2,11 +2,11 @@
 
 using LinearAlgebra
 
-mutable struct ObsrvEdge
+include(joinpath(split(@__FILE__, "src")[1], "src/common/state_transition/state_transition.jl"))
+
+mutable struct MotionEdge
   t1
   t2
-  z1
-  z2
   x1
   x2
   omega_upper_right
@@ -16,72 +16,62 @@ mutable struct ObsrvEdge
   xi_upper
   xi_lower
 
-  # init
-  function ObsrvEdge(t1, t2, z1, z2, pose_list; 
-                     sensor_noise_rate=[0.14,0.05,0.05])
-    @assert z1[1] == z2[1] # prevent id is different
+  # matrix of input noise
+  function mat_M(speed, yaw_rate, time, stds)
+    return diagm(0 => [stds["nn"]^2*abs(speed)/time + stds["no"]^2*abs(yaw_rate)/time,
+                       stds["on"]^2*abs(speed)/time + stds["oo"]^2*abs(yaw_rate)/time])
+  end
+  
+  # jacobian of input
+  function mat_A(speed, yaw_rate, time, theta)
+    st, ct = sin(theta), cos(theta)
+    stw, ctw = sin(theta + yaw_rate * time), cos(theta + yaw_rate * time)
+    return [(stw - st)/yaw_rate  -speed/(yaw_rate^2)*(stw - st) + speed/yaw_rate*time*ctw;
+            (-ctw + ct)/yaw_rate -speed/(yaw_rate^2)*(-ctw + ct) + speed/yaw_rate*time*stw;
+            0                    time]
+  end
 
+  # jacobian of pose
+  function mat_F(speed, yaw_rate, time, theta)
+    F = diagm(0 => [1.0, 1.0, 1.0])
+    F[1, 3] = speed / yaw_rate * (cos(theta + yaw_rate * time) - cos(theta))
+    F[2, 3] = speed / yaw_rate * (sin(theta + yaw_rate * time) - sin(theta))
+    return F
+  end
+
+  # init
+  function MotionEdge(t1, t2, pose_list, input_list, delta; 
+                      motion_noise_stds=Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20))
     self = new()
 
     self.t1 = t1 # time
     self.t2 = t2
-    self.z1 = z1[2] # observation [distance, direction orientation]
-    self.z2 = z2[2]
     self.x1 = pose_list[string(t1)] # pose [x, y, theta]
     self.x2 = pose_list[string(t2)]
-
-    sin1 = sin(self.x1[3] + self.z1[2])
-    cos1 = cos(self.x1[3] + self.z1[2])
-    sin2 = sin(self.x2[3] + self.z2[2])
-    cos2 = cos(self.x2[3] + self.z2[2])
-
-    # calculate error
-    error_pose = self.x2 - self.x1
-    error_obsrv = [
-      self.z2[1]*cos2-self.z1[1]*cos1,
-      self.z2[1]*sin2-self.z1[1]*sin1,
-      self.z2[2]-self.z2[3]-self.z1[2]+self.z1[3]
-    ]
-    error = error_pose + error_obsrv
-
-    # normalize -pi ~ pi
-    while error[3] >= pi
-      error[3] -= pi*2
-    end
-    while error[3] < -pi
-      error[3] += pi*2
+    speed = input_list[string(t2)][1] # input [speed, yaw_rate]
+    yaw_rate = input_list[string(t2)][2]
+    if abs(yaw_rate) < 1e-5
+      yaw_rate = 1e-5
     end
 
-    # precision matrix for edge
-    Q1 = diagm(0 => [(self.z1[1]*sensor_noise_rate[1])^2,
-                     sensor_noise_rate[2]^2,
-                     sensor_noise_rate[3]^2])
-    R1 = -[cos1 -self.z1[1]*sin1 0;
-           sin1  self.z1[1]*cos1 0;
-              0                1 -1]
-    Q2 = diagm(0 => [(self.z2[1]*sensor_noise_rate[1])^2,
-                     sensor_noise_rate[2]^2,
-                     sensor_noise_rate[3]^2])
-    R2 = [cos2 -self.z2[1]*sin2 0;
-          sin2  self.z2[1]*cos2 0;
-             0                1 -1]
-    sigma_edge = R1*Q1*R1' + R2*Q2*R2'
-    omega_edge = inv(sigma_edge)
+    # noise matrix and jacobian
+    M = mat_M(speed, yaw_rate, delta, motion_noise_stds)
+    A = mat_A(speed, yaw_rate, delta, self.x1[3])
+    F = mat_F(speed, yaw_rate, delta, self.x1[3])
 
-    # precision matrix for graph
-    B1 = -[1 0 -self.z1[1]*sin1;
-           0 1  self.z1[1]*cos1;
-           0 0                 1]
-    B2 = [1 0 -self.z2[1]*sin2;
-          0 1  self.z2[1]*cos2;
-          0 0                 1]
-    self.omega_upper_left = B1' * omega_edge * B1
-    self.omega_upper_right = B1' * omega_edge * B2
-    self.omega_lower_left = B2' * omega_edge * B1
-    self.omega_lower_right = B2' * omega_edge * B2
-    # coefficient vector for graph
-    self.xi_upper = -B1' * omega_edge * error
-    self.xi_lower = -B2' * omega_edge * error
+    # precision matrix of edge
+    omega_edge = inv(A*M*A' + Matrix{Float64}(I,3,3).*0.0001)
+
+    # precision matrix of graph
+    self.omega_upper_left = F' * omega_edge * F
+    self.omega_upper_right = -F' * omega_edge
+    self.omega_lower_left = -omega_edge * F
+    self.omega_lower_right = omega_edge
+
+    # coefficient vector
+    x2 = state_transition(speed, yaw_rate, delta, self.x1)
+    self.xi_upper = F' * omega_edge * (self.x2 - x2)
+    self.xi_lower = -omega_edge * (self.x2 - x2)
 
     return self
   end
