@@ -4,12 +4,14 @@ module AnimeGraphBasedSlam
   # packages
   using Combinatorics
   using LinearAlgebra
+  using Statistics
   using Plots
   pyplot()
 
   # external modules
   include(joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/obsrv_edge.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/motion_edge.jl"))
+  include(joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/map_edge.jl"))
   
   # read logged trajectory and observation data
   function read_data()
@@ -118,11 +120,20 @@ module AnimeGraphBasedSlam
     end
   end
 
-  function draw(pose_list, obsrv_list, edges)
+  function draw_landmarks(landmark_list)
+    scatter!([m[2][1] for m in landmark_list],
+             [m[2][2] for m in landmark_list],
+             markershape=:star,
+             markercolor=:blue,
+             markersize=15)
+  end
+
+  function draw(pose_list, obsrv_list, edges, landmark_list)
     make_axis()
     draw_observation(pose_list, obsrv_list)
     # draw_edges(edges)
     draw_trajectory(pose_list)
+    draw_landmarks(landmark_list)
   end
 
   function main(is_test=false)
@@ -132,12 +143,23 @@ module AnimeGraphBasedSlam
     dim = length(pose_list) * 3
     
     # iterate for optimization
-    for n in 1:1
+    for n in 1:10000
       edges, landmark_keys_list = make_edges(pose_list, obsrv_list)
 
       # add motion edges
       for i in 0:length(pose_list)-2
         push!(edges, MotionEdge(i, i+1, pose_list, input_list, delta))
+      end
+
+      # add landmark objects
+      landmark_list = Dict()
+      for lm_pair in landmark_keys_list
+        map_edges = []
+        head_z = landmark_keys_list[lm_pair[1]][1]
+        for z in landmark_keys_list[lm_pair[1]]
+          push!(map_edges, MapEdge(z[1], z[2][2], head_z[1], head_z[2][2], pose_list))
+        end
+        landmark_list[lm_pair[1]] = mean([me.m for me in map_edges])
       end
       
       # initialize precision matrix for graph
@@ -162,14 +184,14 @@ module AnimeGraphBasedSlam
       diff = norm(delta_traj)
       println("iteration times:$(n) diff:$(diff)")
       if diff < 0.01
-        draw(pose_list, obsrv_list, edges)
+        draw(pose_list, obsrv_list, edges, landmark_list)
         break
       end
     end
 
-    # if is_test == false
-    #   save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/est_poses_obsrv_motion_edge.png")
-    #   savefig(save_path)
-    # end
+    if is_test == false
+      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/est_poses_mean_map.png")
+      savefig(save_path)
+    end
   end
 end
