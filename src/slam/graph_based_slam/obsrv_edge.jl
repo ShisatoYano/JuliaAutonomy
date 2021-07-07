@@ -36,21 +36,12 @@ mutable struct ObsrvEdge
     cos2 = cos(self.x2[3] + self.z2[2])
 
     # calculate error
-    error_pose = self.x2 - self.x1
+    error_pose = self.x2[1:2] - self.x1[1:2]
     error_obsrv = [
       self.z2[1]*cos2-self.z1[1]*cos1,
-      self.z2[1]*sin2-self.z1[1]*sin1,
-      self.z2[2]-self.z2[3]-self.z1[2]+self.z1[3]
+      self.z2[1]*sin2-self.z1[1]*sin1
     ]
     error = error_pose + error_obsrv
-
-    # normalize -pi ~ pi
-    while error[3] >= pi
-      error[3] -= pi*2
-    end
-    while error[3] < -pi
-      error[3] += pi*2
-    end
 
     # precision matrix for edge
     Q1 = diagm(0 => [(self.z1[1]*sensor_noise_rate[1])^2,

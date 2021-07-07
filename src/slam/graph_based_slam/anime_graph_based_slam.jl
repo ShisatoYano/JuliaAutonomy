@@ -29,11 +29,11 @@ module AnimeGraphBasedSlam
         step = tmp[2]
         if type == "x" # [x, y, theta]
           pose_list[step] = [parse(Float64, tmp[3]), parse(Float64, tmp[4]), parse(Float64, tmp[5])]
-        elseif type == "z" # (id, [distance, direction, orientation])
+        elseif type == "z" # (id, [distance, direction])
           if !haskey(obsrv_list, step)
             obsrv_list[step] = []
           end
-          push!(obsrv_list[step], (parse(Int64, tmp[3]), [parse(Float64, tmp[4]), parse(Float64, tmp[5]), parse(Float64, tmp[6])]))
+          push!(obsrv_list[step], (parse(Int64, tmp[3]), [parse(Float64, tmp[4]), parse(Float64, tmp[5])]))
         elseif type == "delta" # time interval
           delta = parse(Float64, tmp[2])
         elseif type == "u" # input
