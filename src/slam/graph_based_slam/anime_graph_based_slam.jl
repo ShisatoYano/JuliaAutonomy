@@ -121,8 +121,8 @@ module AnimeGraphBasedSlam
   end
 
   function draw_landmarks(landmark_list)
-    scatter!([m[2][1] for m in landmark_list],
-             [m[2][2] for m in landmark_list],
+    scatter!([m[1] for m in landmark_list],
+             [m[2] for m in landmark_list],
              markershape=:star,
              markercolor=:blue,
              markersize=15)
@@ -152,14 +152,21 @@ module AnimeGraphBasedSlam
       end
 
       # add landmark objects
-      landmark_list = Dict()
+      landmark_list = []
       for lm_pair in landmark_keys_list
         map_edges = []
         head_z = landmark_keys_list[lm_pair[1]][1]
         for z in landmark_keys_list[lm_pair[1]]
           push!(map_edges, MapEdge(z[1], z[2][2], head_z[1], head_z[2][2], pose_list))
         end
-        landmark_list[lm_pair[1]] = mean([me.m for me in map_edges])
+
+        omega_map = zeros(3, 3)
+        xi_map = zeros(3)
+        for me in map_edges
+          omega_map += me.omega
+          xi_map += me.xi
+        end
+        push!(landmark_list, inv(omega_map)*xi_map)
       end
       
       # initialize precision matrix for graph
@@ -190,7 +197,7 @@ module AnimeGraphBasedSlam
     end
 
     if is_test == false
-      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/est_poses_mean_map.png")
+      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/est_poses_map_least_squares.png")
       savefig(save_path)
     end
   end
