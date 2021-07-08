@@ -18,7 +18,7 @@ mutable struct ObsrvEdge
 
   # init
   function ObsrvEdge(t1, t2, z1, z2, pose_list; 
-                     sensor_noise_rate=[0.14,0.05,0.05])
+                     sensor_noise_rate=[0.14,0.05])
     @assert z1[1] == z2[1] # prevent id is different
 
     self = new()
@@ -45,27 +45,21 @@ mutable struct ObsrvEdge
 
     # precision matrix for edge
     Q1 = diagm(0 => [(self.z1[1]*sensor_noise_rate[1])^2,
-                     sensor_noise_rate[2]^2,
-                     sensor_noise_rate[3]^2])
-    R1 = -[cos1 -self.z1[1]*sin1 0;
-           sin1  self.z1[1]*cos1 0;
-              0                1 -1]
+                     sensor_noise_rate[2]^2])
+    R1 = -[cos1 -self.z1[1]*sin1;
+           sin1  self.z1[1]*cos1]
     Q2 = diagm(0 => [(self.z2[1]*sensor_noise_rate[1])^2,
-                     sensor_noise_rate[2]^2,
-                     sensor_noise_rate[3]^2])
-    R2 = [cos2 -self.z2[1]*sin2 0;
-          sin2  self.z2[1]*cos2 0;
-             0                1 -1]
+                     sensor_noise_rate[2]^2])
+    R2 = [cos2 -self.z2[1]*sin2;
+          sin2  self.z2[1]*cos2]
     sigma_edge = R1*Q1*R1' + R2*Q2*R2'
     omega_edge = inv(sigma_edge)
 
     # precision matrix for graph
     B1 = -[1 0 -self.z1[1]*sin1;
-           0 1  self.z1[1]*cos1;
-           0 0                 1]
+           0 1  self.z1[1]*cos1]
     B2 = [1 0 -self.z2[1]*sin2;
-          0 1  self.z2[1]*cos2;
-          0 0                 1]
+          0 1  self.z2[1]*cos2]
     self.omega_upper_left = B1' * omega_edge * B1
     self.omega_upper_right = B1' * omega_edge * B2
     self.omega_lower_left = B2' * omega_edge * B1

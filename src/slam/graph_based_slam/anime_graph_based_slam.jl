@@ -160,8 +160,8 @@ module AnimeGraphBasedSlam
           push!(map_edges, MapEdge(z[1], z[2][2], head_z[1], head_z[2][2], pose_list))
         end
 
-        omega_map = zeros(3, 3)
-        xi_map = zeros(3)
+        omega_map = zeros(2, 2)
+        xi_map = zeros(2)
         for me in map_edges
           omega_map += me.omega
           xi_map += me.xi
@@ -197,7 +197,7 @@ module AnimeGraphBasedSlam
     end
 
     if is_test == false
-      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/est_poses_map_least_squares.png")
+      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/est_poses_map_2vars.png")
       savefig(save_path)
     end
   end
