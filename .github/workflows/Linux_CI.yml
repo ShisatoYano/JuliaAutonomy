@@ -41,4 +41,8 @@ jobs:
         shell: bash
 
       - name: "Run test suite"
-        run: julia test/runtests.jl
+        run: julia --code-coverage test/runtests.jl
+      
+      - name: "Upload coverage"
+        uses: codecov/codecov-action@v1
+        with: token: ${{ secrets.CODECOV_TOKEN }}
