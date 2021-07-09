@@ -87,6 +87,9 @@ FastSLAM 1.0
 FastSLAM 2.0  
 ![](src/slam/fast_slam_2/anime_fast_slam_2.gif)  
 
+Graph-based SLAM  
+![](src/slam/graph_based_slam/est_poses_map_2vars.gif)  
+
 # License
 MIT  
 
