@@ -44,6 +44,7 @@ jobs:
         run: julia --code-coverage test/runtests.jl
       
       - name: "Upload coverage"
-        uses: codecov/codecov-action@v1
-        with: 
-          token: ${{ secrets.CODECOV_TOKEN }}
+        run: julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
+        # uses: codecov/codecov-action@v1
+        # with: 
+        #   token: ${{ secrets.CODECOV_TOKEN }}
