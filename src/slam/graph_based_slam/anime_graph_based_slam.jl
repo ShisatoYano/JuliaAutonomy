@@ -128,12 +128,12 @@ module AnimeGraphBasedSlam
              markersize=15)
   end
 
-  function draw(pose_list, obsrv_list, edges, landmark_list)
+  function draw(pose_list, obsrv_list, edges, landmark_list, n)
     make_axis()
     draw_observation(pose_list, obsrv_list)
-    # draw_edges(edges)
     draw_trajectory(pose_list)
     draw_landmarks(landmark_list)
+    annotate!(-3.5, 4.5, "iterate: $(n)")
   end
 
   function main(is_test=false)
@@ -143,12 +143,14 @@ module AnimeGraphBasedSlam
     dim = length(pose_list) * 3
     
     # iterate for optimization
-    for n in 1:10000
+    anime = @animate for n in 1:10000
       edges, landmark_keys_list = make_edges(pose_list, obsrv_list)
 
       # add motion edges
       for i in 0:length(pose_list)-2
-        push!(edges, MotionEdge(i, i+1, pose_list, input_list, delta))
+        for j in 1:100
+          push!(edges, MotionEdge(i, i+1, pose_list, input_list, delta))  
+        end
       end
 
       # add landmark objects
@@ -189,16 +191,15 @@ module AnimeGraphBasedSlam
 
       # convergence
       diff = norm(delta_traj)
-      println("iteration times:$(n) diff:$(diff)")
+      draw(pose_list, obsrv_list, edges, landmark_list, n)
       if diff < 0.01
-        draw(pose_list, obsrv_list, edges, landmark_list)
         break
       end
     end
 
     if is_test == false
-      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/est_poses_map_2vars.png")
-      savefig(save_path)
+      save_path = joinpath(split(@__FILE__, "src")[1], "src/slam/graph_based_slam/est_poses_map_2vars.gif")
+      gif(anime, fps=1, save_path)
     end
   end
 end
