@@ -26,7 +26,8 @@ module TrajObsrvLogger
                   dist_bias_rate_stddev=0.1, dir_bias_stddev=pi/90)
     
     init_pose = [0.0, -3.0, 0.0]
-    a = LoggerAgent(0.2, 5.0/180*pi, time_interval=time_interval, init_pose=init_pose)
+    a = LoggerAgent(0.2, 5.0/180*pi, time_interval=time_interval, 
+                    init_pose=init_pose, is_test=is_test)
     r = DifferentialWheeledRobot(init_pose, 0.2, "black",
                                  a, time_interval,
                                  noise_per_meter=5, 

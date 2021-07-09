@@ -9,6 +9,7 @@ module TestSlam
   include(joinpath(split(@__FILE__, "test")[1], "src/slam/fast_slam_1/anime_fast_slam_1.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/slam/fast_slam_2/anime_fast_slam_2.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/slam/graph_based_slam/psi_sensor.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/slam/graph_based_slam/logger_agent.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/slam/graph_based_slam/traj_obsrv_logger.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/slam/graph_based_slam/anime_graph_based_slam.jl"))  
 
@@ -48,6 +49,22 @@ module TestSlam
         @test visible(s, [6.0, pi/3]) == true
         @test visible(s, [0.2, -pi/3]) == false
         @test visible(s, [0.5, pi]) == false
+      end
+      @testset "LoggerAgent" begin
+        a = LoggerAgent(0.1, 1.0, is_test=true)
+        obsrv = []
+        @test a.pose == [0.0, 0.0, 0.0]
+        speed, yaw_rate = draw_decision!(a, obsrv)
+        @test speed == 0.1
+        @test yaw_rate == 1.0
+        @test a.time_interval == 0.1
+        @test a.estimator === nothing
+        @test a.prev_spd == 0.0
+        @test a.prev_yr == 0.0
+        @test a.step == 0
+      end
+      @testset "TrajObsrvLogger" begin
+        @test_nowarn TrajObsrvLogger.main(is_test=true)
       end
       @testset "GraphBasedSlam" begin
         @test_nowarn AnimeGraphBasedSlam.main(true)
