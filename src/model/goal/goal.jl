@@ -15,10 +15,10 @@ mutable struct Goal
 end
 
 function draw!(self::Goal)
-  scatter!([self.pose[1]+0.16], [self.pose[2]+0.5], 
+  scatter!([self.pose[1]+0.1], [self.pose[2]+0.5], 
            markershape=:rtriangle, 
            markercolor=:red, 
-           markersize=15)
+           markersize=9)
   plot!([self.pose[1], self.pose[1]], [self.pose[2], self.pose[2]+0.6],
         color=:black)
 end
