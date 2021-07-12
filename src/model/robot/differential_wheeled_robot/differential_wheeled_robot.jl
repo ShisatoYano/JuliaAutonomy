@@ -140,7 +140,7 @@ function draw!(self::DifferentialWheeledRobot)
         aspect_ratio=true)
   
   # draw trajectory
-  plot!(self.traj_x, self.traj_y, color=self.color, 
+  plot!(self.traj_x, self.traj_y, color="black", 
         legend=false, aspect_ratio=true)
   
   # draw observation

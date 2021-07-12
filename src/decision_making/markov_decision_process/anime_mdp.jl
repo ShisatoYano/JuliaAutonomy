@@ -32,7 +32,7 @@ module AnimeMdp
                                dist_dev_rate=0.14,
                                dir_dev=0.05)
     a = Agent(0.2, 10.0/180*pi, estimator=ekf)
-    r = DifferentialWheeledRobot(init_pose, 0.2, "black",
+    r = DifferentialWheeledRobot(init_pose, 0.2, "red",
                                  a, time_interval,
                                  noise_per_meter=5, 
                                  noise_std=pi/30,
