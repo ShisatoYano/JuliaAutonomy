@@ -21,7 +21,7 @@ end
 function draw!(self::Puddle)
   w = self.upper_right[1] - self.lower_left[1]
   h = self.upper_right[2] - self.lower_left[2]
-  rectangle(w, h, x, y) = Shape(x + [0,w,w,0], y + [0,0,h,h])
+  rectangle(w, h, x, y) = Shape(x .+ [0,w,w,0], y .+ [0,0,h,h])
   plot!(rectangle(w, h, self.lower_left[1], self.lower_left[2]),
         color=:blue, alpha=self.depth, aspect_ratio=true,
         legend=false)

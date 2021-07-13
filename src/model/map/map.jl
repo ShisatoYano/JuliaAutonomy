@@ -5,7 +5,6 @@ using Plots
 pyplot()
 
 include(joinpath(split(@__FILE__, "src")[1], "src/model/object/object.jl"))
-include(joinpath(split(@__FILE__, "src")[1], "src/model/puddle/puddle.jl"))
 
 mutable struct Map
     objects
