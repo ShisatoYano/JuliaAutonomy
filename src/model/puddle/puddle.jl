@@ -26,3 +26,14 @@ function draw!(self::Puddle)
         color=:blue, alpha=self.depth, aspect_ratio=true,
         legend=false)
 end
+
+function inside(self::Puddle, pose)
+  result = true
+  for i in [1, 2]
+    if (self.lower_left[i] > pose[i]) || 
+       (self.upper_right[i] < pose[i])
+      result = false
+    end
+  end
+  return result
+end
