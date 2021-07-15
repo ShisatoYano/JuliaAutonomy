@@ -10,6 +10,8 @@ module TestModel
   include(joinpath(split(@__FILE__, "test")[1], "src/model/object/object.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/sensor/sensor.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/robot/differential_wheeled_robot/differential_wheeled_robot.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/puddle/puddle.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/goal/goal.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/movement/kidnap/anime_move_kidnap.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/movement/random_noise/anime_move_random_noise.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/movement/speed_bias/anime_move_speed_bias.jl"))
@@ -76,6 +78,21 @@ module TestModel
         @test r.delta_time == 0.1
         @test r.agent.speed == 0.1
         @test r.agent.yaw_rate == 1.0
+      end
+      @testset "Goal" begin
+        g = Goal(1.0, 2.0)
+        @test g.pose[1] == 1.0
+        @test g.pose[2] == 2.0
+        @test_nowarn draw!(g)
+      end
+      @testset "Puddle" begin
+        p = Puddle([0.0, 0.0], [6.0, 6.0], 0.1)
+        @test p.lower_left == [0.0, 0.0]
+        @test p.upper_right == [6.0, 6.0]
+        @test p.depth == 0.1
+        @test_nowarn draw!(p)
+        @test inside(p, [2.0, 2.0]) == true
+        @test inside(p, [-1.0, -2.0]) == false
       end
       @testset "uncertainty" begin
         @testset "Movement" begin
