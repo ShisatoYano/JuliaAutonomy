@@ -69,6 +69,12 @@ function one_step(self::PuddleWorld, delta_time)
   
   for r in self.robots
     r.agent.puddle_depth = puddle_depth(self, r.pose)
+    for g in self.goals
+      if inside(g, r.pose)
+        r.agent.in_goal = true
+        r.agent.final_value = g.value
+      end
+    end
   end
   
   for obj in self.objects

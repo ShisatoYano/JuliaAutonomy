@@ -5,12 +5,24 @@ pyplot()
 
 mutable struct Goal
   pose
+  radius
+  value
 
   # init
-  function Goal(x::Float64, y::Float64)
+  function Goal(x, y; radius=0.3, value=0.0)
     self = new()
     self.pose = [x, y]
+    self.radius = radius
+    self.value = value
     return self
+  end
+end
+
+function inside(self::Goal, pose)
+  if self.radius > sqrt((self.pose[1]-pose[1])^2 + (self.pose[2]-pose[2])^2)
+    return true
+  else
+    return false
   end
 end
 

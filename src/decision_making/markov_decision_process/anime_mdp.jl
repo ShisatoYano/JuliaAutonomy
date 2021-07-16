@@ -22,26 +22,27 @@ module AnimeMdp
     
     # map including landmarks 
     map = Map()
-    landmark_positions = [[-4.0, 2.0],[2.0, -3.0],[3.0, 3.0]]
+    landmark_positions = [[-4.0, 2.0],[2.0, -3.0],[4.0, 4.0],[-4.0, -4.0]]
     for (idx, pos) in enumerate(landmark_positions)
       add_object(map, Object(pos[1], pos[2], id=idx))
     end
     append(world, map)
 
+    # goal
+    goal = Goal(-3.0, -3.0)
+    append(world, goal)
+
     # puddles
     append(world, Puddle([-2.0, 0.0], [0.0, 2.0], 0.1))
     append(world, Puddle([-0.5, -2.0], [2.5, 1.0], 0.1))
 
-    # goal
-    append(world, Goal(-3.0, -3.0))
-
     # robot including sensor, agent, estimator
-    init_pose = [0.0, 0.0, 0.0]
+    init_pose = [2.0, 2.0, 0.0]
     sensor = Sensor(map, dist_noise_rate=0.1, dir_noise=pi/90)
     ekf = ExtendedKalmanFilter(init_pose, env_map=map,
                                dist_dev_rate=0.14,
                                dir_dev=0.05)
-    agent = PuddleIgnoreAgent(0.2, 10.0/180*pi, estimator=ekf)
+    agent = PuddleIgnoreAgent(delta_time=delta_time, estimator=ekf, goal=goal)
     robot = DifferentialWheeledRobot(init_pose, 0.2, "red",
                                      agent, delta_time,
                                      noise_per_meter=5, 

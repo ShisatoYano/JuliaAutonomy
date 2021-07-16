@@ -6,6 +6,7 @@ module TestModel
   # target modules
   include(joinpath(split(@__FILE__, "test")[1], "src/model/world/world.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/agent.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/puddle_ignore_agent.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/map/map.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/object/object.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/sensor/sensor.jl"))
@@ -42,6 +43,22 @@ module TestModel
         @test a.estimator === nothing
         @test a.prev_spd == 0.0
         @test a.prev_yr == 0.0 
+      end
+      @testset "PuddleIgnoreAgent" begin
+        pia = PuddleIgnoreAgent()
+        @test pia.speed == 0.0
+        @test pia.yaw_rate == 0.0
+        @test pia.delta_time == 0.1
+        @test pia.estimator === nothing
+        @test pia.prev_spd == 0.0
+        @test pia.prev_yr == 0.0
+        @test pia.puddle_coef == 100
+        @test pia.puddle_depth == 0.0
+        @test pia.total_reward == 0.0
+        @test pia.in_goal == false
+        @test pia.final_value == 0.0
+        @test pia.goal === nothing
+        @test reward_per_sec(pia) == -1.0
       end
       @testset "Object" begin
         o = Object(1.0, 2.0, shape=:circle, color=:red, size=20, id=4)
@@ -80,9 +97,13 @@ module TestModel
         @test r.agent.yaw_rate == 1.0
       end
       @testset "Goal" begin
-        g = Goal(1.0, 2.0)
+        g = Goal(1.0, 2.0, radius=0.5, value=1.0)
         @test g.pose[1] == 1.0
         @test g.pose[2] == 2.0
+        @test g.radius == 0.5
+        @test g.value == 1.0
+        @test inside(g, [1.2, 2.0]) == true
+        @test inside(g, [1.0, 3.0]) == false
         @test_nowarn draw!(g)
       end
       @testset "Puddle" begin
