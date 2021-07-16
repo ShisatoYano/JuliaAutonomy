@@ -45,6 +45,10 @@ function draw_decision!(self::PuddleIgnoreAgent, observation)
       self.total_reward += self.delta_time * reward_per_sec(self)
 
       draw!(self.estimator)
+      x = self.estimator.estimated_pose[1]
+      y = self.estimator.estimated_pose[2]
+      annotate!(x+1.0, y-0.5, text("reward/sec:$(reward_per_sec(self))", :left, 8))
+      annotate!(x+1.0, y-1.0, text("total reward:$(round(self.total_reward, digits=1))", :left, 8))
   end
   return self.speed, self.yaw_rate
 end
