@@ -4,11 +4,13 @@ module TestDecisionMaking
   # target modules
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/markov_decision_process/policy_evaluator.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/goal/goal.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/puddle/puddle.jl"))
 
   function main()
     @testset "PolicyEvaluator" begin
       g = Goal(4.0, 4.0)
-      pe = PolicyEvaluator([0.2, 0.2, pi/18], g)
+      pd = [Puddle([-2.0, 0.0], [0.0, 2.0], 0.1)]
+      pe = PolicyEvaluator([0.2, 0.2, pi/18], g, pd, 0.1, 10)
       @test pe.pose_min == [-4.0, -4.0, 0.0]
       @test pe.pose_max == [4.0, 4.0, 2*pi]
       @test pe.widths == [0.2, 0.2, pi/18]
