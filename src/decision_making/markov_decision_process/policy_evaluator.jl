@@ -188,9 +188,23 @@ function action_value(self::PolicyEvaluator, action, index)
 end
 
 function policy_evaluation_sweep(self::PolicyEvaluator)
+  max_delta = 0.0
+  
   for i in self.indexes
     if self.is_final_state[i[1]+1, i[2]+1, i[3]+1] != true
-      self.value_function[i[1]+1, i[2]+1, i[3]+1] = action_value(self, Tuple(self.policy[i[1]+1, i[2]+1, i[3]+1, :]), i)
+      q = action_value(self, Tuple(self.policy[i[1]+1, i[2]+1, i[3]+1, :]), i)
+      
+      delta = abs(self.value_function[i[1]+1, i[2]+1, i[3]+1] - q)
+
+      if delta > max_delta
+        max_delta = delta
+      else
+        max_delta = max_delta
+      end
+
+      self.value_function[i[1]+1, i[2]+1, i[3]+1] = q
     end
   end
+
+  return max_delta
 end

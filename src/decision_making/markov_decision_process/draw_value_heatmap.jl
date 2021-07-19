@@ -12,17 +12,19 @@ module DrawValueHeatmap
     pe = PolicyEvaluator([0.2, 0.2, pi/18], Goal(-3, -3), puddles, 0.1, 10)
 
     counter = 0
-    for i in 1:50
-      policy_evaluation_sweep(pe)
+    delta = 1e100
+
+    while delta > 0.01
+      delta = policy_evaluation_sweep(pe)
       counter += 1
+      println("$(counter), $(delta)")
     end
 
     v = pe.value_function[:, :, 18]
     heatmap(v', aspect_ratio=true)
-    println(counter)
 
     if is_test == false
-      save_path = joinpath(split(@__FILE__, "src")[1], "src/decision_making/markov_decision_process/sweep50_i18_heatmap.png")
+      save_path = joinpath(split(@__FILE__, "src")[1], "src/decision_making/markov_decision_process/delta_i18_heatmap.png")
       savefig(save_path)
     end
   end
