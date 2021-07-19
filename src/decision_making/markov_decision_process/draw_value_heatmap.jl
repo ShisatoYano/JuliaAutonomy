@@ -11,10 +11,18 @@ module DrawValueHeatmap
 
     pe = PolicyEvaluator([0.2, 0.2, pi/18], Goal(-3, -3), puddles, 0.1, 10)
 
-    heatmap(pe.depths', aspect_ratio=true)
+    counter = 0
+    for i in 1:10
+      policy_evaluation_sweep(pe)
+      counter += 1
+    end
+
+    v = pe.value_function[:, :, 18]
+    heatmap(v', aspect_ratio=true)
+    println(counter)
 
     if is_test == false
-      save_path = joinpath(split(@__FILE__, "src")[1], "src/decision_making/markov_decision_process/puddle_depth_heatmap.png")
+      save_path = joinpath(split(@__FILE__, "src")[1], "src/decision_making/markov_decision_process/sweep10_i18_heatmap.png")
       savefig(save_path)
     end
   end
