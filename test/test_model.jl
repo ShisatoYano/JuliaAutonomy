@@ -5,6 +5,7 @@ module TestModel
 
   # target modules
   include(joinpath(split(@__FILE__, "test")[1], "src/model/world/world.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/world/puddle_world.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/agent.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/puddle_ignore_agent.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/map/map.jl"))
@@ -32,6 +33,30 @@ module TestModel
         @test w.y_min == -5.0
         @test w.y_max == 5.0
         @test_nowarn draw(w)
+      end
+      @testset "PuddleWorld" begin
+        pw = PuddleWorld(-5.0, 5.0, -5.0, 5.0, is_test=true)
+        @test pw.x_min == -5.0
+        @test pw.x_max == 5.0
+        @test pw.y_min == -5.0
+        @test pw.y_max == 5.0
+        @test length(pw.objects) == 0
+        @test pw.delta_time == 0.1
+        @test pw.end_time == 30
+        @test pw.is_test == true
+        @test pw.save_path === nothing
+        @test length(pw.puddles) == 0
+        @test length(pw.robots) == 0
+        @test length(pw.goals) == 0
+        append(pw, DifferentialWheeledRobot([1, 1, 1], 0.5, "red", 
+                                            PuddleIgnoreAgent(), 0.1))
+        append(pw, Puddle([0.0, 0.0], [6.0, 6.0], 0.1))
+        append(pw, Goal(1.0, 2.0, radius=0.5, value=1.0))
+        @test length(pw.puddles) == 1
+        @test length(pw.robots) == 1
+        @test length(pw.goals) == 1
+        @test puddle_depth(pw, [1.0, 1.0, 1.0]) == 0.1
+        @test_nowarn draw(pw)
       end
       @testset "Agent" begin
         a = Agent(0.1, 1.0)
