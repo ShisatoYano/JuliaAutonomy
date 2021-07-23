@@ -8,6 +8,7 @@ module TestModel
   include(joinpath(split(@__FILE__, "test")[1], "src/model/world/puddle_world.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/agent.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/puddle_ignore_agent.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/dp_policy_agent.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/map/map.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/object/object.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/sensor/sensor.jl"))
@@ -84,6 +85,29 @@ module TestModel
         @test pia.final_value == 0.0
         @test pia.goal === nothing
         @test reward_per_sec(pia) == -1.0
+      end
+      @testset "DpPolicyAgent" begin
+        dpa = DpPolicyAgent()
+        @test dpa.speed == 0.0
+        @test dpa.yaw_rate == 0.0
+        @test dpa.delta_time == 0.1
+        @test dpa.estimator === nothing
+        @test dpa.prev_spd == 0.0
+        @test dpa.prev_yr == 0.0
+        @test dpa.puddle_coef == 100
+        @test dpa.puddle_depth == 0.0
+        @test dpa.total_reward == 0.0
+        @test dpa.in_goal == false
+        @test dpa.final_value == 0.0
+        @test dpa.goal === nothing
+        @test dpa.pose_min == [-4.0, -4.0, 0.0]
+        @test dpa.pose_max == [4.0, 4.0, 2*pi]
+        @test dpa.widths == [0.2, 0.2, pi/18]
+        @test dpa.index_nums == round.(Int64, (dpa.pose_max - dpa.pose_min)./dpa.widths)
+        @test reward_per_sec(dpa) == -1.0
+        @test to_index(dpa, [3.0, 3.0, 0.0]) == [35, 35, 0]
+        @test to_index(dpa, [5.0, 5.0, 0.0]) == [39, 39, 0]
+        @test_nowarn draw_decision!(dpa, [])
       end
       @testset "Object" begin
         o = Object(1.0, 2.0, shape=:circle, color=:red, size=20, id=4)
