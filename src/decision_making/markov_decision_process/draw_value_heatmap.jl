@@ -15,13 +15,13 @@ module DrawValueHeatmap
     counter = 0
     delta = 1e100
 
-    while delta > 0.01
-      delta = policy_iteration_sweep(dp)
-      counter += 1
-      println("$(counter), $(delta)")
-    end
-
     if is_test == false
+      while delta > 0.01
+        delta = policy_iteration_sweep(dp)
+        counter += 1
+        println("$(counter), $(delta)")
+      end
+
       txt_path = joinpath(split(@__FILE__, "src")[1], "src/decision_making/markov_decision_process/policy.txt")
       fp = open(txt_path, "w")
       for i in dp.indexes
@@ -37,6 +37,11 @@ module DrawValueHeatmap
         write(fp, "$(i[1]) $(i[2]) $(i[3]) $(v)\n")
       end
       close(fp)
+    else
+      for i in 1:10
+        delta = policy_iteration_sweep(dp)
+        counter += 1
+      end
     end
 
     # v = dp.value_function[:, :, 18]

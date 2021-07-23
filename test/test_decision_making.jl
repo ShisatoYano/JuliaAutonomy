@@ -4,6 +4,8 @@ module TestDecisionMaking
   # target modules
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/markov_decision_process/policy_evaluator.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/markov_decision_process/dynamic_programming.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/markov_decision_process/anime_mdp.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/markov_decision_process/draw_value_heatmap.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/goal/goal.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/puddle/puddle.jl"))
 
@@ -51,6 +53,12 @@ module TestDecisionMaking
       @test out_correction(dp, [40, 1, 40]) == ([39, 1, 4], -1e100)
       @test out_correction(dp, [1, -1, 40]) == ([1, 0, 4], -1e100)
       @test out_correction(dp, [1, 40, 40]) == ([1, 39, 4], -1e100)
+    end
+    @testset "AnimeMdp" begin
+      @test_nowarn AnimeMdp.main(is_test=true)
+    end
+    @testset "DrawValueHeatmap" begin
+      @test_nowarn DrawValueHeatmap.main(true)
     end
   end
 end
