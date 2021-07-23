@@ -9,6 +9,7 @@ module TestSuite
   include(joinpath(split(@__FILE__, "runtests.jl")[1], "test_model.jl"))
   include(joinpath(split(@__FILE__, "runtests.jl")[1], "test_prob_stats.jl"))
   include(joinpath(split(@__FILE__, "runtests.jl")[1], "test_slam.jl"))
+  include(joinpath(split(@__FILE__, "runtests.jl")[1], "test_decision_making.jl"))
 
   function main()
     TestCommon.main()
@@ -16,6 +17,7 @@ module TestSuite
     TestModel.main()
     TestProbStats.main()
     TestSlam.main()
+    TestDecisionMaking.main()
   end
 end
 
