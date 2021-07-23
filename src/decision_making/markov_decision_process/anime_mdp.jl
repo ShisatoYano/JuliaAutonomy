@@ -37,19 +37,21 @@ module AnimeMdp
     append(world, Puddle([-0.5, -2.0], [2.5, 1.0], 0.1))
 
     # robot including sensor, agent, estimator
-    init_pose = [2.0, 2.0, 0.0]
-    sensor = Sensor(map, dist_noise_rate=0.1, dir_noise=pi/90)
-    ekf = ExtendedKalmanFilter(init_pose, env_map=map,
-                               dist_dev_rate=0.14,
-                               dir_dev=0.05)
-    agent = PuddleIgnoreAgent(delta_time=delta_time, estimator=ekf, goal=goal)
-    robot = DifferentialWheeledRobot(init_pose, 0.2, "red",
-                                     agent, delta_time,
-                                     noise_per_meter=5, 
-                                     noise_std=pi/30,
-                                     bias_rate_stds=[0.1, 0.1],
-                                     sensor=sensor)
-    append(world, robot)
+    # 4 robot objects
+    for init_pose in [[-3.0, 3.0, 0.0], [0.5, 1.5, 0.0], [3.0, 3.0, 0.0], [2.0, -1.0, 0.0]]
+      sensor = Sensor(map, dist_noise_rate=0.1, dir_noise=pi/90)
+      ekf = ExtendedKalmanFilter(init_pose, env_map=map,
+                                 dist_dev_rate=0.14,
+                                 dir_dev=0.05)
+      agent = DpPolicyAgent(delta_time=delta_time, estimator=ekf, goal=goal)
+      robot = DifferentialWheeledRobot(init_pose, 0.2, "red",
+                                       agent, delta_time,
+                                       noise_per_meter=5, 
+                                       noise_std=pi/30,
+                                       bias_rate_stds=[0.1, 0.1],
+                                       sensor=sensor)
+      append(world, robot)
+    end
     
     draw(world) 
   end
