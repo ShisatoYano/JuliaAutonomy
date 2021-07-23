@@ -58,6 +58,7 @@ julia> AnimeMclRandSamp.main()
 * LinearAlgebra
 * StatsBase
 * PDMats
+* Combinatorics
 
 # Sample codes
 ## Localization
@@ -80,7 +81,7 @@ Adaptive reset MCL for kidnapped robot problem
 Expansion + Sensor reset MCL for kidnapped robot problem  
 ![](src/localization/reset_process/expansion_sensor_reset_mcl/anime_expansion_sensor_reset_mcl.gif)  
 
-### SLAM
+## SLAM
 FastSLAM 1.0  
 ![](src/slam/fast_slam_1/anime_fast_slam_1.gif)  
 
@@ -89,6 +90,10 @@ FastSLAM 2.0
 
 Graph-based SLAM  
 ![](src/slam/graph_based_slam/est_poses_map_2vars.gif)  
+
+## Decision Making
+Markov Decision Process  
+![](src/decision_making/markov_decision_process/anime_mdp.gif)  
 
 # License
 MIT  
