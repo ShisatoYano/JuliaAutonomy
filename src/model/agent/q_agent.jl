@@ -25,11 +25,11 @@ mutable struct QAgent
   # init
   function QAgent(;delta_time::Float64=0.1,
                   estimator=nothing,
-                  goal=nothing,
                   puddle_coef=100,
                   widths=[0.2, 0.2, pi/18],
                   lower_left=[-4.0, -4.0],
-                  upper_right=[4.0, 4.0])
+                  upper_right=[4.0, 4.0],
+                  dev_borders=[0.1, 0.2, 0.4, 0.8])
     self = new()
     self.speed = 0.0
     self.yaw_rate = 0.0
@@ -42,7 +42,7 @@ mutable struct QAgent
     self.total_reward = 0.0
     self.in_goal = false
     self.final_value = 0.0
-    self.goal = goal
+    self.goal = nothing
 
     self.pose_min = [lower_left[1], lower_left[2], 0.0]
     self.pose_max = [upper_right[1], upper_right[2], 2*pi]
