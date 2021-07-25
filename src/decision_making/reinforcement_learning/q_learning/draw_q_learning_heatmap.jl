@@ -13,7 +13,7 @@ module DrawQlearningHeatmap
     pe = PolicyEvaluator([0.2, 0.2, pi/18], Goal(-3, -3), puddles, 0.1, 10)
 
     if is_test == false
-      txt_path = joinpath(split(@__FILE__, "src")[1], "src/decision_making/reinforcement_learning/policy.txt")
+      txt_path = joinpath(split(@__FILE__, "src")[1], "src/decision_making/reinforcement_learning/q_learning/policy.txt")
       fp = open(txt_path, "w")
       for i in pe.indexes
         p = pe.policy[i[1]+1, i[2]+1, i[3]+1, :]
@@ -21,7 +21,7 @@ module DrawQlearningHeatmap
       end
       close(fp)
 
-      txt_path = joinpath(split(@__FILE__, "src")[1], "src/decision_making/reinforcement_learning/value.txt")
+      txt_path = joinpath(split(@__FILE__, "src")[1], "src/decision_making/reinforcement_learning/q_learning/value.txt")
       fp = open(txt_path, "w")
       for i in pe.indexes
         v = pe.value_function[i[1]+1, i[2]+1, i[3]+1]

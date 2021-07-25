@@ -11,7 +11,7 @@ module AnimeQLearning
 
   function main(delta_time=0.1, end_time=30; is_test=false)
     # save path of gif file
-    path = "src/decision_making/reinforcement_learning/anime_q_learning.gif"
+    path = "src/decision_making/reinforcement_learning/q_learning/anime_q_learning.gif"
 
     # simulation world
     world = PuddleWorld(-5.0, 5.0, -5.0, 5.0,

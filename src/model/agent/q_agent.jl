@@ -56,7 +56,7 @@ end
 function init_policy(self::QAgent)
   tmp = zeros(Tuple([self.index_nums[1], self.index_nums[2], self.index_nums[3], 2]))
 
-  txt_path = "src/decision_making/reinforcement_learning/policy.txt"
+  txt_path = "src/decision_making/reinforcement_learning/q_learning/policy.txt"
   open(joinpath(split(@__FILE__, "src")[1], txt_path), "r") do fp
     for line in eachline(fp)
       d = split(line) # [i_x, i_y, i_theta, speed, yaw_rate]
