@@ -42,15 +42,15 @@ module AnimeQLearning
     ekf = ExtendedKalmanFilter(init_pose, env_map=map,
                                dist_dev_rate=0.14,
                                dir_dev=0.05)
-    agent = QAgent(delta_time=delta_time, estimator=ekf, goal=goal)
+    agent = QAgent(delta_time=delta_time, estimator=ekf)
     robot = DifferentialWheeledRobot(init_pose, 0.2, "red",
                                      agent, delta_time,
                                      noise_per_meter=5, 
                                      noise_std=pi/30,
                                      bias_rate_stds=[0.1, 0.1],
                                      sensor=sensor)
-    append(world, robot)
+    # append(world, robot)
     
-    draw(world) 
+    # draw(world) 
   end
 end

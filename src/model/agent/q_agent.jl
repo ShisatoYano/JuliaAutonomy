@@ -3,6 +3,8 @@
 # get action based on policy
 # by q learning
 
+include(joinpath(split(@__FILE__, "src")[1], "src/decision_making/reinforcement_learning/q_learning/state_info.jl"))
+
 mutable struct QAgent
   speed
   yaw_rate
@@ -20,7 +22,10 @@ mutable struct QAgent
   pose_max
   widths
   index_nums
+  indexes
+  actions
   policy_data
+  state_space
 
   # init
   function QAgent(;delta_time::Float64=0.1,
@@ -49,8 +54,30 @@ mutable struct QAgent
     self.widths = widths
     self.index_nums = round.(Int64, (self.pose_max - self.pose_min)./self.widths)
     self.policy_data = init_policy(self)
+
+    nx, ny, nt = self.index_nums[1], self.index_nums[2], self.index_nums[3]
+    self.indexes = vec(collect(Base.product(0:nx-1, 0:ny-1, 0:nt-1)))
+    actions_set = Set([Tuple(self.policy_data[i[1]+1, i[2]+1, i[3]+1, :]) for i in self.indexes])
+    self.actions = [a for a in actions_set]
+    self.state_space = set_action_value_function(self)
+    println(self.state_space)
     return self
   end
+end
+
+function set_action_value_function(self::QAgent)
+  state_space = Dict()
+
+  txt_path = "src/decision_making/reinforcement_learning/q_learning/value.txt"
+  open(joinpath(split(@__FILE__, "src")[1], txt_path), "r") do fp
+    for line in eachline(fp)
+      d = split(line) # [i_x, i_y, i_theta, value]
+      index, value = Tuple([parse(Int64, d[1])+1, parse(Int64, d[2])+1, parse(Int64, d[3])+1]), parse(Float64, d[4])
+      state_space[index] = StateInfo(length(self.actions))
+    end
+  end
+
+  return state_space
 end
 
 function init_policy(self::QAgent)

@@ -20,6 +20,6 @@ function greedy(self::StateInfo)
 end
 
 # call greedy()
-function pi(self::StateInfo)
+function _pi(self::StateInfo)
   return greedy(self)
 end
