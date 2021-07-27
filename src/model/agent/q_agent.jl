@@ -74,6 +74,14 @@ function set_action_value_function(self::QAgent)
       d = split(line) # [i_x, i_y, i_theta, value]
       index, value = Tuple([parse(Int64, d[1])+1, parse(Int64, d[2])+1, parse(Int64, d[3])+1]), parse(Float64, d[4])
       state_space[index] = StateInfo(length(self.actions))
+
+      for (i, a) in enumerate(self.actions)
+        if Tuple(self.policy_data[index[1], index[2], index[3], :]) == a
+          state_space[index].q[i] = value
+        else
+          state_space[index].q[i] = value - 0.1
+        end
+      end
     end
   end
 
