@@ -49,8 +49,8 @@ module AnimeQLearning
                                      noise_std=pi/30,
                                      bias_rate_stds=[0.1, 0.1],
                                      sensor=sensor)
-    # append(world, robot)
+    append(world, robot)
     
-    # draw(world) 
+    draw(world) 
   end
 end

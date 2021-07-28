@@ -60,7 +60,6 @@ mutable struct QAgent
     actions_set = Set([Tuple(self.policy_data[i[1]+1, i[2]+1, i[3]+1, :]) for i in self.indexes])
     self.actions = [a for a in actions_set]
     self.state_space = set_action_value_function(self)
-    println(self.state_space)
     return self
   end
 end
@@ -126,7 +125,7 @@ end
 function policy(self::QAgent, pose)
   index = to_index(self, pose)
 
-  action = self.policy_data[index[1]+1, index[2]+1, index[3]+1, :]
+  action = self.actions[_pi(self.state_space[Tuple(index .+ [1, 1, 1])])]
 
   return action[1], action[2] 
 end
