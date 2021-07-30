@@ -26,11 +26,18 @@ mutable struct QAgent
   actions
   policy_data
   state_space
+  
+  # for reinforcement learning
+  alpha # step size parameter
+  s # state
+  a # action
+  update_end # end flag
 
   # init
   function QAgent(;delta_time::Float64=0.1,
                   estimator=nothing,
                   puddle_coef=100,
+                  alpha=0.5,
                   widths=[0.2, 0.2, pi/18],
                   lower_left=[-4.0, -4.0],
                   upper_right=[4.0, 4.0],
@@ -60,6 +67,11 @@ mutable struct QAgent
     actions_set = Set([Tuple(self.policy_data[i[1]+1, i[2]+1, i[3]+1, :]) for i in self.indexes])
     self.actions = [a for a in actions_set]
     self.state_space = set_action_value_function(self)
+
+    self.alpha = alpha
+    self.s = nothing
+    self.a = nothing
+    self.update_end = false
     return self
   end
 end
@@ -125,9 +137,11 @@ end
 function policy(self::QAgent, pose)
   index = to_index(self, pose)
 
-  action = self.actions[_pi(self.state_space[Tuple(index .+ [1, 1, 1])])]
+  s = Tuple(index .+ [1, 1, 1])
 
-  return action[1], action[2] 
+  a = _pi(self.state_space[s])
+
+  return s, a 
 end
 
 function draw_decision!(self::QAgent, observation)

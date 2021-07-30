@@ -37,3 +37,8 @@ end
 function _pi(self::StateInfo)
   return epsilon_greedy(self)
 end
+
+# get max q value
+function max_q(self::StateInfo)
+  return maximum(self.q)
+end
