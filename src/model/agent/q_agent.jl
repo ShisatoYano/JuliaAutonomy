@@ -144,17 +144,35 @@ function policy(self::QAgent, pose)
   return s, a 
 end
 
+function q_update(self::QAgent, s, a, r, s_)
+  
+end
+
 function draw_decision!(self::QAgent, observation)
-  # reached goal
-  if self.in_goal == true
+  # finished learning
+  if self.update_end == true
     return 0.0, 0.0 # stop
   end
 
+  # reached at goal
+  if self.in_goal == true
+    self.update_end = true
+  end
+
   if self.estimator !== nothing
+    # state estimation
     motion_update(self.estimator, self.prev_spd, self.prev_yr, self.delta_time)
     observation_update(self.estimator, observation)
 
+    # decide next action
+    s_, a_ = policy(self, self.estimator.estimated_pose)
+
+    # calculate reward for state transition
     self.total_reward += self.delta_time * reward_per_sec(self)
+
+    # q-learning
+
+    # save current state and action
 
     self.speed, self.yaw_rate = policy(self, self.estimator.estimated_pose)
     self.prev_spd, self.prev_yr = self.speed, self.yaw_rate
