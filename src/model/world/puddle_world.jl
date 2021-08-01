@@ -49,7 +49,7 @@ function append(self::PuddleWorld, obj)
     push!(self.puddles, obj)
   end
 
-  if typeof(obj) == DifferentialWheeledRobot
+  if typeof(obj) == DifferentialWheeledRobot || typeof(obj) == WarpRobot
     push!(self.robots, obj)
   end
 

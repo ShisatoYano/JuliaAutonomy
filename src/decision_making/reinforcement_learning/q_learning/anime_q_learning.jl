@@ -2,9 +2,13 @@
 # learning method: q learning
 
 module AnimeQLearning
+  using Plots
+  pyplot()
+
   include(joinpath(split(@__FILE__, "src")[1], "src/model/world/puddle_world.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/map/map.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/robot/differential_wheeled_robot/differential_wheeled_robot.jl"))
+  include(joinpath(split(@__FILE__, "src")[1], "src/model/robot/warp_robot/warp_robot.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/localization/extended_kalman_filter/extended_kalman_filter.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/goal/goal.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/puddle/puddle.jl"))
@@ -43,14 +47,27 @@ module AnimeQLearning
                                dist_dev_rate=0.14,
                                dir_dev=0.05)
     agent = QAgent(delta_time=delta_time, estimator=ekf)
-    robot = DifferentialWheeledRobot(init_pose, 0.2, "red",
-                                     agent, delta_time,
-                                     noise_per_meter=5, 
-                                     noise_std=pi/30,
-                                     bias_rate_stds=[0.1, 0.1],
-                                     sensor=sensor)
+    robot = WarpRobot(init_pose, 0.2, "red",
+                      agent, delta_time,
+                      noise_per_meter=5, 
+                      noise_std=pi/30,
+                      bias_rate_stds=[0.1, 0.1],
+                      sensor=sensor)
     append(world, robot)
     
-    draw(world) 
+    draw(world)
+    
+    # draw heatmap of max q(state value)
+    if is_test == false
+      v = zeros(Tuple(agent.index_nums[1:2]))
+      for x in range(1, agent.index_nums[1], length=agent.index_nums[1])
+        for y in range(1, agent.index_nums[2], length=agent.index_nums[2])
+          v[Int64(x), Int64(y)] = max_q(agent.state_space[Tuple([Int64(x), Int64(y), 18])])
+        end
+      end
+      heatmap(v', aspect_ratio=true)
+      save_path = joinpath(split(@__FILE__, "src")[1], "src/decision_making/reinforcement_learning/q_learning/state_value_heatmap_30s.png")
+      savefig(save_path)
+    end
   end
 end

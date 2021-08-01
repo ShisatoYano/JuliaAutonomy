@@ -162,7 +162,7 @@ function q_update(self::QAgent, r, s_)
   # update q
   self.state_space[self.s].q[self.a] = (1 - self.alpha)*q + self.alpha*(r + q_)
 
-  println("$(self.s) $(r) $(s_) prev_q:$(round(q, digits=2)) next_step_max_q:$(round(q_, digits=2)) new_q:$(round(self.state_space[self.s].q[self.a], digits=2))")
+  # println("$(self.s) $(r) $(s_) prev_q:$(round(q, digits=2)) next_step_max_q:$(round(q_, digits=2)) new_q:$(round(self.state_space[self.s].q[self.a], digits=2))")
 end
 
 function draw_decision!(self::QAgent, observation)
