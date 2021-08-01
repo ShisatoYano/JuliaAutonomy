@@ -144,8 +144,25 @@ function policy(self::QAgent, pose)
   return s, a 
 end
 
-function q_update(self::QAgent, s, a, r, s_)
+function q_update(self::QAgent, r, s_)
+  if self.s === nothing 
+    return # previous state is none
+  end
+
+  # q before update
+  q = self.state_space[self.s].q[self.a]
   
+  # q after state transition
+  if self.in_goal == true
+    q_ = self.final_value
+  else
+    q_ = max_q(self.state_space[s_])
+  end
+
+  # update q
+  self.state_space[self.s].q[self.a] = (1 - self.alpha)*q + self.alpha*(r + q_)
+
+  println("$(self.s) $(r) $(s_) prev_q:$(round(q, digits=2)) next_step_max_q:$(round(q_, digits=2)) new_q:$(round(self.state_space[self.s].q[self.a], digits=2))")
 end
 
 function draw_decision!(self::QAgent, observation)
@@ -168,13 +185,16 @@ function draw_decision!(self::QAgent, observation)
     s_, a_ = policy(self, self.estimator.estimated_pose)
 
     # calculate reward for state transition
-    self.total_reward += self.delta_time * reward_per_sec(self)
+    r = self.delta_time * reward_per_sec(self)
+    self.total_reward += r
 
     # q-learning
+    q_update(self, r, s_) # update using reward and next state
 
     # save current state and action
+    self.s, self.a = s_, a_
 
-    self.speed, self.yaw_rate = policy(self, self.estimator.estimated_pose)
+    self.speed, self.yaw_rate = self.actions[a_][1], self.actions[a_][2]
     self.prev_spd, self.prev_yr = self.speed, self.yaw_rate
 
     draw!(self.estimator)
