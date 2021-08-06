@@ -9,10 +9,12 @@ module TestModel
   include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/agent.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/puddle_ignore_agent.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/dp_policy_agent.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/q_agent.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/map/map.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/object/object.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/sensor/sensor.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/robot/differential_wheeled_robot/differential_wheeled_robot.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/robot/warp_robot/warp_robot.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/puddle/puddle.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/goal/goal.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/movement/kidnap/anime_move_kidnap.jl"))
@@ -109,6 +111,34 @@ module TestModel
         @test to_index(dpa, [5.0, 5.0, 0.0]) == [39, 39, 0]
         @test_nowarn draw_decision!(dpa, [])
       end
+      @testset "QAgent" begin
+        qa = QAgent()
+        @test qa.speed == 0.0
+        @test qa.yaw_rate == 0.0
+        @test qa.delta_time == 0.1
+        @test qa.estimator === nothing
+        @test qa.prev_spd == 0.0
+        @test qa.prev_yr == 0.0
+        @test qa.puddle_coef == 100
+        @test qa.puddle_depth == 0.0
+        @test qa.total_reward == 0.0
+        @test qa.in_goal == false
+        @test qa.final_value == 0.0
+        @test qa.goal === nothing
+        @test qa.pose_min == [-4.0, -4.0, 0.0]
+        @test qa.pose_max == [4.0, 4.0, 2*pi]
+        @test qa.widths == [0.2, 0.2, pi/18]
+        @test qa.index_nums == round.(Int64, (qa.pose_max - qa.pose_min)./qa.widths)
+        @test qa.alpha == 0.5
+        @test qa.s === nothing
+        @test qa.a === nothing
+        @test qa.update_end == false
+        @test qa.stuck_timer == 0.0
+        @test reward_per_sec(qa) == -1.0
+        @test to_index(qa, [3.0, 3.0, 0.0]) == [35, 35, 0]
+        @test to_index(qa, [5.0, 5.0, 0.0]) == [39, 39, 0]
+        @test_nowarn draw_decision!(qa, [])
+      end
       @testset "Object" begin
         o = Object(1.0, 2.0, shape=:circle, color=:red, size=20, id=4)
         @test o.pose == [1.0, 2.0]
@@ -144,6 +174,19 @@ module TestModel
         @test r.delta_time == 0.1
         @test r.agent.speed == 0.1
         @test r.agent.yaw_rate == 1.0
+      end
+      @testset "WarpRobot" begin
+        a = Agent(0.1, 1.0)     
+        wr = WarpRobot([1, 1, 1], 0.5, "red", a, 0.1)
+        @test wr.pose == [1, 1, 1]
+        @test wr.radius == 0.5
+        @test wr.color == "red"
+        @test wr.delta_time == 0.1
+        @test wr.agent.speed == 0.1
+        @test wr.agent.yaw_rate == 1.0
+        @test wr.is_stuck == false
+        @test wr.traj_x[1] == 1
+        @test wr.traj_y[1] == 1
       end
       @testset "Goal" begin
         g = Goal(1.0, 2.0, radius=0.5, value=1.0)

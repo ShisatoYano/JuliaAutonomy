@@ -160,7 +160,7 @@ end
 function draw!(self::WarpRobot)
   # fineshed learning
   if self.agent.update_end == true
-    println("update end:$(self.agent.total_reward + self.agent.final_value)")
+    println("tr:$(self.agent.total_reward) fv:$(self.agent.final_value)")
     reset(self)
     return
   end
