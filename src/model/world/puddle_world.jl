@@ -5,6 +5,9 @@ using Plots
 pyplot()
 
 include(joinpath(split(@__FILE__, "src")[1], "src/model/puddle/puddle.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/model/goal/goal.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/model/robot/differential_wheeled_robot/differential_wheeled_robot.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/model/robot/warp_robot/warp_robot.jl"))
 
 mutable struct PuddleWorld
   x_min
