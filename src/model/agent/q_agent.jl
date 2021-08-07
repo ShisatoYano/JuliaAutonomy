@@ -3,7 +3,7 @@
 # get action based on policy
 # by q learning
 
-include(joinpath(split(@__FILE__, "src")[1], "src/decision_making/reinforcement_learning/q_learning/state_info.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/decision_making/reinforcement_learning/state_info.jl"))
 
 mutable struct QAgent
   speed
@@ -81,7 +81,7 @@ end
 function set_action_value_function(self::QAgent)
   state_space = Dict()
 
-  txt_path = "src/decision_making/reinforcement_learning/q_learning/value.txt"
+  txt_path = "src/decision_making/reinforcement_learning/value.txt"
   open(joinpath(split(@__FILE__, "src")[1], txt_path), "r") do fp
     for line in eachline(fp)
       d = split(line) # [i_x, i_y, i_theta, value]
@@ -104,7 +104,7 @@ end
 function init_policy(self::QAgent)
   tmp = zeros(Tuple([self.index_nums[1], self.index_nums[2], self.index_nums[3], 2]))
 
-  txt_path = "src/decision_making/reinforcement_learning/q_learning/policy.txt"
+  txt_path = "src/decision_making/reinforcement_learning/policy.txt"
   open(joinpath(split(@__FILE__, "src")[1], txt_path), "r") do fp
     for line in eachline(fp)
       d = split(line) # [i_x, i_y, i_theta, speed, yaw_rate]

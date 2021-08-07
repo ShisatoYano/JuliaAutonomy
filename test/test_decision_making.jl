@@ -6,7 +6,7 @@ module TestDecisionMaking
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/markov_decision_process/dynamic_programming.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/markov_decision_process/anime_mdp.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/markov_decision_process/draw_value_heatmap.jl"))
-  include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/q_learning/state_info.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/state_info.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/q_learning/anime_q_learning.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/goal/goal.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/puddle/puddle.jl"))
