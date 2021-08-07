@@ -13,7 +13,7 @@ module AnimeQLearning
   include(joinpath(split(@__FILE__, "src")[1], "src/model/goal/goal.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/puddle/puddle.jl"))
 
-  function main(delta_time=0.1, end_time=30; is_test=false)
+  function main(delta_time=0.1, end_time=20000; is_test=false)
     # save path of gif file
     path = "src/decision_making/reinforcement_learning/q_learning/anime_q_learning.gif"
 
@@ -56,18 +56,5 @@ module AnimeQLearning
     append(world, robot)
     
     draw(world)
-    
-    # draw heatmap of max q(state value)
-    if is_test == false
-      v = zeros(Tuple(agent.index_nums[1:2]))
-      for x in range(1, agent.index_nums[1], length=agent.index_nums[1])
-        for y in range(1, agent.index_nums[2], length=agent.index_nums[2])
-          v[Int64(x), Int64(y)] = max_q(agent.state_space[Tuple([Int64(x), Int64(y), 18])])
-        end
-      end
-      heatmap(v', aspect_ratio=true)
-      save_path = joinpath(split(@__FILE__, "src")[1], "src/decision_making/reinforcement_learning/q_learning/state_value_heatmap_30s.png")
-      savefig(save_path)
-    end
   end
 end

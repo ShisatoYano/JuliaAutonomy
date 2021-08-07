@@ -6,8 +6,11 @@ module TestDecisionMaking
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/markov_decision_process/dynamic_programming.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/markov_decision_process/anime_mdp.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/markov_decision_process/draw_value_heatmap.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/q_learning/state_info.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/q_learning/anime_q_learning.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/goal/goal.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/puddle/puddle.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/robot/warp_robot/warp_robot.jl"))
 
   function main()
     @testset "PolicyEvaluator" begin
@@ -59,6 +62,17 @@ module TestDecisionMaking
     end
     @testset "DrawValueHeatmap" begin
       @test_nowarn DrawValueHeatmap.main(true)
+    end
+    @testset "StateInfo" begin
+      si = StateInfo(5)
+      @test length(si.q) == 5
+      @test si.q == [0.0, 0.0, 0.0, 0.0, 0.0]
+      @test si.epsilon == 0.3
+      @test greedy(si) == 1
+      @test max_q(si) == 0.0
+    end
+    @testset "AnimeQLearning" begin
+      @test_nowarn AnimeQLearning.main(0.1, 10, is_test=true)
     end
   end
 end
