@@ -32,6 +32,7 @@ mutable struct QAgent
   s # state
   a # action
   update_end # end flag
+  stuck_timer
 
   # init
   function QAgent(;delta_time::Float64=0.1,
@@ -72,6 +73,7 @@ mutable struct QAgent
     self.s = nothing
     self.a = nothing
     self.update_end = false
+    self.stuck_timer = 0.0
     return self
   end
 end
@@ -161,8 +163,6 @@ function q_update(self::QAgent, r, s_)
 
   # update q
   self.state_space[self.s].q[self.a] = (1 - self.alpha)*q + self.alpha*(r + q_)
-
-  # println("$(self.s) $(r) $(s_) prev_q:$(round(q, digits=2)) next_step_max_q:$(round(q_, digits=2)) new_q:$(round(self.state_space[self.s].q[self.a], digits=2))")
 end
 
 function draw_decision!(self::QAgent, observation)
@@ -194,10 +194,27 @@ function draw_decision!(self::QAgent, observation)
     # save current state and action
     self.s, self.a = s_, a_
 
-    self.speed, self.yaw_rate = self.actions[a_][1], self.actions[a_][2]
+    # count up while stucking
+    if self.actions[a_][1] == 0.0
+      self.stuck_timer += self.delta_time
+    else
+      self.stuck_timer = 0.0
+    end
+
+    # prevent stuck
+    if self.stuck_timer > 10.0
+      self.speed, self.yaw_rate = 1.0, 0.0
+    else
+      self.speed, self.yaw_rate = self.actions[a_][1], self.actions[a_][2]    
+    end
+
     self.prev_spd, self.prev_yr = self.speed, self.yaw_rate
 
     draw!(self.estimator)
+    x = self.estimator.estimated_pose[1]
+    y = self.estimator.estimated_pose[2]
+    annotate!(x+1.0, y-0.5, text("reward/sec:$(reward_per_sec(self))", :left, 8))
+    annotate!(x+1.0, y-1.0, text("total reward:$(round(self.total_reward, digits=1))", :left, 8))
   end
 
   return self.speed, self.yaw_rate
