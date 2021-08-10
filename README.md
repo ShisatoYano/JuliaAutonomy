@@ -94,7 +94,10 @@ Graph-based SLAM
 
 ## Decision Making
 Markov Decision Process  
-![](src/decision_making/markov_decision_process/anime_mdp.gif)  
+![](src/decision_making/markov_decision_process/anime_mdp.gif) 
+
+Reinforcement Learning  
+![](src/decision_making/reinforcement_learning/q_learning/q_learning_after_1.PNG)  
 
 # License
 MIT  
