@@ -8,6 +8,8 @@ module TestDecisionMaking
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/markov_decision_process/draw_value_heatmap.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/state_info.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/q_learning/anime_q_learning.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/sarsa/sarsa_agent.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/sarsa/anime_sarsa.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/goal/goal.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/puddle/puddle.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/robot/warp_robot/warp_robot.jl"))
@@ -73,6 +75,38 @@ module TestDecisionMaking
     end
     @testset "AnimeQLearning" begin
       @test_nowarn AnimeQLearning.main(0.1, 10, is_test=true)
+    end
+    @testset "SarsaAgent" begin
+      sa = SarsaAgent()
+      @test sa.speed == 0.0
+      @test sa.yaw_rate == 0.0
+      @test sa.delta_time == 0.1
+      @test sa.estimator === nothing
+      @test sa.prev_spd == 0.0
+      @test sa.prev_yr == 0.0
+      @test sa.puddle_coef == 100
+      @test sa.puddle_depth == 0.0
+      @test sa.total_reward == 0.0
+      @test sa.in_goal == false
+      @test sa.final_value == 0.0
+      @test sa.goal === nothing
+      @test sa.pose_min == [-4.0, -4.0, 0.0]
+      @test sa.pose_max == [4.0, 4.0, 2*pi]
+      @test sa.widths == [0.2, 0.2, pi/18]
+      @test sa.index_nums == round.(Int64, (sa.pose_max - sa.pose_min)./sa.widths)
+      @test sa.alpha == 0.5
+      @test sa.s === nothing
+      @test sa.a === nothing
+      @test sa.update_end == false
+      @test sa.stuck_timer == 0.0
+      @test sa.learning_timer == 0.0
+      @test reward_per_sec(sa) == -1.0
+      @test to_index(sa, [3.0, 3.0, 0.0]) == [35, 35, 0]
+      @test to_index(sa, [5.0, 5.0, 0.0]) == [39, 39, 0]
+      @test_nowarn draw_decision!(sa, [])
+    end
+    @testset "AnimeSarsa" begin
+      @test_nowarn AnimeSarsa.main(0.1, 10, is_test=true)
     end
   end
 end

@@ -5,6 +5,7 @@
 using Plots, Random, Distributions, LinearAlgebra
 pyplot()
 
+include(joinpath(split(@__FILE__, "src")[1], "src/decision_making/reinforcement_learning/sarsa/sarsa_agent.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/agent/q_agent.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/sensor/sensor.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/common/error_calculation/error_calculation.jl"))
