@@ -11,6 +11,7 @@ module AnimeSarsa
   include(joinpath(split(@__FILE__, "src")[1], "src/localization/extended_kalman_filter/extended_kalman_filter.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/goal/goal.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/puddle/puddle.jl"))
+  include(joinpath(split(@__FILE__, "src")[1], "src/decision_making/reinforcement_learning/sarsa/sarsa_agent.jl"))
 
   function main(delta_time=0.1, end_time=20000; is_test=false)
     # save path of gif file

@@ -10,6 +10,10 @@ module TestDecisionMaking
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/q_learning/anime_q_learning.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/sarsa/sarsa_agent.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/sarsa/anime_sarsa.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/n_step_sarsa/n_step_sarsa_agent.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/n_step_sarsa/anime_n_step_sarsa.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/sarsa_lambda/sarsa_lambda_agent.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/decision_making/reinforcement_learning/sarsa_lambda/anime_sarsa_lambda.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/goal/goal.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/puddle/puddle.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/robot/warp_robot/warp_robot.jl"))
@@ -107,6 +111,77 @@ module TestDecisionMaking
     end
     @testset "AnimeSarsa" begin
       @test_nowarn AnimeSarsa.main(0.1, 10, is_test=true)
+    end
+    @testset "NstepSarsaAgent" begin
+      nsa = NstepSarsaAgent()
+      @test nsa.speed == 0.0
+      @test nsa.yaw_rate == 0.0
+      @test nsa.delta_time == 0.1
+      @test nsa.estimator === nothing
+      @test nsa.prev_spd == 0.0
+      @test nsa.prev_yr == 0.0
+      @test nsa.puddle_coef == 100
+      @test nsa.puddle_depth == 0.0
+      @test nsa.total_reward == 0.0
+      @test nsa.in_goal == false
+      @test nsa.final_value == 0.0
+      @test nsa.goal === nothing
+      @test nsa.pose_min == [-4.0, -4.0, 0.0]
+      @test nsa.pose_max == [4.0, 4.0, 2*pi]
+      @test nsa.widths == [0.2, 0.2, pi/18]
+      @test nsa.index_nums == round.(Int64, (nsa.pose_max - nsa.pose_min)./nsa.widths)
+      @test nsa.alpha == 0.5
+      @test nsa.s === nothing
+      @test nsa.a === nothing
+      @test nsa.update_end == false
+      @test nsa.stuck_timer == 0.0
+      @test nsa.learning_timer == 0.0
+      @test nsa.s_trace == []
+      @test nsa.a_trace == []
+      @test nsa.r_trace == []
+      @test nsa.n_step == 10
+      @test reward_per_sec(nsa) == -1.0
+      @test to_index(nsa, [3.0, 3.0, 0.0]) == [35, 35, 0]
+      @test to_index(nsa, [5.0, 5.0, 0.0]) == [39, 39, 0]
+      @test_nowarn draw_decision!(nsa, [])
+    end
+    @testset "AnimeNstepSarsa" begin
+      @test_nowarn AnimeNstepSarsa.main(0.1, 10, is_test=true)
+    end
+    @testset "SarsaLambdaAgent" begin
+      sla = SarsaLambdaAgent()
+      @test sla.speed == 0.0
+      @test sla.yaw_rate == 0.0
+      @test sla.delta_time == 0.1
+      @test sla.estimator === nothing
+      @test sla.prev_spd == 0.0
+      @test sla.prev_yr == 0.0
+      @test sla.puddle_coef == 100
+      @test sla.puddle_depth == 0.0
+      @test sla.total_reward == 0.0
+      @test sla.in_goal == false
+      @test sla.final_value == 0.0
+      @test sla.goal === nothing
+      @test sla.pose_min == [-4.0, -4.0, 0.0]
+      @test sla.pose_max == [4.0, 4.0, 2*pi]
+      @test sla.widths == [0.2, 0.2, pi/18]
+      @test sla.index_nums == round.(Int64, (sla.pose_max - sla.pose_min)./sla.widths)
+      @test sla.alpha == 0.5
+      @test sla.s === nothing
+      @test sla.a === nothing
+      @test sla.update_end == false
+      @test sla.stuck_timer == 0.0
+      @test sla.learning_timer == 0.0
+      @test sla.s_trace == []
+      @test sla.a_trace == []
+      @test sla.lmd == 0.9
+      @test reward_per_sec(sla) == -1.0
+      @test to_index(sla, [3.0, 3.0, 0.0]) == [35, 35, 0]
+      @test to_index(sla, [5.0, 5.0, 0.0]) == [39, 39, 0]
+      @test_nowarn draw_decision!(sla, [])
+    end
+    @testset "AnimeSarsaLambda" begin
+      @test_nowarn AnimeSarsaLambda.main(0.1, 10, is_test=true)
     end
   end
 end

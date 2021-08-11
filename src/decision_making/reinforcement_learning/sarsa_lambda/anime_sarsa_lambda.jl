@@ -1,7 +1,7 @@
 # Path planning simulation by reinforcement learning
-# learning method: q learning
+# learning method: sarsa lambda
 
-module AnimeQLearning
+module AnimeSarsaLambda
   using Plots
   pyplot()
 
@@ -11,11 +11,11 @@ module AnimeQLearning
   include(joinpath(split(@__FILE__, "src")[1], "src/localization/extended_kalman_filter/extended_kalman_filter.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/goal/goal.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/puddle/puddle.jl"))
-  include(joinpath(split(@__FILE__, "src")[1], "src/model/agent/q_agent.jl"))
+  include(joinpath(split(@__FILE__, "src")[1], "src/decision_making/reinforcement_learning/sarsa_lambda/sarsa_lambda_agent.jl"))
 
-  function main(delta_time=0.1, end_time=20000; is_test=false)
+  function main(delta_time=0.1, end_time=50000; is_test=false)
     # save path of gif file
-    path = "src/decision_making/reinforcement_learning/q_learning/anime_q_learning.gif"
+    path = "src/decision_making/reinforcement_learning/sarsa_lambda/anime_sarsa_lambda.gif"
 
     # simulation world
     world = PuddleWorld(-5.0, 5.0, -5.0, 5.0,
@@ -46,7 +46,7 @@ module AnimeQLearning
     ekf = ExtendedKalmanFilter(init_pose, env_map=map,
                                dist_dev_rate=0.14,
                                dir_dev=0.05)
-    agent = QAgent(delta_time=delta_time, estimator=ekf)
+    agent = SarsaLambdaAgent(delta_time=delta_time, estimator=ekf)
     robot = WarpRobot(init_pose, 0.2, "red",
                       agent, delta_time,
                       noise_per_meter=5, 
