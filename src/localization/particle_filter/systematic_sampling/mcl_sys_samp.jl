@@ -96,8 +96,8 @@ function draw!(self::MclSysSamp)
   # all of particles
   px = [p.pose[1] for p in self.particles]
   py = [p.pose[2] for p in self.particles]
-  vx = [cos(p.pose[3])*k*p.weight*length(self.particles) for p in self.particles]
-  vy = [sin(p.pose[3])*k*p.weight*length(self.particles) for p in self.particles]
+  vx = [cos(p.pose[3])*k for p in self.particles]
+  vy = [sin(p.pose[3])*k for p in self.particles]
   quiver!(px, py, quiver=(vx, vy), aspect_ratio=true, color="blue")
   # maximum likelihood particle
   mx = [self.estimated_pose[1]]
