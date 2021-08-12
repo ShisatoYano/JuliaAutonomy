@@ -11,11 +11,11 @@ module AnimeDpMcl
   include(joinpath(split(@__FILE__, "src")[1], "src/localization/particle_filter/systematic_sampling/mcl_sys_samp.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/goal/goal.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/model/puddle/puddle.jl"))
-  include(joinpath(split(@__FILE__, "src")[1], "src/model/agent/dp_policy_agent.jl"))
+  include(joinpath(split(@__FILE__, "src")[1], "src/decision_making/partially_observable_mdp/q_mdp_agent.jl"))
 
   function main(delta_time=0.1, end_time=30; is_test=false)
     # save path of gif file
-    path = "src/decision_making/partially_observable_mdp/anime_dp_mcl.gif"
+    path = "src/decision_making/partially_observable_mdp/anime_qmdp_mcl.gif"
 
     # simulation world
     world = PuddleWorld(-5.0, 5.0, -5.0, 5.0,
@@ -37,8 +37,11 @@ module AnimeDpMcl
     append(world, goal)
 
     # puddles
-    append(world, Puddle([-2.0, 0.0], [0.0, 2.0], 0.1))
-    append(world, Puddle([-0.5, -2.0], [2.5, 1.0], 0.1))
+    puddles = [Puddle([-2.0, 0.0], [0.0, 2.0], 0.1),
+               Puddle([-0.5, -2.0], [2.5, 1.0], 0.1)]
+    for puddle in puddles
+      append(world, puddle)
+    end
 
     # robot including sensor, agent, estimator
     init_pose = [2.5, 2.5, 0.0]
@@ -46,7 +49,7 @@ module AnimeDpMcl
     noises = Dict("nn"=>0.20, "no"=>0.001, "on"=>0.11, "oo"=>0.20)
     mcl = MclSysSamp(init_pose, 100, noises, env_map=map,
                      dist_dev_rate=0.14, dir_dev=0.05)
-    agent = DpPolicyAgent(delta_time=delta_time, estimator=mcl, goal=goal)
+    agent = QmdpAgent(delta_time=delta_time, estimator=mcl, goal=goal, puddles=puddles)
     robot = DifferentialWheeledRobot(init_pose, 0.2, "red",
                                      agent, delta_time,
                                      noise_per_meter=5, 
