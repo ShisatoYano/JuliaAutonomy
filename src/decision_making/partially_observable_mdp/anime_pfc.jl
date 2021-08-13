@@ -13,7 +13,7 @@ module AnimePfc
   include(joinpath(split(@__FILE__, "src")[1], "src/model/puddle/puddle.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/decision_making/partially_observable_mdp/pfc_agent.jl"))
 
-  function main(delta_time=0.1, end_time=30; is_test=false)
+  function main(delta_time=0.1, end_time=60; is_test=false)
     # save path of gif file
     path = "src/decision_making/partially_observable_mdp/anime_pfc.gif"
 

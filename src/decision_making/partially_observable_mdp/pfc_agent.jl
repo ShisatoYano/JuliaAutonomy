@@ -73,7 +73,7 @@ end
 function init_value(self::PfcAgent)
   tmp = zeros(Tuple(self.dp.index_nums))
 
-  txt_path = "src/decision_making/markov_decision_process/value.txt"
+  txt_path = "src/decision_making/partially_observable_mdp/value.txt"
   open(joinpath(split(@__FILE__, "src")[1], txt_path), "r") do fp
     for line in eachline(fp)
       d = split(line) # [i_x, i_y, i_theta, value]
@@ -87,7 +87,7 @@ end
 function init_policy(self::PfcAgent)
   tmp = zeros(Tuple([self.index_nums[1], self.index_nums[2], self.index_nums[3], 2]))
 
-  txt_path = "src/decision_making/markov_decision_process/policy.txt"
+  txt_path = "src/decision_making/partially_observable_mdp/policy.txt"
   open(joinpath(split(@__FILE__, "src")[1], txt_path), "r") do fp
     for line in eachline(fp)
       d = split(line) # [i_x, i_y, i_theta, speed, yaw_rate]
