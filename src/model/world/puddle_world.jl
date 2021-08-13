@@ -62,7 +62,11 @@ function append(self::PuddleWorld, obj)
 end
 
 function puddle_depth(self::PuddleWorld, pose)
-  return sum([p.depth*inside(p, pose)  for p in self.puddles])
+  if length(self.puddles) > 0  
+    return sum([p.depth*inside(p, pose)  for p in self.puddles])
+  else
+    return 0.0
+  end
 end
 
 function one_step(self::PuddleWorld, delta_time)
