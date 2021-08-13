@@ -27,6 +27,7 @@ mutable struct QmdpAgent
   dp
   evaluations
   current_value
+  stop_timer
 
   # init
   function QmdpAgent(;delta_time::Float64=0.1,
@@ -62,6 +63,9 @@ mutable struct QmdpAgent
     self.dp.value_function = init_value(self)
     self.evaluations = [0.0, 0.0, 0.0] # to store q-mdp value
     self.current_value = 0.0 # to store average of current state value
+    
+    self.stop_timer = 0.0
+    
     return self
   end
 end
@@ -144,7 +148,18 @@ function draw_decision!(self::QmdpAgent, observation)
 
     self.total_reward += self.delta_time * reward_per_sec(self)
 
-    self.speed, self.yaw_rate = policy(self, self.estimator.estimated_pose)
+    spd_tmp, yr_tmp = policy(self, self.estimator.estimated_pose)
+    if spd_tmp == 0.0
+      self.stop_timer += self.delta_time
+    else
+      self.stop_timer = 0.0
+    end
+
+    if self.stop_timer > 1.0
+      self.speed, self.yaw_rate = 1.0, 0.0
+    else
+      self.speed, self.yaw_rate = spd_tmp, yr_tmp
+    end
     self.prev_spd, self.prev_yr = self.speed, self.yaw_rate
 
     draw!(self.estimator)
