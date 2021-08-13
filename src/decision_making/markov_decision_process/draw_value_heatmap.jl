@@ -17,7 +17,7 @@ module DrawValueHeatmap
 
     if is_test == false
       while delta > 0.01
-        delta = policy_iteration_sweep(dp)
+        delta = value_iteration_sweep(dp)
         counter += 1
         println("$(counter), $(delta)")
       end
@@ -39,7 +39,7 @@ module DrawValueHeatmap
       close(fp)
     else
       for i in 1:10
-        delta = policy_iteration_sweep(dp)
+        delta = value_iteration_sweep(dp)
         counter += 1
       end
     end

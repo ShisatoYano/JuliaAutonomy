@@ -223,7 +223,7 @@ function policy_evaluation_sweep(self::DynamicProgramming)
   return max_delta
 end
 
-function policy_iteration_sweep(self::DynamicProgramming)
+function value_iteration_sweep(self::DynamicProgramming)
   max_delta = 0.0
   
   for i in self.indexes
