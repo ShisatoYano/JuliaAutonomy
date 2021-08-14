@@ -28,6 +28,7 @@ mutable struct PfcAgent
   evaluations
   current_value
   stop_timer
+  magnitude
 
   # init
   function PfcAgent(;delta_time::Float64=0.1,
@@ -38,7 +39,8 @@ mutable struct PfcAgent
                     puddle_coef=100,
                     widths=[0.2, 0.2, pi/18],
                     lower_left=[-4.0, -4.0],
-                    upper_right=[4.0, 4.0])
+                    upper_right=[4.0, 4.0],
+                    magnitude=2)
     self = new()
     self.speed = 0.0
     self.yaw_rate = 0.0
@@ -65,6 +67,7 @@ mutable struct PfcAgent
     self.current_value = 0.0 # to store average of current state value
     
     self.stop_timer = 0.0
+    self.magnitude = magnitude
     
     return self
   end
@@ -120,17 +123,35 @@ function to_index(self::PfcAgent, pose)
 end
 
 function evaluation(self::PfcAgent, action, indexes)
-  # normalize weight of particles
-  return sum([action_value(self.dp, action, i, out_penalty=false) for i in indexes])/length(indexes)
+  v = self.dp.value_function
+  vs = []
+  for i in indexes
+    if abs(self.dp.value_function[i[1]+1, i[2]+1, i[3]+1]) > 0.0
+      push!(vs, abs(self.dp.value_function[i[1]+1, i[2]+1, i[3]+1]))
+    else
+      push!(vs, 1e-10)
+    end
+  end
+
+  qs = [action_value(self.dp, action, i, out_penalty=false) for i in indexes]
+
+  ps = self.estimator.particles
+
+  return sum([(p.weight/(v^self.magnitude))*q for (v, q, p) in zip(vs, qs, ps)])
 end
 
 function policy(self::PfcAgent, pose)
+  # decrease weight of particle reached at goal
+  for p in self.estimator.particles
+    if inside(self.goal, p.pose) == true
+      p.weight *= 1e-10
+    end
+  end
+  resampling(self.estimator)
+
   indexes = [to_index(self, p.pose) for p in self.estimator.particles]
-
   self.current_value = sum([self.dp.value_function[i[1]+1, i[2]+1, i[3]+1] for i in indexes])/length(indexes)
-
   self.evaluations = [evaluation(self, a, indexes) for a in self.dp.actions]
-  
   action = self.dp.actions[argmax(self.evaluations)]
 
   return action[1], action[2]  

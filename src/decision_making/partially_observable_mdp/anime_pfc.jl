@@ -13,7 +13,7 @@ module AnimePfc
   include(joinpath(split(@__FILE__, "src")[1], "src/model/puddle/puddle.jl"))
   include(joinpath(split(@__FILE__, "src")[1], "src/decision_making/partially_observable_mdp/pfc_agent.jl"))
 
-  function main(delta_time=0.1, end_time=60; is_test=false)
+  function main(delta_time=0.1, end_time=30; is_test=false)
     # save path of gif file
     path = "src/decision_making/partially_observable_mdp/anime_pfc.gif"
 
@@ -36,7 +36,7 @@ module AnimePfc
     # robot including sensor, agent, estimator
     init_pose = [3.5, 3.5, pi]
     sensor = Sensor(map, dist_noise_rate=0.1, dir_noise=pi/90)
-    mcl = SensorResetMcl(init_pose, 100, env_map=map)
+    mcl = SensorResetMcl(init_pose, 1000, env_map=map)
     agent = PfcAgent(delta_time=delta_time, estimator=mcl, goal=goal, puddles=[])
     robot = DifferentialWheeledRobot(init_pose, 0.2, "red",
                                      agent, delta_time,
