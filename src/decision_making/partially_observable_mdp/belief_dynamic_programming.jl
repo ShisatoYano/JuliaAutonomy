@@ -9,6 +9,7 @@ include(joinpath(split(@__FILE__, "src")[1], "src/model/agent/puddle_ignore_agen
 include(joinpath(split(@__FILE__, "src")[1], "src/common/state_transition/state_transition.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/puddle/puddle.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/localization/extended_kalman_filter/extended_kalman_filter.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/model/sensor/sensor.jl"))
 
 mutable struct BeliefDynamicProgramming
   pose_min
@@ -28,12 +29,14 @@ mutable struct BeliefDynamicProgramming
   dev_borders
   dev_borders_side
   motion_sigma_transition_probs
+  obs_sigma_transition_probs
 
   # init
   function BeliefDynamicProgramming(widths, goal,
                                     puddles, 
                                     delta_time,
-                                    sampling_num;
+                                    sampling_num,
+                                    sensor;
                                     puddle_coef=100,
                                     lower_left=[-4.0, -4.0],
                                     upper_right=[4.0, 4.0],
@@ -52,7 +55,7 @@ mutable struct BeliefDynamicProgramming
     self.policy = init_policy(self)
 
     actions_set = Set([Tuple(self.policy[i[1]+1, i[2]+1, i[3]+1, :]) for i in self.indexes])
-    self.actions = [a for a in actions_set]
+    self.actions = [(0.0, 2.0), (0.0, -2.0), (1.0, 0.0), (-1.0, 0.0)]
     self.state_transition_probs = init_state_transition_probs(self, delta_time, sampling_num)
     
     self.depths = depth_means(self, puddles, sampling_num)
@@ -64,8 +67,41 @@ mutable struct BeliefDynamicProgramming
     self.dev_borders_side = [dev_borders[1]/10, dev_borders[1], dev_borders[2], dev_borders[3], dev_borders[4], dev_borders[4]*10]
     self.motion_sigma_transition_probs = init_motion_sigma_transition_probs(self)
 
+    self.obs_sigma_transition_probs = init_obs_sigma_transition_probs(self, sensor)
     return self
   end
+end
+
+function init_obs_sigma_transition_probs(self::BeliefDynamicProgramming, sensor)
+  probs = Dict()
+
+  for index in self.indexes
+    pose = self.pose_min + self.widths.*(index[1:3] .+ 0.5)
+    sigma = (self.dev_borders_side[index[4]+1] +self.dev_borders_side[index[4]+2])/2
+    cov_mat = (sigma^2) .* Matrix{Float64}(I, 3, 3)
+    
+    # considering observation
+    for d in data(sensor, pose)
+      cov_mat = observation_update(self, d[2], cov_mat, sensor, pose)
+    end
+
+    probs[index] = Dict(cov_to_index(self, cov_mat) => 1.0)
+  end
+
+  return probs
+end
+
+function observation_update(self::BeliefDynamicProgramming,
+                            landmark_id, cov_mat, sensor, pose)
+  dist_dev_rate = 0.14 # sigma parameter of observed distance
+  dir_dev = 0.05 # sigma parameter of observed direction
+
+  H = mat_H(pose, sensor.map.objects[landmark_id].pose)
+  est_z = observation_function(pose, sensor.map.objects[landmark_id].pose)
+  Q = mat_Q(dist_dev_rate*est_z[1], dir_dev)
+  K = cov_mat * H' * inv(Q + H*cov_mat*H')
+
+  return (Matrix{Float64}(I, 3, 3) - K*H) * cov_mat
 end
 
 function depth_means(self::BeliefDynamicProgramming, puddles, sampling_num)
@@ -113,7 +149,7 @@ function cov_to_index(self::BeliefDynamicProgramming, cov)
     end
   end
 
-  return length(self.dev_borders)
+  return length(self.dev_borders)-1
 end
 
 function calc_motion_sigma_transition_probs(self::BeliefDynamicProgramming,
@@ -223,22 +259,8 @@ function belief_final_state(self::BeliefDynamicProgramming, index)
              [lower_left[1], upper_right[2]],
              [upper_right[1], lower_left[2]],
              [upper_right[1], upper_right[2]]]
-  
-  # check arrived at goal
-  # all of corner point should be inside of goal area
-  for c in corners
-    if inside(self.goal, c) == false
-      return false
-    end
-  end
 
-  # only when belief distribution is narrow,
-  # decided robot reached at goal
-  if index[4] != 0
-    return false
-  end
-
-  return true
+  return (all([inside(self.goal, c) for c in corners]) && (index[4] == 0))
 end
 
 # give penalty when robot moved out of space
@@ -270,7 +292,9 @@ function action_value(self::BeliefDynamicProgramming, action, index; out_penalty
     reward = -self.delta_time*self.depths[after[1]+1, after[2]+1]*self.puddle_coef - self.delta_time + out_reward*out_penalty
     
     for sigma_after_prob in self.motion_sigma_transition_probs[(index[4]+1, action)]
-      value += (self.value_function[after[1]+1, after[2]+1, after[3]+1, sigma_after_prob[1]] + reward) * delta_prob[2] * sigma_after_prob[2]
+      for sigma_obs_prob in self.obs_sigma_transition_probs[(after[1], after[2], after[3], sigma_after_prob[1])]
+        value += (self.value_function[after[1]+1, after[2]+1, after[3]+1, sigma_obs_prob[1]+1] + reward) * delta_prob[2] * sigma_after_prob[2] * sigma_obs_prob[2]
+      end
     end
   end
 
