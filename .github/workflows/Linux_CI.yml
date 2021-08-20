@@ -30,8 +30,11 @@ jobs:
         with:
           version: ${{ matrix.julia-version }}
 
-      - name: "Install dependencies for GR"
-        run: sudo apt-get -y install libxt6 libxrender1 libxext6 libgl1-mesa-glx libqt5widgets5
+      - name: "Update"
+        run: sudo apt-get update
+      
+      - name: "Upgrade"
+        run: sudo apt-get upgrade
 
       - name: "Install packages"
         run: julia -e 'ENV["CONDA_JL_VERSION"]=3;include("setup.jl");Setup.install_packages()'
@@ -44,7 +47,5 @@ jobs:
         run: julia --code-coverage test/runtests.jl
       
       - name: "Upload coverage"
+      
         run: julia -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Codecov.submit(Codecov.process_folder())'
-        # uses: codecov/codecov-action@v1
-        # with: 
-        #   token: ${{ secrets.CODECOV_TOKEN }}

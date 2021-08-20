@@ -2,7 +2,7 @@ FROM julia:1.6.1
 
 RUN apt-get update
 
-RUN apt-get -yq install libxt6 libxrender1 libxext6 libgl1-mesa-glx libqt5widgets5
+RUN apt-get upgrade
 
 RUN apt-get -yq install build-essential
 

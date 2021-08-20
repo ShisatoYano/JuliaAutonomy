@@ -283,7 +283,7 @@ function belief_final_state(self::BeliefDynamicProgramming, index)
              [upper_right[1], lower_left[2]],
              [upper_right[1], upper_right[2]]]
 
-  return all([inside(self.goal, c) for c in corners]) #&& (index[4] == 0)
+  return all([inside(self.goal, c) for c in corners])
 end
 
 # give penalty when robot moved out of space
