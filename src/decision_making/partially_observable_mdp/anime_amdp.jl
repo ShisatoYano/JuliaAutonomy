@@ -26,7 +26,7 @@ module AnimeAmdp
     
     # map including landmarks 
     map = Map()
-    for (id, lm) in enumerate([[1.0, 4.0], [4.0, 1.0], [-4.0, 1.0], [-2.0, 1.0]])
+    for (id, lm) in enumerate([[1.0, 4.0], [4.0, 1.0], [-4.0, -4.0]])
       add_object(map, Object(lm[1], lm[2], id=id))
     end
     append(world, map)
@@ -37,11 +37,11 @@ module AnimeAmdp
     end
 
     # goal
-    goal = Goal(-3.0, 0.0)
+    goal = Goal(-3.0, -3.0)
     append(world, goal)
 
     # robot including sensor, agent, estimator
-    for init_pose in [[-3.0, 4.0, pi], [-1.0, 4.0, pi], [1.0, 4.0, pi], [3.0, 4.0, pi]]
+    for init_pose in [[2.5, 2.5, pi]]
       sensor = Sensor(map, dist_noise_rate=0.1, dir_noise=pi/90)
       ekf = ExtendedKalmanFilter(init_pose, env_map=map,
                                  dist_dev_rate=0.14,

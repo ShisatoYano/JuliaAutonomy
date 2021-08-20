@@ -11,13 +11,13 @@ module ValueHeatmapAmdp
     puddles = [Puddle([-2.0, 0.0], [0.0, 2.0], 0.1), Puddle([-0.5, -2.0], [2.5, 1.0], 0.1)]
 
     map = Map()
-    for (id, lm) in enumerate([[1.0, 4.0], [4.0, 1.0], [-4.0, 1.0], [-2.0, 1.0]])
+    for (id, lm) in enumerate([[1.0, 4.0], [4.0, 1.0], [-4.0, -4.0]])
       add_object(map, Object(lm[1], lm[2], id=id))
     end
 
     sensor = Sensor(map, dist_noise_rate=0.1, dir_noise=pi/90)
 
-    dp = BeliefDynamicProgramming([0.2, 0.2, pi/18], Goal(-3, 0), puddles, 0.1, 10, sensor)
+    dp = BeliefDynamicProgramming([0.2, 0.2, pi/18], Goal(-3, -3), puddles, 0.1, 10, sensor)
 
     counter = 0
     delta = 1e100
@@ -32,7 +32,7 @@ module ValueHeatmapAmdp
       txt_path = joinpath(split(@__FILE__, "src")[1], "src/decision_making/partially_observable_mdp/policy_amdp.txt")
       fp = open(txt_path, "w")
       for i in dp.indexes
-        p = dp.policy[i[1]+1, i[2]+1, i[3]+1, :]
+        p = dp.policy[i[1]+1, i[2]+1, i[3]+1, i[4]+1, :]
         write(fp, "$(i[1]) $(i[2]) $(i[3]) $(i[4]) $(p[1]) $(p[2])\n")
       end
       close(fp)

@@ -2,7 +2,7 @@
 # by value iteration
 # considering belief distribution get narrow
 
-using FreqTables, NamedArrays, LinearAlgebra
+using FreqTables, NamedArrays, LinearAlgebra, Distributions
 
 include(joinpath(split(@__FILE__, "src")[1], "src/model/goal/goal.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/agent/puddle_ignore_agent.jl"))
@@ -52,13 +52,12 @@ mutable struct BeliefDynamicProgramming
     nx, ny, nt, nh = self.index_nums[1], self.index_nums[2], self.index_nums[3] , self.index_nums[4]
     self.indexes = vec(collect(Base.product(0:nx-1, 0:ny-1, 0:nt-1, 0:nh-1)))
     self.value_function, self.is_final_state = init_belief_value_function(self)
-    self.policy = init_policy(self)
-
-    actions_set = Set([Tuple(self.policy[i[1]+1, i[2]+1, i[3]+1, :]) for i in self.indexes])
-    self.actions = [(0.0, 2.0), (0.0, -2.0), (1.0, 0.0), (-1.0, 0.0)]
-    self.state_transition_probs = init_state_transition_probs(self, delta_time, sampling_num)
     
-    self.depths = depth_means(self, puddles, sampling_num)
+    self.policy = init_policy(self)
+    actions_set = Set([Tuple(self.policy[i[1]+1, i[2]+1, i[3]+1, i[4]+1, :]) for i in self.indexes])
+    self.actions = [a for a in actions_set]
+    self.state_transition_probs = init_state_transition_probs(self, delta_time, sampling_num)
+    self.policy = zeros(Tuple([self.index_nums[1], self.index_nums[2], self.index_nums[3], self.index_nums[4], 2]))
 
     self.delta_time = delta_time
     self.puddle_coef = puddle_coef
@@ -68,8 +67,32 @@ mutable struct BeliefDynamicProgramming
     self.motion_sigma_transition_probs = init_motion_sigma_transition_probs(self)
 
     self.obs_sigma_transition_probs = init_obs_sigma_transition_probs(self, sensor)
+    
+    self.depths = expected_depths(self, puddles)
+
     return self
   end
+end
+
+function expected_depths(self::BeliefDynamicProgramming,
+                         puddles, sampling_num=100)
+  depths = Dict()
+
+  # x, y, sigma
+  for index in collect(Base.product(0:self.index_nums[1]-1, 0:self.index_nums[2]-1, 0:self.index_nums[4]-1))
+    pose = self.pose_min[1:2] + self.widths[1:2].*(index[1:2] .+ 0.5) # center of cell
+    sigma = (self.dev_borders_side[index[3]+1] +self.dev_borders_side[index[3]+2])/2 # center of sigma
+    belief = MvNormal(pose, (sigma^2).*Matrix{Float64}(I,2,2))
+    
+    depth_sum = 0.0
+    for pos in [rand(belief, sampling_num)[:,i] for i in 1:sampling_num] 
+      depth_sum += sum([p.depth*inside(p, pos) for p in puddles])
+    end
+
+    depths[index] = depth_sum / sampling_num
+  end
+
+  return depths
 end
 
 function init_obs_sigma_transition_probs(self::BeliefDynamicProgramming, sensor)
@@ -225,11 +248,11 @@ function get_index(self::BeliefDynamicProgramming, pose)
 end
 
 function init_policy(self::BeliefDynamicProgramming)
-  tmp = zeros(Tuple([self.index_nums[1], self.index_nums[2], self.index_nums[3], 2]))
+  tmp = zeros(Tuple([self.index_nums[1], self.index_nums[2], self.index_nums[3], self.index_nums[4], 2]))
 
   for index in self.indexes
     center = self.pose_min + self.widths.*(index[1:3] .+ 0.5)
-    tmp[index[1]+1, index[2]+1, index[3]+1, :] .= policy(center, self.goal)
+    tmp[index[1]+1, index[2]+1, index[3]+1, index[4]+1, :] .= policy(center, self.goal)
   end
 
   return tmp
@@ -260,7 +283,7 @@ function belief_final_state(self::BeliefDynamicProgramming, index)
              [upper_right[1], lower_left[2]],
              [upper_right[1], upper_right[2]]]
 
-  return (all([inside(self.goal, c) for c in corners]) && (index[4] == 0))
+  return all([inside(self.goal, c) for c in corners]) #&& (index[4] == 0)
 end
 
 # give penalty when robot moved out of space
@@ -289,38 +312,16 @@ function action_value(self::BeliefDynamicProgramming, action, index; out_penalty
 
   for delta_prob in self.state_transition_probs[(action, index[3]+1)]
     after, out_reward = out_correction(self, [index[1]+1, index[2]+1, index[3]+1]+delta_prob[1])
-    reward = -self.delta_time*self.depths[after[1]+1, after[2]+1]*self.puddle_coef - self.delta_time + out_reward*out_penalty
     
     for sigma_after_prob in self.motion_sigma_transition_probs[(index[4]+1, action)]
       for sigma_obs_prob in self.obs_sigma_transition_probs[(after[1], after[2], after[3], sigma_after_prob[1])]
+        reward = -self.delta_time*self.depths[(after[1], after[2], sigma_obs_prob[1])]*self.puddle_coef - self.delta_time + out_reward*out_penalty
         value += (self.value_function[after[1]+1, after[2]+1, after[3]+1, sigma_obs_prob[1]+1] + reward) * delta_prob[2] * sigma_after_prob[2] * sigma_obs_prob[2]
       end
     end
   end
 
   return value
-end
-
-function policy_evaluation_sweep(self::BeliefDynamicProgramming)
-  max_delta = 0.0
-  
-  for i in self.indexes
-    if self.is_final_state[i[1]+1, i[2]+1, i[3]+1] != true
-      q = action_value(self, Tuple(self.policy[i[1]+1, i[2]+1, i[3]+1, :]), i)
-      
-      delta = abs(self.value_function[i[1]+1, i[2]+1, i[3]+1] - q)
-
-      if delta > max_delta
-        max_delta = delta
-      else
-        max_delta = max_delta
-      end
-
-      self.value_function[i[1]+1, i[2]+1, i[3]+1] = q
-    end
-  end
-
-  return max_delta
 end
 
 function value_iteration_sweep(self::BeliefDynamicProgramming)
@@ -343,7 +344,7 @@ function value_iteration_sweep(self::BeliefDynamicProgramming)
       end
 
       self.value_function[i[1]+1, i[2]+1, i[3]+1, i[4]+1] = max_q
-      self.policy[i[1]+1, i[2]+1, i[3]+1, :] .= max_a
+      self.policy[i[1]+1, i[2]+1, i[3]+1, i[4]+1, :] .= max_a
     end
   end
 
