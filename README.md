@@ -1,5 +1,5 @@
 # JuliaAutonomy
-[![Build Status](https://travis-ci.org/ShisatoYano/JuliaAutonomy.svg?branch=main)](https://travis-ci.org/ShisatoYano/JuliaAutonomy) [![Build status](https://ci.appveyor.com/api/projects/status/3u43w72pkinpuc48?svg=true)](https://ci.appveyor.com/project/ShisatoYano/juliaautonomy) ![Linux_CI](https://github.com/ShisatoYano/JuliaAutonomy/workflows/Linux_CI/badge.svg) [![codecov](https://codecov.io/gh/ShisatoYano/JuliaAutonomy/branch/main/graph/badge.svg?token=7UQN0H01OW)](https://codecov.io/gh/ShisatoYano/JuliaAutonomy)  
+![Linux_CI](https://github.com/ShisatoYano/JuliaAutonomy/workflows/Linux_CI/badge.svg) [![codecov](https://codecov.io/gh/ShisatoYano/JuliaAutonomy/branch/main/graph/badge.svg?token=7UQN0H01OW)](https://codecov.io/gh/ShisatoYano/JuliaAutonomy)  
 Julia codes for Autonomy, Robotics and Self-Driving Algorithms.  
 ![](icon.PNG)  
 
@@ -98,6 +98,9 @@ Markov Decision Process
 
 Reinforcement Learning  
 ![](src/decision_making/reinforcement_learning/q_learning/q_learning_after_1.PNG)  
+
+Partially Observable Markov Decision Process  
+![](src/decision_making/partially_observable_mdp/anime_amdp.gif)  
 
 # License
 MIT  
