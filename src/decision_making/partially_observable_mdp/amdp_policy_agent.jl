@@ -114,16 +114,6 @@ function policy(self::AmdpPolicyAgent, pose, cov)
 
   action = self.policy_data[pose_index[1]+1, pose_index[2]+1, pose_index[3]+1, belief_index+1, :]
 
-  # if action[1] == 0.0
-  #   self.stop_timer += self.delta_time
-  # else
-  #   self.stop_timer = 0.0
-  # end
-
-  # if self.stop_timer > 2.0
-  #   return -1.0, 0.0
-  # end
-
   return action[1], action[2] 
 end
 
