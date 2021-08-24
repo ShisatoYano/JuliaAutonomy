@@ -29,12 +29,34 @@ module VariationalInference
       else  
         data = hcat(data, DataFrame(two=data_k))
       end
-      # data = hcat(data, DataFrame(=data_k))
     end
-    println(data)
 
+    println(update_parameters(data, 1))
     
+  end
+
+  function update_parameters(ds, k, mu_avg=600, zeta=1, alpha=1, beta=1, tau=1)
+    if k == 1
+      key_class = "one"
+    else
+      key_class = "two" 
+    end
+
+    # calculate R, S, T
+    R = sum([ds[i, key_class] for i in 1:size(ds)[1]])
+    S = sum([ds[i, key_class]*ds[i, :z] for i in 1:size(ds)[1]])
+    T = sum([ds[i, key_class]*(ds[i, :z]^2) for i in 1:size(ds)[1]])
     
+    # store calculated parameters temporarily
+    hat = Dict()
+    hat["tau"] = R + tau
+    hat["zeta"] = R + zeta
+    hat["mu_avg"] = (S + zeta*mu_avg)/hat["zeta"]
+    hat["alpha"] = R/2 + alpha
+    hat["beta"] = (T + zeta*(mu_avg^2) - hat["zeta"]*(hat["mu_avg"]^2))/2 + beta
+    hat["z_std"] = sqrt(hat["beta"]/hat["alpha"])
+
+    return DataFrame(hat)
   end
 
 end
