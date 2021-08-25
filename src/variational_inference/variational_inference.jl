@@ -1,7 +1,8 @@
 # variational inference sample code
 
 module VariationalInference
-  using DataFrames, CSV, StatsBase
+  using DataFrames, CSV, StatsBase, Plots, Distributions
+  pyplot()
   
   function main(;test=false)
     # read original data
@@ -31,7 +32,17 @@ module VariationalInference
       end
     end
 
-    println(update_parameters(data, 1))
+    params = DataFrame()
+    for k in 1:K
+      if k == 1
+        params = update_parameters(data, k)
+      else
+        params = vcat(params, update_parameters(data, k))
+      end
+    end
+    draw_sensor_dist(params, K,
+                    "src/variational_inference/draw_sensor_dist_sample.png",
+                    test)
     
   end
 
@@ -57,6 +68,16 @@ module VariationalInference
     hat["z_std"] = sqrt(hat["beta"]/hat["alpha"])
 
     return DataFrame(hat)
+  end
+
+  function draw_sensor_dist(params, K, save_name, test)
+    pi_ = rand(Dirichlet([params[k, "tau"] for k in 1:K]))
+    pdfs = [Normal(params[k, "mu_avg"], params[k, "z_std"]) for k in 1:K]
+    
+    xs = range(600, 650, length=Int64(floor(50/0.5)))
+    
+    # draw p(z)
+    
   end
 
 end
