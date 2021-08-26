@@ -40,9 +40,9 @@ module VariationalInference
         params = vcat(params, update_parameters(data, k))
       end
     end
-    draw_sensor_dist(params, K,
-                    "src/variational_inference/draw_sensor_dist_sample.png",
-                    test)
+    draw_sensor_dist(data, params, K,
+                     "src/variational_inference/draw_sensor_dist_sample.png",
+                     test)
     
   end
 
@@ -70,14 +70,26 @@ module VariationalInference
     return DataFrame(hat)
   end
 
-  function draw_sensor_dist(params, K, save_name, test)
+  function draw_sensor_dist(data, params, K, save_name, test)
     pi_ = rand(Dirichlet([params[k, "tau"] for k in 1:K]))
     pdfs = [Normal(params[k, "mu_avg"], params[k, "z_std"]) for k in 1:K]
     
     xs = range(600, 650, length=Int64(floor(50/0.5)))
     
-    # draw p(z)
-    
+    # histogram of observation
+    histogram(data.z, bins=(maximum(data.z)-minimum(data.z)), color=:gray, label="histogram")
+    # draw gaussian mixture distribution
+    ys = [sum([pdf(pdfs[k], x)*pi_[k] for k in 1:K])*size(data)[1] for x in xs]
+    plot!(xs, ys, color=:red, label="Mixture")
+    # gaussian distribution of each cluster
+    for k in 1:K
+      ys = [pdf(pdfs[k], x)*pi_[k]*size(data)[1] for x in xs]
+      plot!(xs, ys, color=:blue, label="Cluster$(k)")
+    end
+    if test == false
+      save_path = joinpath(split(@__FILE__, "src")[1], save_name)
+      savefig(save_path)
+    end
   end
 
 end
