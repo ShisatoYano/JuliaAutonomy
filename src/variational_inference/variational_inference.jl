@@ -2,6 +2,7 @@
 
 module VariationalInference
   using DataFrames, CSV, StatsBase, Plots, Distributions
+  using SpecialFunctions
   pyplot()
   
   function main(;test=false)
@@ -44,6 +45,8 @@ module VariationalInference
                      "src/variational_inference/draw_sensor_dist_sample.png",
                      test)
     
+    rs = [responsibility(data[i, :z], K, params) for i in 1:size(data)[1]]
+    println(rs)
   end
 
   function update_parameters(ds, k, mu_avg=600, zeta=1, alpha=1, beta=1, tau=1)
@@ -90,6 +93,44 @@ module VariationalInference
       save_path = joinpath(split(@__FILE__, "src")[1], save_name)
       savefig(save_path)
     end
+  end
+
+  function responsibility(z, K, params)
+    tau_sum = sum([params[k, "tau"] for k in 1:K])
+    
+    r = Dict()
+    for k in 1:K
+      log_rho = (digamma(params[k, "alpha"]) - log(params[k, "beta"]))/2 \
+                - (1/params[k, "zeta"] + ((params[k, "mu_avg"]-z)^2)*params[k, "alpha"]/params[k, "beta"])/2 \
+                + digamma(params[k, "tau"]) - digamma(tau_sum)
+      if k == 1
+        r["one"] = exp(log_rho)
+      else
+        r["two"] = exp(log_rho)
+      end
+    end
+
+    # sum of r_k
+    rks = []
+    for k in 1:K
+      if k == 1
+        append!(rks, r["one"])
+      else
+        append!(rks, r["two"])  
+      end
+    end
+    w = sum(rks)
+    
+    # normalization
+    for k in 1:K
+      if k == 1
+        r["one"] /= w
+      else
+        r["two"] /= w
+      end
+    end
+
+    return r
   end
 
 end
