@@ -8,7 +8,7 @@ module Setup
         :Plots, :DataFrames, :CSV, :Test,
         :StatsPlots, :Statistics, :FreqTables, 
         :NamedArrays, :Distributions, :LinearAlgebra,
-        :StatsBase, :PDMats, :Combinatorics
+        :StatsBase, :PDMats, :Combinatorics, :SpecialFunctions
     ]
 
     function install_packages()
