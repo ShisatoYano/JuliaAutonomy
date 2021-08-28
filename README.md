@@ -14,6 +14,7 @@ Julia codes for Autonomy, Robotics and Self-Driving Algorithms.
         * [Reset Process](#reset-process)
     * [SLAM](#slam)
     * [Decision Making](#decision-making)
+    * [Parameters Inference](#parameters-inference)
 * [License](#license)  
 * [Contribution](#contribution)  
 * [Author](#author)
@@ -60,6 +61,7 @@ julia> AnimeMclRandSamp.main()
 * StatsBase
 * PDMats
 * Combinatorics
+* SpecialFunctions
 
 # Sample codes
 ## Localization
@@ -102,7 +104,7 @@ Reinforcement Learning
 Partially Observable Markov Decision Process  
 ![](src/decision_making/partially_observable_mdp/anime_amdp.gif)  
 
-## Variational Inference
+## Parameters Inference
 Analyzing mixture model  
 ![](src/variational_inference/draw_sensor_dist_K3_t340.png)  
 
