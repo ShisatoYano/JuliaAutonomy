@@ -102,6 +102,10 @@ Reinforcement Learning
 Partially Observable Markov Decision Process  
 ![](src/decision_making/partially_observable_mdp/anime_amdp.gif)  
 
+## Variational Inference
+Analyzing mixture model  
+![](src/variational_inference/draw_sensor_dist_K3_t340.png)  
+
 # License
 MIT  
 
