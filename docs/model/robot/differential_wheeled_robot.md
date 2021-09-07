@@ -72,3 +72,8 @@ Map
 $$
 \bm{m} = \{m_j|j=0,1,2,...,N_{\bm{m}}-1\}
 $$
+
+Observation Equation  
+$$
+\bm{h}(\bm{x}, \bm{m}_j)
+$$
