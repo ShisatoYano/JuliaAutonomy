@@ -78,6 +78,12 @@ $$
 \bm{h}(\bm{x}, \bm{m}_j) = 
   \left(
     \begin{array}{c}
+      l_j \\
+      \phi_j \\
+    \end{array}
+  \right) =
+  \left(
+    \begin{array}{c}
       \sqrt{(m_{j,x}-x)^2 + (m_{j,y}-y)^2} \\
       atan2(m_{j,y}-y, m_{j,x}-x)-\theta \\
     \end{array}
