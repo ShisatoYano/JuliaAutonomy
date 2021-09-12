@@ -16,6 +16,7 @@ module TestModel
   include(joinpath(split(@__FILE__, "test")[1], "src/model/sensor/sensor.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/robot/differential_wheeled_robot/differential_wheeled_robot.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/robot/warp_robot/warp_robot.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/robot/robot_move_sample.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/puddle/puddle.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/goal/goal.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/uncertainty/movement/kidnap/anime_move_kidnap.jl"))
@@ -191,6 +192,9 @@ module TestModel
         @test wr.is_stuck == false
         @test wr.traj_x[1] == 1
         @test wr.traj_y[1] == 1
+      end
+      @testset "RobotMoveSample" begin
+        @test_nowarn RobotMoveSample.main(is_test=true)
       end
       @testset "Goal" begin
         g = Goal(1.0, 2.0, radius=0.5, value=1.0)

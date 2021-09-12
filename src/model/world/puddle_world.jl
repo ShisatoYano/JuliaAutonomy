@@ -8,6 +8,7 @@ include(joinpath(split(@__FILE__, "src")[1], "src/model/puddle/puddle.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/goal/goal.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/robot/differential_wheeled_robot/differential_wheeled_robot.jl"))
 include(joinpath(split(@__FILE__, "src")[1], "src/model/robot/warp_robot/warp_robot.jl"))
+include(joinpath(split(@__FILE__, "src")[1], "src/model/agent/agent.jl"))
 
 mutable struct PuddleWorld
   x_min
@@ -75,11 +76,13 @@ function one_step(self::PuddleWorld, delta_time)
        legend=false)
   
   for r in self.robots
-    r.agent.puddle_depth = puddle_depth(self, r.pose)
-    for g in self.goals
-      if inside(g, r.pose)
-        r.agent.in_goal = true
-        r.agent.final_value = g.value
+    if typeof(r.agent) != Agent
+      r.agent.puddle_depth = puddle_depth(self, r.pose)
+      for g in self.goals
+        if inside(g, r.pose)
+          r.agent.in_goal = true
+          r.agent.final_value = g.value
+        end
       end
     end
   end
