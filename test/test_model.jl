@@ -6,6 +6,7 @@ module TestModel
   # target modules
   include(joinpath(split(@__FILE__, "test")[1], "src/model/world/world.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/world/puddle_world.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/world/world_sample.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/agent.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/puddle_ignore_agent.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/agent/dp_policy_agent.jl"))
@@ -60,6 +61,9 @@ module TestModel
         @test length(pw.goals) == 1
         @test puddle_depth(pw, [1.0, 1.0, 1.0]) == 0.1
         @test_nowarn draw(pw)
+      end
+      @testset "WorldSample" begin
+        @test_nowarn WorldSample.main(is_test=true)
       end
       @testset "Agent" begin
         a = Agent(0.1, 1.0)
