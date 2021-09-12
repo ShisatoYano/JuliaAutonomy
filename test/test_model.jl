@@ -14,6 +14,7 @@ module TestModel
   include(joinpath(split(@__FILE__, "test")[1], "src/model/map/map.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/object/object.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/sensor/sensor.jl"))
+  include(joinpath(split(@__FILE__, "test")[1], "src/model/sensor/robot_sensing_sample.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/robot/differential_wheeled_robot/differential_wheeled_robot.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/robot/warp_robot/warp_robot.jl"))
   include(joinpath(split(@__FILE__, "test")[1], "src/model/robot/robot_move_sample.jl"))
@@ -169,6 +170,9 @@ module TestModel
         @test visible(s, [6.0, pi/3]) == true
         @test visible(s, [0.2, -pi/3]) == false
         @test visible(s, [0.5, pi]) == false
+      end
+      @testset "RobotSensingSample" begin
+        @test_nowarn RobotSensingSample.main(is_test=true)
       end
       @testset "DifferentialWheeledRobot" begin
         a = Agent(0.1, 1.0)     
