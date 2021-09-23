@@ -71,5 +71,5 @@ $$
 b_t(\bm{x_t^{(i)}}) = \hat{b}_t(\bm{x_t^{(i)}}|\bm{z}_{j,t}) = \eta p_j(\bm{z}_{j,t}|\bm{x})
 $$
 
-test: ![p_j(\mathbf{z}|\mathbf{x})
-](https://render.githubusercontent.com/render/math?math=%5CLarge+%5Cdisplaystyle+p_j%28%5Cmathbf%7Bz%7D%7C%5Cmathbf%7Bx%7D%29%0A)
+test: ![b_t(\mathbf{x}_t^{(i)})
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Ctextstyle+b_t%28%5Cmathbf%7Bx%7D_t%5E%7B%28i%29%7D%29%0A)
