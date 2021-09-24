@@ -1,5 +1,14 @@
 # Particle Filter
 
+## Simulation examples
+* Random Sampling  
+src/localization/particle_filter/random_sampling/anime_mcl_rand_samp.jl  
+![](random_sampling/anime_mcl_rand_samp.gif)  
+
+* Systematic Sampling  
+src/localization/particle_filter/systematic_sampling/anime_mcl_sys_samp.gif  
+![](systematic_sampling/anime_mcl_sys_samp.gif)  
+
 ## Monte Carlo Localization
 * Method to estimate self-pose by Particle Filter  
 * Calculate distribution of particles with State transition/Observation model  
@@ -78,3 +87,49 @@
 ](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+w_t%5E%7B%28i%29%7D+%3D+L_j%28%5Cmathbf%7Bx%7D_t%5E%7B%28i%29%7D%7C%5Cmathbf%7Bz%7D_%7Bj%2Ct%7D%29%5Chat%7Bw%7D_t%5E%7B%28i%29%7D%0A)  
 
 ### Likelihood function  
+* Observation ![\mathbf{z}_j = (l_j, \varphi_i)^T
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5Cmathbf%7Bz%7D_j+%3D+%28l_j%2C+%5Cvarphi_i%29%5ET%0A) of landmark ![m_j
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+m_j%0A) at pose ![\mathbf{x}
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5Cmathbf%7Bx%7D%0A)  
+* Variation of ![\mathbf{z}_j = (l_j, \varphi_i)^T
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5Cmathbf%7Bz%7D_j+%3D+%28l_j%2C+%5Cvarphi_i%29%5ET%0A) follows 2-dimensional gaussian distribution  
+* Covariance matrix: ![Q_j(\mathbf{x})
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+Q_j%28%5Cmathbf%7Bx%7D%29%0A), Observation function: ![\mathbf{h}_j(\mathbf{x})
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5Cmathbf%7Bh%7D_j%28%5Cmathbf%7Bx%7D%29%0A)  
+![\mathbf{z}_j \sim N(\mathbf{z}|\mathbf{h}_j(\mathbf{x}), Q_j(\mathbf{x}))
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5Cmathbf%7Bz%7D_j+%5Csim+N%28%5Cmathbf%7Bz%7D%7C%5Cmathbf%7Bh%7D_j%28%5Cmathbf%7Bx%7D%29%2C+Q_j%28%5Cmathbf%7Bx%7D%29%29%0A), ![Q_j(\mathbf{x}) = \begin{pmatrix}
+[l_j(\mathbf{x})\sigma_l]^2 & 0 \\
+0 & \sigma_{\varphi}^2
+\end{pmatrix}
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+Q_j%28%5Cmathbf%7Bx%7D%29+%3D+%5Cbegin%7Bpmatrix%7D%0A%5Bl_j%28%5Cmathbf%7Bx%7D%29%5Csigma_l%5D%5E2+%26+0+%5C%5C%0A0+%26+%5Csigma_%7B%5Cvarphi%7D%5E2%0A%5Cend%7Bpmatrix%7D%0A)  
+* Define Likelihood function: ![L_j(\mathbf{x}|\mathbf{z}_j) = N[\mathbf{z}=\mathbf{z}_j|\mathbf{h}_j(\mathbf{x}), Q_j(\mathbf{x})]](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+L_j%28%5Cmathbf%7Bx%7D%7C%5Cmathbf%7Bz%7D_j%29+%3D+N%5B%5Cmathbf%7Bz%7D%3D%5Cmathbf%7Bz%7D_j%7C%5Cmathbf%7Bh%7D_j%28%5Cmathbf%7Bx%7D%29%2C+Q_j%28%5Cmathbf%7Bx%7D%29%5D)  
+
+## Resampling  
+* Delete particles which weight is too small  
+* Divide particles which weight is big  
+* Sum of weight should be 1 by normalizing  
+### Simple random sampling
+* Old list of particles before resampling: ![\Xi_{old} = \{ \xi^{(i)}|i=0,1,2,...,N-1 \}
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5CXi_%7Bold%7D+%3D+%5C%7B+%5Cxi%5E%7B%28i%29%7D%7Ci%3D0%2C1%2C2%2C...%2CN-1+%5C%7D%0A)  
+* New list of particles after resampling: ![\Xi_{new} = \{ \}
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5CXi_%7Bnew%7D+%3D+%5C%7B+%5C%7D%0A)  
+* Iterate the following processes for N' times(N' is number of new particles)  
+1. Select a particle from old list randomly(proportional to weight)  
+2. Copy selected particle  
+3. The weight is changed as 1/N' and the particle is added to new list  
+### Systematic sampling
+* Binary search is used for the above random sampling  
+* Computational complexity to select a particle is O(log n)  
+* Should be reduced to O(N)  
+* In addition, important to escape sampling bias  
+* Systematic sampling can resolve these problems  
+
+1. Create a list of weight by accumulating each particle's weight  
+2. ![r \sim U(0, W/N')
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+r+%5Csim+U%280%2C+W%2FN%27%29%0A), W: sum of weights, N': number of selected particles  
+3. Set pointer at where accumulated weight is r from head of list  
+4. Iterate the following process for N times  
+  4-1. Select an weight of pointer in list  
+  4-2. Add the particle which has the weight to new list  
+  4-3. Weight is changed as 1/N' for normalization  
+  4-4. Plus W/N' to r
