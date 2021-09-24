@@ -59,6 +59,22 @@
 ](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5Csigma_%7Bv%5Comega%7D%0A): sqrt of value variance of distance is divided by mean of direction  
 
 ### Approximation of belief distribution by particle
-
+![P(\mathbf{x}_t^* \in X) = \int_{\mathbf{x} \in X} b_t(\mathbf{x})d\mathbf{x} \approx \frac{1}{N} \sum_{i=0}^{N-1}\delta(\mathbf{x}_t^{(i)} \in X)
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+P%28%5Cmathbf%7Bx%7D_t%5E%2A+%5Cin+X%29+%3D+%5Cint_%7B%5Cmathbf%7Bx%7D+%5Cin+X%7D+b_t%28%5Cmathbf%7Bx%7D%29d%5Cmathbf%7Bx%7D+%5Capprox+%5Cfrac%7B1%7D%7BN%7D+%5Csum_%7Bi%3D0%7D%5E%7BN-1%7D%5Cdelta%28%5Cmathbf%7Bx%7D_t%5E%7B%28i%29%7D+%5Cin+X%29%0A)  
 
 ### How to reflect observation to particle
+* Observation Model for Landmark ![m_j](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+m_j): ![p_j(\mathbf{z}_j|\mathbf{x})](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+p_j%28%5Cmathbf%7Bz%7D_j%7C%5Cmathbf%7Bx%7D%29)  
+* With the above model, we can evaluate which is more plausible, ![\mathbf{x}^{(i)}](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5Cmathbf%7Bx%7D%5E%7B%28i%29%7D) or ![\mathbf{x}^{(k)}](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5Cmathbf%7Bx%7D%5E%7B%28k%29%7D)?  
+
+![\frac{p_j(\mathbf{z}_j|\mathbf{x}^{(i)})}{p_j(\mathbf{z}_j|\mathbf{x}^{(k)})}](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5Cfrac%7Bp_j%28%5Cmathbf%7Bz%7D_j%7C%5Cmathbf%7Bx%7D%5E%7B%28i%29%7D%29%7D%7Bp_j%28%5Cmathbf%7Bz%7D_j%7C%5Cmathbf%7Bx%7D%5E%7B%28k%29%7D%29%7D)  
+* This model can be defined as the following Likelihood function  
+![L_j(\mathbf{x}|\mathbf{z}) = \eta p_j(\mathbf{z}|\mathbf{x})](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+L_j%28%5Cmathbf%7Bx%7D%7C%5Cmathbf%7Bz%7D%29+%3D+%5Ceta+p_j%28%5Cmathbf%7Bz%7D%7C%5Cmathbf%7Bx%7D%29)  
+
+### Weight of particle
+* Particle is defined as a pair of pose and weight: ![\xi_t^{(i)} = (\mathbf{x}_t^{(i)}, w_t^{(i)})
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5Cxi_t%5E%7B%28i%29%7D+%3D+%28%5Cmathbf%7Bx%7D_t%5E%7B%28i%29%7D%2C+w_t%5E%7B%28i%29%7D%29%0A)  
+* Sum of each particle's weight: ![\sum_{i=0}^{N-1} w_t^{(i)} = 1](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+%5Csum_%7Bi%3D0%7D%5E%7BN-1%7D+w_t%5E%7B%28i%29%7D+%3D+1)  
+* Update weight by reflecting observation: ![w_t^{(i)} = L_j(\mathbf{x}_t^{(i)}|\mathbf{z}_{j,t})\hat{w}_t^{(i)}
+](https://render.githubusercontent.com/render/math?math=%5Clarge+%5Cdisplaystyle+w_t%5E%7B%28i%29%7D+%3D+L_j%28%5Cmathbf%7Bx%7D_t%5E%7B%28i%29%7D%7C%5Cmathbf%7Bz%7D_%7Bj%2Ct%7D%29%5Chat%7Bw%7D_t%5E%7B%28i%29%7D%0A)  
+
+### Likelihood function  
